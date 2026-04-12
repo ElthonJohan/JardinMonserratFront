@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -15,6 +16,7 @@ import LandinPage from "./pages/LandinPage";
 import EstudiantesPage from "./pages/EstudiantesPage";
 import Register from "./pages/Register";
 import "./App.css";
+
 
 function App() {
   return (
@@ -57,6 +59,7 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />{" "}
           </Routes>
 
+
           <Toaster
             position="top-right"
             reverseOrder={false}
@@ -67,8 +70,8 @@ function App() {
                 background: "#363636",
                 color: "#fff",
               },
-            }}
-          />
+            }}/>
+
         </ErrorBoundary>
       </AuthProvider>
     </Router>
