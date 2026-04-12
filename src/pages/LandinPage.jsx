@@ -25,9 +25,9 @@ export default function LandinPage() {
   };
 
   return (
-    <div className="landing-page" style={{paddingTop: '80px'}}>
+    <div className="landing-page">
       {/* ==================== NAVBAR ==================== */}
-      <Navbar expand="lg" className="landing-navbar fixed-top">
+      <Navbar expand="lg" className="landing-navbar sticky-top">
         <Container fluid>
           <Navbar.Brand>
             <img src={logoJardin} alt="Logo Jardín" style={{height: '45px', marginRight: '10px'}} />
@@ -40,7 +40,7 @@ export default function LandinPage() {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
               <Nav.Link onClick={() => scrollToSection('servicios')} className="nav-link">
-                Servicios
+                Talleres
               </Nav.Link>
               <Nav.Link onClick={() => scrollToSection('acerca')} className="nav-link">
                 Acerca de
@@ -81,7 +81,7 @@ export default function LandinPage() {
                   📬 Contáctenos
                 </button>
                 <button className="btn btn-secondary-purple" onClick={() => scrollToSection('servicios')}>
-                  📚 Conocer más
+                  🎓 Ver Talleres
                 </button>
               </div>
             </Col>
@@ -89,68 +89,58 @@ export default function LandinPage() {
         </Container>
       </section>
 
-      {/* ==================== SERVICIOS SECTION ==================== */}
+      {/* ==================== TALLERES SECTION ==================== */}
       <section className="servicios-section" id="servicios">
         <Container>
-          <h2 className="section-title">Nuestros Servicios</h2>
+          <h2 className="section-title">Nuestros Talleres</h2>
           <Row className="g-4">
-            <Col md={6} lg={4}>
+            {/* <Col md={6} lg={4}>
               <Card className="service-card">
                 <div className="service-icon">🎨</div>
-                <h5>Educación Artística</h5>
+                <h5>Dibujo y Pintura</h5>
                 <p>
-                  Desarrollamos la creatividad y expresión de los niños a través de actividades
-                  lúdicas y educativas en artes plásticas.
+                  Los niños exploran la creatividad a través del arte, desarrollando su imaginación
+                  y expresión artística con técnicas variadas y materiales seguros.
+                </p>
+              </Card>
+            </Col> */}
+            <Col md={6} lg={4}>
+              <Card className="service-card">
+                <div className="service-icon">✋</div>
+                <h5>Manitos Creativas</h5>
+                <p>
+                  Estimulamos la motricidad fina y coordinación mediante actividades manuales,
+                  construcciones y trabajos en equipo.
+                </p>
+              </Card>
+            </Col>
+            {/* <Col md={6} lg={4}>
+              <Card className="service-card">
+                <div className="service-icon">🌐</div>
+                <h5>Inglés</h5>
+                <p>
+                  Iniciamos a los niños en el aprendizaje del idioma inglés de forma lúdica y
+                  divertida, creando una base sólida para su futuro.
+                </p>
+              </Card>
+            </Col> */}
+            <Col md={6} lg={4}>
+              <Card className="service-card">
+                <div className="service-icon">💃</div>
+                <h5>Danza</h5>
+                <p>
+                  Fomentamos la expresión corporal y el ritmo a través de actividades de danza
+                  adaptadas a cada edad.
                 </p>
               </Card>
             </Col>
             <Col md={6} lg={4}>
               <Card className="service-card">
-                <div className="service-icon">⚽</div>
-                <h5>Educación Física</h5>
+                <div className="service-icon">👨‍🍳</div>
+                <h5>Minichef</h5>
                 <p>
-                  Promovemos hábitos saludables y el desarrollo motriz con actividades deportivas
-                  seguras y divertidas.
-                </p>
-              </Card>
-            </Col>
-            <Col md={6} lg={4}>
-              <Card className="service-card">
-                <div className="service-icon">🎵</div>
-                <h5>Educación Musical</h5>
-                <p>
-                  Estimulamos el oído musical y la sensibilidad artística mediante experiencias
-                  enriquecedoras con la música.
-                </p>
-              </Card>
-            </Col>
-            <Col md={6} lg={4}>
-              <Card className="service-card">
-                <div className="service-icon">📖</div>
-                <h5>Programa Académico</h5>
-                <p>
-                  Ofrecemos un currículum sólido que integra lectoescritura, matemáticas y ciencias
-                  de forma lúdica.
-                </p>
-              </Card>
-            </Col>
-            <Col md={6} lg={4}>
-              <Card className="service-card">
-                <div className="service-icon">🍎</div>
-                <h5>Nutrición y Salud</h5>
-                <p>
-                  Cuidamos la salud integral con snacks nutritivos y seguimiento del bienestar de
-                  cada niño.
-                </p>
-              </Card>
-            </Col>
-            <Col md={6} lg={4}>
-              <Card className="service-card">
-                <div className="service-icon">👨‍👩‍👧</div>
-                <h5>Integración Familiar</h5>
-                <p>
-                  Fomentamos la participación activa de las familias en el proceso educativo de sus
-                  hijos.
+                  Los niños aprenden nociones básicas de cocina de forma segura y divertida,
+                  descubriendo nuevos sabores y valores nutricionales.
                 </p>
               </Card>
             </Col>
@@ -281,9 +271,9 @@ export default function LandinPage() {
             <Col md={6} lg={3} className="footer-section">
               <h5>Información</h5>
               <p className="fw-bold">Jardín Nuestra Señora de Monserrat</p>
-              <p>📍 Dirección: Av. Principal 123, Ciudad</p>
-              <p>📞 Teléfono: +56 2 XXXX XXXX</p>
-              <p>📧 Email: info@jardinmonserrat.cl</p>
+              <p>📍 Dirección: Av. Miguel Grau número 768, Cajamarca, Peru, 06001</p>
+              <p>📞 Teléfono: +51 987244935</p>
+              <p>📧 Email: iepnsmonserrat@gmail.com</p>
             </Col>
 
             <Col md={6} lg={3} className="footer-section">
@@ -330,13 +320,13 @@ export default function LandinPage() {
               <h5>Síguenos</h5>
               <p>Estamos en redes sociales</p>
               <div className="footer-social">
-                <div className="social-icon" onClick={() => window.open('https://facebook.com')}>
+                <div className="social-icon" onClick={() => window.open('https://www.facebook.com/profile.php?id=100064244611306&locale=es_LA')}>
                   f
                 </div>
-                <div className="social-icon" onClick={() => window.open('https://instagram.com')}>
+                {/* <div className="social-icon" onClick={() => window.open('https://instagram.com')}>
                   📷
-                </div>
-                <div className="social-icon" onClick={() => window.open('https://whatsapp.com')}>
+                </div> */}
+                <div className="social-icon" onClick={() => window.open('https://wa.me/51987244935')}>
                   💬
                 </div>
               </div>
