@@ -1,3 +1,12 @@
+/* Variables de color - Paleta Morada */
+:root {
+  --primary-purple: #34048A;
+  --secondary-purple: #5C2BAC;
+  --accent-purple: #7A4BC4;
+  --light-purple: #E8D5F2;
+  --extra-light-purple: #F3E8FC;
+}
+  
 * {
   margin: 0;
   padding: 0;
