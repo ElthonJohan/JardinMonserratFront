@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Navbar, Nav, Card } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import niñosAprendiendo from '../images/niñosAprendiendo.jpg';
+import educacionCalidad from '../images/educacionCalidad.png';
+import actividadesRecreativas from '../images/actividadesRecreativas.jpg';
+import desarrolloInfantil from '../images/desarrolloInfantil.jpg';
+import logoJardin from '../images/logoJardin.png';
 import './LandinPage.css';
 
 export default function LandinPage() {
@@ -20,11 +25,14 @@ export default function LandinPage() {
   };
 
   return (
-    <div className="landing-page">
+    <div className="landing-page" style={{paddingTop: '80px'}}>
       {/* ==================== NAVBAR ==================== */}
-      <Navbar expand="lg" className="landing-navbar sticky-top">
+      <Navbar expand="lg" className="landing-navbar fixed-top">
         <Container fluid>
-          <Navbar.Brand>🌸 Jardín Monserrat</Navbar.Brand>
+          <Navbar.Brand>
+            <img src={logoJardin} alt="Logo Jardín" style={{height: '45px', marginRight: '10px'}} />
+            Jardín Nuestra Señora de Monserrat
+          </Navbar.Brand>
           <Navbar.Toggle
             aria-controls="basic-navbar-nav"
             onClick={() => setNavOpen(!navOpen)}
@@ -157,7 +165,7 @@ export default function LandinPage() {
             <Col lg={6}>
               <div className="acerca-image">
                 <img
-                  src="https://images.unsplash.com/photo-1564620035527-ffee3be80122?w=600&h=400&fit=crop"
+                  src={niñosAprendiendo}
                   alt="Niños aprendiendo"
                 />
               </div>
@@ -195,25 +203,7 @@ export default function LandinPage() {
           <div className="gallery-container">
             <div className="gallery-item">
               <img
-                src="https://images.unsplash.com/photo-1503454537688-e47a9f00c535?w=400&h=300&fit=crop"
-                alt="Niños jugando"
-              />
-              <div className="gallery-overlay">
-                <span>Diversión y Aprendizaje</span>
-              </div>
-            </div>
-            <div className="gallery-item">
-              <img
-                src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=400&h=300&fit=crop"
-                alt="Clases educativas"
-              />
-              <div className="gallery-overlay">
-                <span>Educación de Calidad</span>
-              </div>
-            </div>
-            <div className="gallery-item">
-              <img
-                src="https://images.unsplash.com/photo-1588088129545-9fc10c13c62c?w=400&h=300&fit=crop"
+                src={actividadesRecreativas}
                 alt="Actividades recreativas"
               />
               <div className="gallery-overlay">
@@ -222,7 +212,25 @@ export default function LandinPage() {
             </div>
             <div className="gallery-item">
               <img
-                src="https://images.unsplash.com/photo-1516627145497-ae6968895b2f?w=400&h=300&fit=crop"
+                src={educacionCalidad}
+                alt="Clases educativas"
+              />
+              <div className="gallery-overlay">
+                <span>Educación de Calidad</span>
+              </div>
+            </div>
+            <div className="gallery-item">
+              <img
+                src={actividadesRecreativas}
+                alt="Actividades recreativas"
+              />
+              <div className="gallery-overlay">
+                <span>Diversión y Juego</span>
+              </div>
+            </div>
+            <div className="gallery-item">
+              <img
+                src={desarrolloInfantil}
                 alt="Desarrollo infantil"
               />
               <div className="gallery-overlay">
