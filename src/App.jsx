@@ -6,6 +6,7 @@ import { LoginPage } from './components/login';
 import { AlumnosPage } from './components/core';
 import { Toaster } from 'react-hot-toast';
 import DashboardPage from './pages/DashboardPage';
+import LandinPage from './pages/LandinPage';
 import './App.css';
 
 function App() {
@@ -14,37 +15,13 @@ function App() {
       <AuthProvider>
         <ErrorBoundary>
           <Routes>
-            {/* Login - Ruta pública */}
+            <Route path="/" element={<LandinPage />} />
+            <Route path="/landing" element={<LandinPage />} />
             <Route path="/login" element={<LoginPage />} />
-            
-            {/* Dashboard - Ruta protegida */}
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <DashboardPage />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Alumnos - Ruta protegida */}
-            <Route
-              path="/alumnos"
-              element={
-                <ProtectedRoute>
-                  <AlumnosPage />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Ruta raíz - Redirige a login */}
-            <Route path="/" element={<Navigate to="/login" replace />} />
-
-            {/* Página 404 - Redirige a login */}
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          </Routes>
-
-          {/* Toast notifications */}
+            <Route path="/dashboard" element={<ProtectedRoute> <DashboardPage /> </ProtectedRoute> }/> 
+            <Route path="/alumnos" element={<ProtectedRoute> <AlumnosPage /> </ProtectedRoute> }/>
+            <Route path="*" element={<Navigate to="/" replace />} /> </Routes>
+          
           <Toaster
             position="top-right"
             reverseOrder={false}
@@ -55,8 +32,8 @@ function App() {
                 background: '#363636',
                 color: '#fff',
               },
-            }}
-          />
+            }}/>
+
         </ErrorBoundary>
       </AuthProvider>
     </Router>
