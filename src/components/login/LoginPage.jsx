@@ -14,6 +14,7 @@ import { useAuth } from "../../context/AuthContext";
 import "./LoginPage.css";
 import logoJardin from "../../images/logoJardin.png";
 
+
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -47,7 +48,7 @@ export default function LoginPage() {
         <Row className="justify-content-center">
           <Col md={6} lg={5}>
             <Card className="shadow-lg border-0 login-card">
-              <Card.Body className="p-5">
+              <Card.Body className="p-4">
                 <div className="text-center mb-4">
 
                   <h1 className="fw-bold text-primary">Jardín Monserrat</h1>
@@ -61,6 +62,7 @@ export default function LoginPage() {
                   <h1 className="fw-bold text-primary">
                     Jardín Nuestra Señora de Monserrat
                   </h1>
+
                   <p className="text-muted small">Sistema de Gestión Escolar</p>
                 </div>
 
