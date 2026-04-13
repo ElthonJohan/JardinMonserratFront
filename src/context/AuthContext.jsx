@@ -1,6 +1,6 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-import axiosInstance from '../api/axiosConfig';
-import toast from 'react-hot-toast';
+import React, { createContext, useState, useContext, useEffect } from "react";
+import axiosInstance from "../api/axiosConfig";
+import toast from "react-hot-toast";
 
 const AuthContext = createContext();
 
@@ -11,36 +11,55 @@ export const AuthProvider = ({ children }) => {
 
   // Verificar si hay token al cargar
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      setIsAuthenticated(true);
-      // Aquí podrías hacer una llamada para verificar si el token es válido
-    }
-    setLoading(false);
+    const initAuth = async () => {
+      const token = localStorage.getItem("access_token");
+      const refresh = localStorage.getItem("refresh_token");
+
+      if (token) {
+        setIsAuthenticated(true);
+        setUser({ username: localStorage.getItem("username") });
+      } else if (refresh) {
+        try {
+          const res = await axiosInstance.post("/refresh/", {
+            refresh,
+          });
+
+          localStorage.setItem("access_token", res.data.access);
+          setIsAuthenticated(true);
+        } catch {
+          logout();
+        }
+      }
+
+      setLoading(false);
+    };
+
+    initAuth();
   }, []);
 
   // Función de login
   const login = async (username, password) => {
     try {
       setLoading(true);
-const response = await axiosInstance.post('/token/', {
+
+      const response = await axiosInstance.post("/login/", {
         username,
         password,
       });
 
       const { access, refresh } = response.data;
 
-      localStorage.setItem('access_token', access);
-      localStorage.setItem('refresh_token', refresh);
-      localStorage.setItem('username', username);
+      localStorage.setItem("access_token", access);
+      localStorage.setItem("refresh_token", refresh);
+      localStorage.setItem("username", username);
 
       setIsAuthenticated(true);
-      setUser({ username });
+      setUser({ username: data.username, role: data.role });
 
-      toast.success('¡Bienvenido!');
+      toast.success("¡Bienvenido!");
       return true;
     } catch (error) {
-      const errorMessage = error.response?.data?.detail || 'Error en el login';
+      const errorMessage = error.response?.data?.detail || "Error en el login";
       toast.error(errorMessage);
       return false;
     } finally {
@@ -50,12 +69,12 @@ const response = await axiosInstance.post('/token/', {
 
   // Función de logout
   const logout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('username');
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("username");
     setIsAuthenticated(false);
     setUser(null);
-    toast.success('Sesión cerrada');
+    toast.success("Sesión cerrada");
   };
 
   const value = {
@@ -66,17 +85,13 @@ const response = await axiosInstance.post('/token/', {
     logout,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth debe usarse dentro de AuthProvider');
+    throw new Error("useAuth debe usarse dentro de AuthProvider");
   }
   return context;
 };
