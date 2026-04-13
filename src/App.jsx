@@ -6,6 +6,8 @@ import { LoginPage } from './components/login';
 import { AlumnosPage } from './components/core';
 import { Toaster } from 'react-hot-toast';
 import DashboardPage from './pages/DashboardPage';
+import LandinPage from './pages/LandinPage';
+import EstudiantesPage from "./pages/EstudiantesPage";
 import './App.css';
 
 function App() {
@@ -16,35 +18,12 @@ function App() {
           <Routes>
             {/* Login - Ruta pública */}
             <Route path="/login" element={<LoginPage />} />
-            
-            {/* Dashboard - Ruta protegida */}
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <DashboardPage />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/dashboard" element={<ProtectedRoute> <DashboardPage /> </ProtectedRoute> }/> 
+            <Route path="/alumnos" element={<ProtectedRoute> <AlumnosPage /> </ProtectedRoute> }/>
+            <Route path="/estudiantes" element={<ProtectedRoute> <EstudiantesPage /> </ProtectedRoute> }/>
 
-            {/* Alumnos - Ruta protegida */}
-            <Route
-              path="/alumnos"
-              element={
-                <ProtectedRoute>
-                  <AlumnosPage />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Ruta raíz - Redirige a login */}
-            <Route path="/" element={<Navigate to="/login" replace />} />
-
-            {/* Página 404 - Redirige a login */}
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          </Routes>
-
-          {/* Toast notifications */}
+            <Route path="*" element={<Navigate to="/" replace />} /> </Routes>
+          
           <Toaster
             position="top-right"
             reverseOrder={false}
