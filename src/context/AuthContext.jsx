@@ -39,33 +39,69 @@ export const AuthProvider = ({ children }) => {
 
   // Función de login
   const login = async (username, password) => {
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const response = await axiosInstance.post("/login/", {
-        username,
-        password,
-      });
+    const response = await axiosInstance.post("/login/", {
+      username,
+      password,
+    });
 
-      const { access, refresh } = response.data;
+    console.log("LOGIN RESPONSE:", response.data); // 👈 DEBUG
 
-      localStorage.setItem("access_token", access);
-      localStorage.setItem("refresh_token", refresh);
-      localStorage.setItem("username", username);
+    const { access, refresh } = response.data;
 
-      setIsAuthenticated(true);
-      setUser({ username: data.username, role: data.role });
+    localStorage.setItem("access_token", access);
+    localStorage.setItem("refresh_token", refresh);
+    localStorage.setItem("username", username);
 
-      toast.success("¡Bienvenido!");
-      return true;
-    } catch (error) {
-      const errorMessage = error.response?.data?.detail || "Error en el login";
-      toast.error(errorMessage);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
+    setIsAuthenticated(true);
+    setUser({ username });
+
+    toast.success("¡Bienvenido!");
+    return true;
+
+  } catch (error) {
+    console.log("ERROR LOGIN:", error.response); // 👈 IMPORTANTE
+
+    const errorMessage =
+      error.response?.data?.detail ||
+      "Error en el servidor o conexión";
+
+    toast.error(errorMessage);
+    return false;
+
+  } finally {
+    setLoading(false);
+  }
+};
+  // const login = async (username, password) => {
+  //   try {
+  //     setLoading(true);
+
+  //     const response = await axiosInstance.post("/login/", {
+  //       username,
+  //       password,
+  //     });
+
+  //     const { access, refresh } = response.data;
+
+  //     localStorage.setItem("access_token", access);
+  //     localStorage.setItem("refresh_token", refresh);
+  //     localStorage.setItem("username", username);
+
+  //     setIsAuthenticated(true);
+  //     setUser({ username });
+  //     toast.success("¡Bienvenido!");
+  //     return true;
+  //   } catch (error) {
+  //     const errorMessage = error.response?.data?.detail || "Error en el login";
+  //     toast.error(errorMessage);
+  //     return false;
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   // Función de logout
   const logout = () => {
