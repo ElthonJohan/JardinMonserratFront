@@ -1,14 +1,20 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
-import { ErrorBoundary, ProtectedRoute } from './components/shared';
-import { LoginPage } from './components/login';
-import { AlumnosPage } from './components/core';
-import { Toaster } from 'react-hot-toast';
-import DashboardPage from './pages/DashboardPage';
-import LandinPage from './pages/LandinPage';
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import { ErrorBoundary, ProtectedRoute } from "./components/shared";
+import { LoginPage } from "./components/login";
+import { AlumnosPage } from "./components/core";
+import { Toaster } from "react-hot-toast";
+import DashboardPage from "./pages/DashboardPage";
+import LandinPage from "./pages/LandinPage";
 import EstudiantesPage from "./pages/EstudiantesPage";
-import './App.css';
+import Register from "./pages/Register";
+import "./App.css";
 
 function App() {
   return (
@@ -16,14 +22,41 @@ function App() {
       <AuthProvider>
         <ErrorBoundary>
           <Routes>
-            {/* Login - Ruta pública */}
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/dashboard" element={<ProtectedRoute> <DashboardPage /> </ProtectedRoute> }/> 
-            <Route path="/alumnos" element={<ProtectedRoute> <AlumnosPage /> </ProtectedRoute> }/>
-            <Route path="/estudiantes" element={<ProtectedRoute> <EstudiantesPage /> </ProtectedRoute> }/>
 
-            <Route path="*" element={<Navigate to="/" replace />} /> </Routes>
-          
+            <Route path="/" element={<LandinPage />} />
+            <Route path="/landing" element={<LandinPage />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  {" "}
+                  <DashboardPage />{" "}
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/alumnos"
+              element={
+                <ProtectedRoute>
+                  {" "}
+                  <AlumnosPage />{" "}
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/estudiantes"
+              element={
+                <ProtectedRoute>
+                  {" "}
+                  <EstudiantesPage />{" "}
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<Navigate to="/" replace />} />{" "}
+          </Routes>
+
           <Toaster
             position="top-right"
             reverseOrder={false}
@@ -31,8 +64,8 @@ function App() {
             toastOptions={{
               duration: 4000,
               style: {
-                background: '#363636',
-                color: '#fff',
+                background: "#363636",
+                color: "#fff",
               },
             }}
           />
