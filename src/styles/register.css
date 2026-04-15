@@ -1,0 +1,59 @@
+.register-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.register-card {
+  width: 400px;
+  border-radius: 15px;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.card-body {
+  padding: 30px;
+}
+
+h2 {
+  font-weight: bold;
+  color: #333;
+}
+
+.form-control,
+.form-select {
+  border-radius: 10px;
+}
+
+.btn-primary {
+  border-radius: 10px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.link-login {
+  color: #2904be;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.link-login:hover {
+  text-decoration: underline;
+}
+
+/* Animación */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,18 @@
+.form-container {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+}
+
+.btn-primary {
+  background: blue;
+  color: white;
+  padding: 10px;
+}
