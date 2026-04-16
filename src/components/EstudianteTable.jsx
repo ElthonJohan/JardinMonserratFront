@@ -9,6 +9,7 @@ export default function EstudianteTable({ data, onEdit, onDelete }) {
             <th>Nombres</th>
             <th>Apellidos</th>
             <th>Aula</th>
+            <th>Apoderado</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -18,7 +19,8 @@ export default function EstudianteTable({ data, onEdit, onDelete }) {
             <tr key={e.id}>
               <td>{e.nombres}</td>
               <td>{e.apellidos}</td>
-              <td>{e.aula}</td>
+              <td>{e.aula_nombre}</td>
+              <td>{e.apoderado_nombre}</td>
 
               <td>
                 <button className="btn btn-warning btn-sm me-2" onClick={() => onEdit(e)}>
