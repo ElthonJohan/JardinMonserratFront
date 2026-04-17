@@ -1,0 +1,85 @@
+body {
+  background-color: #f4f6f9;
+}
+
+/* Contenedor general */
+.container-custom {
+  padding: 30px;
+}
+
+/* Títulos */
+.title {
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Cards */
+.card-custom {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  margin-bottom: 25px;
+  background: white;
+}
+
+/* Inputs */
+.form-control,
+.form-select {
+  border-radius: 10px;
+  padding: 10px;
+}
+
+/* Botón */
+.btn-primary {
+  background: linear-gradient(135deg, #4facfe, #00c6ff);
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn-primary:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, #3a8dde, #00aaff);
+}
+
+/* Tabla */
+.table-custom {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table thead {
+  background-color: #4facfe;
+  color: white;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Botones acciones */
+.btn-action {
+  margin-right: 5px;
+  border-radius: 8px;
+  padding: 5px 10px;
+}
+
+.modal-content {
+  border-radius: 15px;
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #4facfe, #00c6ff);
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card-custom {
+    padding: 15px;
+  }
+}
