@@ -1,48 +1,41 @@
-
-import "bootstrap/dist/css/bootstrap.min.css";
-export default function EstudianteTable({ data, onEdit, onDelete }) {
+export default function AulaTable({ data, onEdit, onDelete }) {
   return (
     <div className="card-custom">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h5 className="mb-0">Lista de Estudiantes</h5>
+        <h5 className="mb-0">Lista de Aulas</h5>
       </div>
-
       <div className="table-responsive">
         <table className="table table-hover align-middle">
           <thead className="table-primary">
             <tr>
-              <th>Nombres</th>
-              <th>Apellidos</th>
-              <th>Aula</th>
-              <th>Apoderado</th>
-              <th className="text-center">Acciones</th>
+              <th>Nombre</th>
+              <th>Capacidad</th>
+              <th>Edad</th>
+              <th>Acciones</th>
             </tr>
           </thead>
 
           <tbody>
             {Array.isArray(data) && data.length > 0 ? (
-              data.map((e) => (
-                <tr key={e.id}>
-                  <td>{e.nombres}</td>
-                  <td>{e.apellidos}</td>
+              data.map((a) => (
+                <tr key={a.id}>
+                  <td>{a.nombre}</td>
+                  <td>{a.capacidad}</td>
                   <td>
-                    <span className="badge bg-info text-dark">
-                      {e.aula_nombre}
-                    </span>
+                    {a.edad_min} - {a.edad_max}
                   </td>
-                  <td>{e.apoderado_nombre}</td>
 
                   <td className="text-center">
                     <button
                       className="btn btn-warning btn-sm me-2"
-                      onClick={() => onEdit(e)}
+                      onClick={() => onEdit(a)}
                     >
                       ✏️
                     </button>
 
                     <button
                       className="btn btn-danger btn-sm"
-                      onClick={() => onDelete(e.id)}
+                      onClick={() => onDelete(a.id)}
                     >
                       🗑️
                     </button>
@@ -52,7 +45,7 @@ export default function EstudianteTable({ data, onEdit, onDelete }) {
             ) : (
               <tr>
                 <td colSpan="5" className="text-center text-muted">
-                  No hay estudiantes registrados
+                  No hay aulas registradas.
                 </td>
               </tr>
             )}

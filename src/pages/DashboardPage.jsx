@@ -2,10 +2,14 @@ import React from 'react';
 import { Container, Row, Col, Card, Button, Badge } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { AppNavbar } from '../components/shared';
+import { getEstudiantes } from '../services/estudianteService';
 import './DashboardPage.css';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
+
+  const numAlumnos = getEstudiantes(); // Aquí se debería obtener el número real de alumnos desde el backend
+  const numMatriculas = 0;
 
   return (
     <div className="dashboard-container">
@@ -25,7 +29,7 @@ export default function DashboardPage() {
               <Card.Body className="text-center">
                 <div className="card-icon mb-3">👥</div>
                 <h5>Alumnos</h5>
-                <Badge bg="primary" className="fs-5">0</Badge>
+                <Badge bg="primary" className="fs-5">{numAlumnos.length}</Badge>
                 <p className="text-muted small mt-2">Total registrado</p>
               </Card.Body>
             </Card>
@@ -76,9 +80,20 @@ export default function DashboardPage() {
                   <Button 
                     variant="primary" 
                     size="sm"
-                    onClick={() => navigate('/alumnos')}
+
+                    onClick={() => navigate('/estudiantes')}
                   >
                     ➕ Nuevo Alumno
+                  </Button>
+                  <Button variant="primary" size="sm"
+                    onClick={() => navigate('/aulas')}
+                  >
+                    ➕ Nueva Aula
+                  </Button>
+                  <Button variant="secondary" size="sm"
+                    onClick={() => navigate('/apoderados')}
+                  >
+                    ➕ Nuevo Apoderado
                   </Button>
                   <Button variant="success" size="sm">
                     ➕ Nueva Matrícula
