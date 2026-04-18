@@ -13,6 +13,7 @@ import { Toaster } from "react-hot-toast";
 import DashboardPage from "./pages/DashboardPage";
 import LandinPage from "./pages/LandinPage";
 import EstudiantesPage from "./pages/EstudiantesPage";
+import MatriculasPage from "./pages/MatriculasPage";
 import Register from "./pages/Register";
 import ApoderadosPage from "./pages/ApoderadosPage";
 import AulasPage from "./pages/AulasPage";
@@ -68,6 +69,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AulasPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/matriculas"
+              element={
+                <ProtectedRoute>
+                  <MatriculasPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/pagos"
+              element={
+                <ProtectedRoute>
+                  <Navigate to="/dashboard" replace />
                 </ProtectedRoute>
               }
             />

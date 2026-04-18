@@ -95,10 +95,10 @@ export default function DashboardPage() {
                   >
                     ➕ Nuevo Apoderado
                   </Button>
-                  <Button variant="success" size="sm">
+                  <Button variant="success" size="sm" onClick={() => navigate('/matriculas')}>
                     ➕ Nueva Matrícula
                   </Button>
-                  <Button variant="warning" size="sm">
+                  <Button variant="warning" size="sm" onClick={() => navigate('/pagos')}>
                     💰 Registrar Pago
                   </Button>
                   <Button variant="info" size="sm">
