@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -15,8 +14,9 @@ import DashboardPage from "./pages/DashboardPage";
 import LandinPage from "./pages/LandinPage";
 import EstudiantesPage from "./pages/EstudiantesPage";
 import Register from "./pages/Register";
+import ApoderadosPage from "./pages/ApoderadosPage";
+import AulasPage from "./pages/AulasPage";
 import "./App.css";
-
 
 function App() {
   return (
@@ -24,7 +24,6 @@ function App() {
       <AuthProvider>
         <ErrorBoundary>
           <Routes>
-
             <Route path="/" element={<LandinPage />} />
             <Route path="/landing" element={<LandinPage />} />
             <Route path="/register" element={<Register />} />
@@ -56,9 +55,24 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/apoderados"
+              element={
+                <ProtectedRoute>
+                  <ApoderadosPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/aulas"
+              element={
+                <ProtectedRoute>
+                  <AulasPage />
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<Navigate to="/" replace />} />{" "}
           </Routes>
-
 
           <Toaster
             position="top-right"
@@ -70,8 +84,8 @@ function App() {
                 background: "#363636",
                 color: "#fff",
               },
-            }}/>
-
+            }}
+          />
         </ErrorBoundary>
       </AuthProvider>
     </Router>
