@@ -1,32 +1,43 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Container, Form, Button, Card, Row, Col, Alert } from 'react-bootstrap';
-import { useAuth } from '../../context/AuthContext';
-import './LoginPage.css';
-import logoJardin from '../../images/logoJardin.png';
+
+
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Container,
+  Form,
+  Button,
+  Card,
+  Row,
+  Col,
+  Alert,
+} from "react-bootstrap";
+import { useAuth } from "../../context/AuthContext";
+import "./LoginPage.css";
+import logoJardin from "../../images/logoJardin.png";
+
 
 export default function LoginPage() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
       const success = await login(username, password);
       if (success) {
-        navigate('/dashboard');
+        navigate("/dashboard");
       } else {
-        setError('Usuario o contraseña incorrectos');
+        setError("Usuario o contraseña incorrectos");
       }
     } catch (err) {
-      setError('Error en la conexión con el servidor');
+      setError("Error en la conexión con el servidor");
     } finally {
       setLoading(false);
     }
@@ -40,8 +51,17 @@ export default function LoginPage() {
             <Card className="shadow-lg border-0 login-card">
               <Card.Body className="p-4">
                 <div className="text-center mb-4">
-                  <img src={logoJardin} alt="Logo Jardín" style={{height: '80px'}} />
-                  <h1 className="fw-bold text-primary">Jardín Nuestra Señora de Monserrat</h1>
+                  <h1 className="fw-bold text-primary">Jardín Monserrat</h1>
+                  <p className="text-muted">Sistema de Gestión Escolar</p>
+
+                  <img
+                    src={logoJardin}
+                    alt="Logo Jardín"
+                    style={{ height: "80px" }}
+                  />
+                  <h1 className="fw-bold text-primary">
+                    Jardín Nuestra Señora de Monserrat
+                  </h1>
                   <p className="text-muted small">Sistema de Gestión Escolar</p>
                 </div>
 
@@ -85,8 +105,17 @@ export default function LoginPage() {
                     type="submit"
                     disabled={loading}
                   >
-                    {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+                    {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
                   </Button>
+                  <p className="text-center mt-3">
+                    ¿No tienes una cuenta?{" "}
+                    <span
+                      className="link-register"
+                      onClick={() => navigate("/register")}
+                    >
+                      Regístrate
+                    </span>
+                  </p>
                 </Form>
 
                 <div className="text-center mt-4">
