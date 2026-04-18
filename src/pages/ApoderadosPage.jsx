@@ -6,8 +6,8 @@ import {
   deleteApoderado,
 } from "../services/apoderadoService.js";
 
-import ApoderadoForm from "../components/ApoderadoForm";
-import ApoderadoTable from "../components/ApoderadoTable";
+import ApoderadoForm from "../components/apoderados/ApoderadoForm.jsx";
+import ApoderadoTable from "../components/apoderados/ApoderadoTable.jsx";
 
 export default function ApoderadosPage() {
   const [apoderados, setApoderados] = useState([]);

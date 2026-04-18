@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import EstudianteForm from "../components/EstudianteForm";
-import EstudianteTable from "../components/EstudianteTable";
+import EstudianteForm from "../components/estudiantes/EstudianteForm";
+import EstudianteTable from "../components/estudiantes/EstudianteTable";
 import {
   getEstudiantes,
   createEstudiante,

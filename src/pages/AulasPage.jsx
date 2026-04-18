@@ -6,8 +6,8 @@ import {
   deleteAula,
 } from "../services/aulaService";
 
-import AulaForm from "../components/AulaForm";
-import AulaTable from "../components/AulaTable";
+import AulaForm from "../components/aulas/AulaForm";
+import AulaTable from "../components/aulas/AulaTable";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/aulas.css";
 import toast from "react-hot-toast";
