@@ -8,11 +8,11 @@ import {
 import { AuthProvider } from "./context/AuthContext";
 import { ErrorBoundary, ProtectedRoute } from "./components/shared";
 import { LoginPage } from "./components/login";
-import { AlumnosPage } from "./components/core";
 import { Toaster } from "react-hot-toast";
 import DashboardPage from "./pages/DashboardPage";
 import LandinPage from "./pages/LandinPage";
 import EstudiantesPage from "./pages/EstudiantesPage";
+import MatriculasPage from "./pages/MatriculasPage";
 import Register from "./pages/Register";
 import ApoderadosPage from "./pages/ApoderadosPage";
 import AulasPage from "./pages/AulasPage";
@@ -37,15 +37,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/alumnos"
-              element={
-                <ProtectedRoute>
-                  {" "}
-                  <AlumnosPage />{" "}
-                </ProtectedRoute>
-              }
-            />
+            
             <Route
               path="/estudiantes"
               element={
@@ -71,9 +63,24 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/matriculas"
+              element={
+                <ProtectedRoute>
+                  <MatriculasPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/pagos"
+              element={
+                <ProtectedRoute>
+                  <Navigate to="/dashboard" replace />
+                </ProtectedRoute>
+              }
+            />
             <Route path="*" element={<Navigate to="/" replace />} />{" "}
           </Routes>
-
           <Toaster
             position="top-right"
             reverseOrder={false}

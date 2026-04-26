@@ -1,4 +1,5 @@
 
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -50,7 +51,6 @@ export default function LoginPage() {
             <Card className="shadow-lg border-0 login-card">
               <Card.Body className="p-4">
                 <div className="text-center mb-4">
-
                   <h1 className="fw-bold text-primary">Jardín Monserrat</h1>
                   <p className="text-muted">Sistema de Gestión Escolar</p>
 
@@ -62,7 +62,6 @@ export default function LoginPage() {
                   <h1 className="fw-bold text-primary">
                     Jardín Nuestra Señora de Monserrat
                   </h1>
-
                   <p className="text-muted small">Sistema de Gestión Escolar</p>
                 </div>
 

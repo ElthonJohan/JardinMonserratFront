@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Row, Col, Card, Button, Badge } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { AppNavbar } from '../components/shared';
-import { getEstudiantes } from '../services/estudianteService';
+import { getEstudiantes } from '../api/estudiantesAPI';
 import './DashboardPage.css';
 
 export default function DashboardPage() {
@@ -95,10 +95,10 @@ export default function DashboardPage() {
                   >
                     ➕ Nuevo Apoderado
                   </Button>
-                  <Button variant="success" size="sm">
+                  <Button variant="success" size="sm" onClick={() => navigate('/matriculas')}>
                     ➕ Nueva Matrícula
                   </Button>
-                  <Button variant="warning" size="sm">
+                  <Button variant="warning" size="sm" onClick={() => navigate('/pagos')}>
                     💰 Registrar Pago
                   </Button>
                   <Button variant="info" size="sm">
