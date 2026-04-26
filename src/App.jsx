@@ -8,7 +8,6 @@ import {
 import { AuthProvider } from "./context/AuthContext";
 import { ErrorBoundary, ProtectedRoute } from "./components/shared";
 import { LoginPage } from "./components/login";
-import { AlumnosPage } from "./components/core";
 import { Toaster } from "react-hot-toast";
 import DashboardPage from "./pages/DashboardPage";
 import LandinPage from "./pages/LandinPage";
@@ -38,15 +37,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/alumnos"
-              element={
-                <ProtectedRoute>
-                  {" "}
-                  <AlumnosPage />{" "}
-                </ProtectedRoute>
-              }
-            />
+            
             <Route
               path="/estudiantes"
               element={

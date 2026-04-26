@@ -19,3 +19,29 @@ export const getAula = async (id) => {
 		throw error;
 	}
 };
+
+export const createAula = async (data) => {
+	try {
+		const response = await axiosInstance.post(`${AULAS_URL}/`, data);
+		return response.data;
+	} catch (error) {
+		throw error;
+	}
+};
+
+export const updateAula = async (id, data) => {
+	try {
+		const response = await axiosInstance.put(`${AULAS_URL}/${id}/`, data);
+		return response.data;
+	} catch (error) {
+		throw error;
+	}
+};
+
+export const deleteAula = async (id) => {
+	try {
+		await axiosInstance.delete(`${AULAS_URL}/${id}/`);	
+	} catch (error) {
+		throw error;
+	}
+};

@@ -9,11 +9,14 @@ import { buildComprobanteMatriculaHtml } from '../utils/matriculaComprobante';
 import {
   createMatricula,
   deleteMatricula,
-  getEstudiantes,
-  getAulas,
+  
   getMatriculas,
   updateMatricula
-} from '../api';
+} from '../api/matriculasAPI';
+
+import { getEstudiantes } from '../api/estudiantesAPI';
+import { getAulas } from '../api/estudiantesAPI';
+
 
 export default function MatriculasPage() {
   const [loading, setLoading] = useState(false);

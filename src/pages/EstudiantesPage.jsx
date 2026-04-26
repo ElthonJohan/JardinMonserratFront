@@ -8,12 +8,12 @@ import {
   deleteEstudiante,
   getAulas,
   getApoderados,
-} from "../services/estudianteService";
+} from "../api/estudiantesAPI";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/estudiantes.css";
 import toast from "react-hot-toast";
-
 import { Modal } from "bootstrap";
+import { AppNavbar, Loading } from '../components/shared';
 
 export default function EstudiantesPage() {
   const [estudiantes, setEstudiantes] = useState([]);
@@ -30,14 +30,10 @@ export default function EstudiantesPage() {
         getApoderados(),
       ]);
 
-      console.log("ESTUDIANTES 👉", estRes);
-      console.log("AULAS 👉", aulaRes);
-      console.log("APODERADOS 👉", apoRes);
-
       // 🔥 NORMALIZAR TODO
-      const estudiantesData = estRes.data?.results || estRes.data;
-      const aulasData = aulaRes.data?.results || aulaRes.data;
-      const apoderadosData = apoRes.data?.results || apoRes.data;
+      const estudiantesData = estRes.results || estRes.data;
+      const aulasData = aulaRes.results || aulaRes.data;
+      const apoderadosData = apoRes.results || apoRes.data;
 
       setEstudiantes(Array.isArray(estudiantesData) ? estudiantesData : []);
       setAulas(Array.isArray(aulasData) ? aulasData : []);
@@ -101,6 +97,9 @@ export default function EstudiantesPage() {
 
 
   return (
+    <>
+    <AppNavbar />
+
     <div className="container container-custom">
       <h1 className="text-2xl font-bold mb-4">Gestión de Estudiantes</h1>
       <button className="btn btn-primary mb-3" onClick={openCreateModal}>
@@ -130,11 +129,13 @@ export default function EstudiantesPage() {
                 initialData={selectedEstudiante}
                 aulas={aulas}
                 apoderados={apoderados}
+                isEditMode={isEditMode}
               />
             </div>
           </div>
         </div>
       </div>
     </div>
+    </> 
   );
 }

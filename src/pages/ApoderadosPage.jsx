@@ -4,7 +4,7 @@ import {
   createApoderado,
   updateApoderado,
   deleteApoderado,
-} from "../api/apoderadoApi.js";
+} from "../api/apoderadosApi.js";
 
 import ApoderadoForm from "../components/apoderados/ApoderadoForm.jsx";
 import ApoderadoTable from "../components/apoderados/ApoderadoTable.jsx";

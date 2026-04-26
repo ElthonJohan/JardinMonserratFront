@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Row, Col, Card, Button, Badge } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { AppNavbar } from '../components/shared';
-import { getEstudiantes } from '../services/estudianteService';
+import { getEstudiantes } from '../api/estudiantesAPI';
 import './DashboardPage.css';
 
 export default function DashboardPage() {
