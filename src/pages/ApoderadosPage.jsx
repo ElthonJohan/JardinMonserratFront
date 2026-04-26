@@ -4,7 +4,7 @@ import {
   createApoderado,
   updateApoderado,
   deleteApoderado,
-} from "../services/apoderadoService.js";
+} from "../api/apoderadoApi.js";
 
 import ApoderadoForm from "../components/apoderados/ApoderadoForm.jsx";
 import ApoderadoTable from "../components/apoderados/ApoderadoTable.jsx";
@@ -15,7 +15,9 @@ export default function ApoderadosPage() {
 
   const loadData = async () => {
     const res = await getApoderados();
-    setApoderados(res.data.results || []);
+    //setApoderados(res.data.results || []);
+      setApoderados(res && res.results ? res.results : []);
+
   };
 
   useEffect(() => {
