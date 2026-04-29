@@ -1,1 +1,0 @@
-export { AlumnosPage } from './alumnos';

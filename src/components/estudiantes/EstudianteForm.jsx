@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
-export default function EstudianteForm({ onSubmit, initialData, aulas }) {
+export default function EstudianteForm({ onSubmit, initialData, aulas, apoderados, isEditMode }) {
   const initialFormState = {
     nombres: "",
     apellidos: "",
@@ -66,7 +66,7 @@ export default function EstudianteForm({ onSubmit, initialData, aulas }) {
   return (
     <div className="card-custom">
       <h5 className="mb-3">
-        {initialData ? "Editar Estudiante" : "Nuevo Estudiante"}
+        {isEditMode ? "Editar Estudiante" : "Nuevo Estudiante"}
       </h5>
 
       <form onSubmit={handleSubmit}>
@@ -97,6 +97,7 @@ export default function EstudianteForm({ onSubmit, initialData, aulas }) {
               type="date"
               name="fecha_nacimiento"
               className="form-control"
+              placeholder="Fecha de Nacimiento"
               onChange={handleChange}
               value={form.fecha_nacimiento}
             />
@@ -191,7 +192,7 @@ export default function EstudianteForm({ onSubmit, initialData, aulas }) {
         {/* BOTÓN */}
         <div className="text-end">
           <button className="btn btn-primary px-4">
-            {initialData ? "Actualizar" : "Guardar"}
+            {isEditMode ? "Actualizar" : "Guardar"}
           </button>
         </div>
       </form>

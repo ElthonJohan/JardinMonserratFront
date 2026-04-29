@@ -1,9 +1,20 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Container, Form, Button, Card, Row, Col, Alert } from 'react-bootstrap';
-import { useAuth } from '../../context/AuthContext';
-import './LoginPage.css';
-import logoJardin from '../../images/logoJardin.png';
+
+
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Container,
+  Form,
+  Button,
+  Card,
+  Row,
+  Col,
+  Alert,
+} from "react-bootstrap";
+import { useAuth } from "../../context/AuthContext";
+import "./LoginPage.css";
+import logoJardin from "../../images/logoJardin.png";
+
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
@@ -40,8 +51,17 @@ export default function LoginPage() {
             <Card className="shadow-lg border-0 login-card">
               <Card.Body className="p-4">
                 <div className="text-center mb-4">
-                  <img src={logoJardin} alt="Logo Jardín" style={{height: '80px'}} />
-                  <h1 className="fw-bold text-primary">Jardín Nuestra Señora de Monserrat</h1>
+                  <h1 className="fw-bold text-primary">Jardín Monserrat</h1>
+                  <p className="text-muted">Sistema de Gestión Escolar</p>
+
+                  <img
+                    src={logoJardin}
+                    alt="Logo Jardín"
+                    style={{ height: "80px" }}
+                  />
+                  <h1 className="fw-bold text-primary">
+                    Jardín Nuestra Señora de Monserrat
+                  </h1>
                   <p className="text-muted small">Sistema de Gestión Escolar</p>
                 </div>
 

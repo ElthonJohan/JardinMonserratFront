@@ -4,15 +4,17 @@ import {
   createAula,
   updateAula,
   deleteAula,
-} from "../services/aulaService";
+} from "../api/aulasAPI";
 
-import AulaForm from "../components/AulaForm";
-import AulaTable from "../components/AulaTable";
+import AulaForm from "../components/aulas/AulaForm";
+import AulaTable from "../components/aulas/AulaTable";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/aulas.css";
 import toast from "react-hot-toast";
 
 import { Modal } from "bootstrap";
+import { AppNavbar, Loading } from '../components/shared';
+
 
 export default function AulasPage() {
   const [aulas, setAulas] = useState([]);
@@ -25,7 +27,7 @@ export default function AulasPage() {
 
     console.log("AULAS 👉", res);
 
-    setAulas(res.data.results || []);
+    setAulas(res.results || []);
   };
 
   useEffect(() => {
@@ -84,6 +86,8 @@ export default function AulasPage() {
   };
 
   return (
+    <>
+    <AppNavbar />
     <div className="container container-custom">
       <h1 className="text-2xl font-bold mb-4">Gestión de Aulas</h1>
       <button className="btn btn-primary mb-3" onClick={openCreateModal}>
@@ -114,5 +118,6 @@ export default function AulasPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

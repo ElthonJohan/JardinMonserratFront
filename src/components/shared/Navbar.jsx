@@ -22,7 +22,7 @@ const AppNavbar = ({ title = 'Jardín Monserrat' }) => {
 
         <Nav className="ms-auto d-flex align-items-center">
           <Nav.Link href="/dashboard">Dashboard</Nav.Link>
-          <Nav.Link href="/alumnos">Alumnos</Nav.Link>
+          <Nav.Link href="/estudiantes">Estudiantes</Nav.Link>
           <Nav.Link href="/matriculas">Matrículas</Nav.Link>
           <Nav.Link href="/pagos">Pagos</Nav.Link>
 
