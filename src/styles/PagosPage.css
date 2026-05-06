@@ -1,0 +1,47 @@
+.registro-pago-container {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.registro-pago-container form {
+  background: white;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.registro-pago-container .table-responsive {
+  background: white;
+  border-radius: 6px;
+  padding: 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.gestion-caja-container {
+  max-width: 900px;
+}
+
+.gestion-caja-container .card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.gestion-caja-container .card-header {
+  font-weight: 600;
+  padding: 15px;
+  border-radius: 6px 6px 0 0;
+}
+
+.gestion-caja-container .alert {
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.gestion-caja-container .badge {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
