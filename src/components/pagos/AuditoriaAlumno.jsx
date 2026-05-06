@@ -154,7 +154,7 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
             <Form.Select
               value={alumnoSeleccionado?.id || ''}
               onChange={handleAlumnoChange}
-              size="lg"
+              size="sm"
             >
               <option value="">-- Seleccionar alumno --</option>
               {alumnos.map((a) => (

@@ -40,40 +40,45 @@ export default function RegistroPago({
     setFormData((prev) => ({ ...prev, alumno: alumnoId }));
 
     if (!alumnoId) {
-      setDeudas([]);
-      setAlumnoSeleccionado(null);
-      setPagosHistorico([]);
-      return;
+        setDeudas([]);
+        setAlumnoSeleccionado(null);
+        setPagosHistorico([]);
+        return;
     }
 
     setLoadingDeudas(true);
     try {
-      const alumno = alumnos.find((a) => String(a.id) === String(alumnoId));
-      setAlumnoSeleccionado(alumno);
+        const alumno = alumnos.find((a) => String(a.id) === String(alumnoId));
+        setAlumnoSeleccionado(alumno);
 
-      const [deudasRes, pagosRes] = await Promise.all([
+        const [deudasRes, pagosRes] = await Promise.all([
         getDeudasByAlumno(alumnoId, false),
         getPagosByAlumno(alumnoId)
-      ]);
+        ]);
 
-      const deudasArray = Array.isArray(deudasRes) ? deudasRes : deudasRes?.results || [];
-      const pagosArray = Array.isArray(pagosRes) ? pagosRes : pagosRes?.results || [];
+        const deudasArray = Array.isArray(deudasRes) ? deudasRes : deudasRes?.results || [];
+        const pagosArray = Array.isArray(pagosRes) ? pagosRes : pagosRes?.results || [];
 
-      setDeudas(deudasArray);
-      setPagosHistorico(pagosArray);
+        setDeudas(deudasArray);
+        setPagosHistorico(pagosArray);
 
-      if (deudasArray.length === 0) {
-        toast.info('El alumno no tiene deudas pendientes');
-      }
+        // ✅ Cambiado: Solo info, no error
+        if (deudasArray.length === 0) {
+        toast.info('El alumno no tiene deudas pendientes', {
+            icon: 'ℹ️',
+            duration: 3000
+        });
+        }
     } catch (error) {
-      toast.error('Error al cargar datos del alumno');
-      console.error(error);
-      setDeudas([]);
-      setPagosHistorico([]);
+        // ✅ Solo aquí va el error (problemas de red, servidor, etc.)
+        toast.error('Error al cargar los datos. Intenta nuevamente.');
+        console.error('Error fetching data:', error);
+        setDeudas([]);
+        setPagosHistorico([]);
     } finally {
-      setLoadingDeudas(false);
+        setLoadingDeudas(false);
     }
-  };
+    };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
