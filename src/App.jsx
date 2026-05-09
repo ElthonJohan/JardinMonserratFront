@@ -17,6 +17,7 @@ import PagosPage from "./pages/PagosPage";
 import Register from "./pages/Register";
 import ApoderadosPage from "./pages/ApoderadosPage";
 import AulasPage from "./pages/AulasPage";
+import ConceptosPage from "./pages/ConceptosPage";
 import "./App.css";
 
 function App() {
@@ -77,6 +78,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <PagosPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/conceptos"
+              element={
+                <ProtectedRoute>
+                  <ConceptosPage />
                 </ProtectedRoute>
               }
             />

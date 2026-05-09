@@ -140,6 +140,15 @@ export const getDeuda = async (id) => {
   }
 };
 
+export const createDeuda = async (data) => {
+  try {
+    const response = await axiosInstance.post(`${DEUDAS_URL}/`, data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // Cajas
 export const getMiEstadoCaja = async () => {
   try {

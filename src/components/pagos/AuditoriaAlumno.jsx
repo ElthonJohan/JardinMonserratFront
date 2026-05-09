@@ -3,6 +3,7 @@ import { Alert, Badge, Button, Card, Col, Form, Row, Spinner, Table } from 'reac
 import toast from 'react-hot-toast';
 import { DataTable } from '../shared';
 import { getDeudasHistoricas, getPagosByAlumno } from '../../api/pagosAPI';
+import ModalNuevoCargo from './ModalNuevoCargo';
 
 const getAlumnoLabel = (a) => {
   if (!a) return '';
@@ -16,6 +17,11 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
   const [deudas, setDeudas] = useState([]);
   const [loading, setLoading] = useState(false);
   const [expandedPagoId, setExpandedPagoId] = useState(null);
+  const [showModalNuevoCargo, setShowModalNuevoCargo] = useState(false);
+
+  const handleNuevoCargoSuccess = () => {
+    cargarDatos(alumnoSeleccionado.id);
+  };
 
   const cargarDatos = async (alumnoId) => {
     setLoading(true);
@@ -99,7 +105,10 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
     {
       key: 'concepto_detail',
       label: 'Concepto',
-      render: (val) => val?.nombre || 'N/A'
+      render: (val, row) => {
+        const nombre = val?.nombre || 'N/A';
+        return row.detalle_adicional ? `${nombre} - ${row.detalle_adicional}` : nombre;
+      }
     },
     {
       key: 'mes',
@@ -369,8 +378,15 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
           </Card>
 
           <Card>
-            <Card.Header className="bg-warning text-dark">
+            <Card.Header className="bg-warning text-dark d-flex justify-content-between align-items-center">
               <Card.Title className="mb-0">📄 Estado de Cuenta Completo</Card.Title>
+              <Button 
+                variant="outline-dark" 
+                size="sm"
+                onClick={() => setShowModalNuevoCargo(true)}
+              >
+                + Nuevo Cargo
+              </Button>
             </Card.Header>
             <Card.Body>
               <DataTable
@@ -383,6 +399,13 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
               />
             </Card.Body>
           </Card>
+          
+          <ModalNuevoCargo
+            show={showModalNuevoCargo}
+            handleClose={() => setShowModalNuevoCargo(false)}
+            alumnoId={alumnoSeleccionado.id}
+            onSuccess={handleNuevoCargoSuccess}
+          />
         </>
       )}
     </div>

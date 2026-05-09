@@ -150,7 +150,10 @@ export default function RegistroPago({
     {
       key: 'concepto_detail',
       label: 'Concepto',
-      render: (val) => val?.nombre || 'N/A'
+      render: (val, row) => {
+        const nombre = val?.nombre || 'N/A';
+        return row.detalle_adicional ? `${nombre} - ${row.detalle_adicional}` : nombre;
+      }
     },
     {
       key: 'mes',
