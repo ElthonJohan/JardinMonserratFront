@@ -73,7 +73,7 @@ export default function AulasPage() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("¿Eliminar aula?")) {
+    if (window.confirm("¿Estás seguro que quieres eliminar esta aula?")) {
       try {
         await deleteAula(id);
         toast.success("Eliminado");
@@ -89,7 +89,7 @@ export default function AulasPage() {
     <>
     <AppNavbar />
     <div className="container container-custom">
-      <h1 className="text-2xl font-bold mb-4">Gestión de Aulas</h1>
+      <h1 className="text-2xl text-center font-bold mb-4">Gestión de Aulas 🏫</h1>
       <button className="btn btn-primary mb-3" onClick={openCreateModal}>
         + Nueva Aula
       </button>

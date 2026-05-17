@@ -79,6 +79,11 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
               placeholder="Nombres"
               onChange={handleChange}
               value={form.nombres}
+              type="text"
+              required
+              autoFocus
+              minLength={3}
+              maxLength={50}
             />
           </div>
 
@@ -89,26 +94,40 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
               placeholder="Apellidos"
               onChange={handleChange}
               value={form.apellidos}
+              type="text"
+              required
+              minLength={3}
+              maxLength={50}
             />
           </div>
 
+          {/* // Colocar un label para el campo de fecha de nacimiento */}
           <div className="col-md-6 mb-3">
+            <label htmlFor="fecha_nacimiento" className="form-label mb-1 fw-bold text-secondary small">
+              Fecha de nacimiento
+            </label>
             <input
+
               type="date"
               name="fecha_nacimiento"
               className="form-control"
-              placeholder="Fecha de Nacimiento"
+              placeholder="Fecha de nacimiento"
               onChange={handleChange}
               value={form.fecha_nacimiento}
+              required
             />
           </div>
 
           <div className="col-md-6 mb-3">
+            <label htmlFor="aula" className="form-label mb-1 fw-bold text-secondary small">
+              Aula
+            </label>
             <select
               name="aula"
               className="form-select"
               onChange={handleChange}
               value={form.aula}
+              required
             >
               <option value="">Seleccione aula</option>
               {Array.isArray(aulas) &&
@@ -135,6 +154,9 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
               placeholder="Nombres"
               onChange={handleChange}
               value={form.apoderado.nombres}
+              required
+              minLength={3}
+              maxLength={50}
             />
           </div>
 
@@ -145,6 +167,9 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
               placeholder="Apellidos"
               onChange={handleChange}
               value={form.apoderado.apellidos}
+              required
+              minLength={3}
+              maxLength={50}
             />
           </div>
 
@@ -155,6 +180,10 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
               placeholder="Email"
               onChange={handleChange}
               value={form.apoderado.email}
+              required
+              type="email"
+              minLength={3}
+              maxLength={50}
             />
           </div>
 
@@ -165,6 +194,9 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
               placeholder="DNI"
               onChange={handleChange}
               value={form.apoderado.dni || ""}
+              required
+              minLength={8}
+              maxLength={8}
             />
           </div>
 
@@ -175,6 +207,10 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
               placeholder="Teléfono"
               onChange={handleChange}
               value={form.apoderado.telefono}
+              required
+              minLength={9}
+              maxLength={9}
+              type="tel"
             />
           </div>
 
@@ -185,6 +221,7 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
               placeholder="Dirección"
               onChange={handleChange}
               value={form.apoderado.direccion}
+              
             />
           </div>
         </div>
