@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
-export default function EstudianteForm({ onSubmit, initialData, aulas, apoderados, isEditMode }) {
+export default function EstudianteForm({ onSubmit, initialData, aulas, apoderados, isEditMode, errors }) {
   const initialFormState = {
     nombres: "",
     apellidos: "",
@@ -40,6 +40,11 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Validación preventiva: Solo permitir números en el DNI
+    if (name === "apoderado.dni") {
+      if (value !== "" && !/^\d+$/.test(value)) return;
+    }
 
     if (name.startsWith("apoderado.")) {
       const key = name.split(".")[1];
@@ -187,6 +192,7 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
             />
           </div>
 
+                {/*Validar que dni sea único*/}
           <div className="col-md-4 mb-3">
             <input
               name="apoderado.dni"
@@ -194,10 +200,17 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
               placeholder="DNI"
               onChange={handleChange}
               value={form.apoderado.dni || ""}
+              type="text"
               required
               minLength={8}
               maxLength={8}
+              
             />
+            {errors?.apoderado?.dni && (
+              <div className="text-danger small mt-1">
+                {errors.apoderado.dni[0]}
+              </div>
+            )}
           </div>
 
           <div className="col-md-4 mb-3">
