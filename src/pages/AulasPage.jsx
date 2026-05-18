@@ -14,6 +14,8 @@ import toast from "react-hot-toast";
 
 import { Modal } from "bootstrap";
 import { AppNavbar, Loading } from '../components/shared';
+import axios from "axios";
+import axiosInstance from "../api/axiosConfig";
 
 
 export default function AulasPage() {
@@ -73,7 +75,7 @@ export default function AulasPage() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("¿Eliminar aula?")) {
+    if (window.confirm("¿Estás seguro que quieres eliminar esta aula?")) {
       try {
         await deleteAula(id);
         toast.success("Eliminado");
@@ -85,14 +87,33 @@ export default function AulasPage() {
     }
   };
 
+  const handleSearch = async (e) => {
+    const term = e.target.value;
+    try {
+      const response = await axiosInstance.get(`/aulas/${term ? `?search=${term}` : ""}`);
+      const data = response.data.results || response.data;
+      setAulas(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Error buscando:", error);
+    }
+  };
+
+
   return (
     <>
     <AppNavbar />
     <div className="container container-custom">
-      <h1 className="text-2xl font-bold mb-4">Gestión de Aulas</h1>
+      <h1 className="text-2xl text-center font-bold mb-4">Gestión de Aulas 🏫</h1>
       <button className="btn btn-primary mb-3" onClick={openCreateModal}>
         + Nueva Aula
       </button>
+
+      <input 
+  type="text" 
+  className="form-control mb-3" 
+  placeholder="Buscar por nombre de aula..." 
+  onChange={handleSearch} 
+/>
 
       <AulaTable data={aulas} onEdit={handleEdit} onDelete={handleDelete} />
 

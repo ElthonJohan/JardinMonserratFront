@@ -9,6 +9,7 @@ import {
   getAulas,
   getApoderados,
 } from "../api/estudiantesAPI";
+import axiosInstance from "../api/axiosConfig";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/estudiantes.css";
 import toast from "react-hot-toast";
@@ -20,6 +21,7 @@ export default function EstudiantesPage() {
   const [aulas, setAulas] = useState([]);
   const [apoderados, setApoderados] = useState([]);
   const [selectedEstudiante, setSelectedEstudiante] = useState(null);
+  const [serverErrors, setServerErrors] = useState({});
   const [isEditMode, setIsEditMode] = useState(false);
 
   const loadData = async () => {
@@ -51,6 +53,7 @@ export default function EstudiantesPage() {
   const openCreateModal = () => {
     setSelectedEstudiante({});
     setIsEditMode(false);
+    setServerErrors({}); // Limpiar errores previos al abrir el modal
 
     const modal = new Modal(document.getElementById("estudianteModal"));
     modal.show();
@@ -65,14 +68,23 @@ export default function EstudiantesPage() {
         await createEstudiante(data);
         toast.success("Creado correctamente");
       }
-
+ 
       const modalElement = document.getElementById("estudianteModal");
       const modal = Modal.getInstance(modalElement);
       modal.hide();
 
       loadData();
-    } catch {
-      toast.error("Error al guardar");
+      // Si tiene éxito, limpiar errores y cerrar modal/limpiar form
+    setServerErrors({});
+    } catch (error) {
+      console.log("ERROR COMPLETO 👉", error.response?.data);
+      if (error.response && error.response.status === 400) {
+        // Guardamos los errores que vienen de Django (como el de DNI único)
+        setServerErrors(error.response.data);
+        toast.error("Por favor, revisa los campos marcados.");
+      } else {
+        toast.error("Ocurrió un error inesperado.");
+      }
     }
   };
 
@@ -82,6 +94,7 @@ export default function EstudiantesPage() {
 
     setSelectedEstudiante(copia);
     setIsEditMode(true);
+    setServerErrors({}); // Limpiar errores previos al editar
 
     const modal = new Modal(document.getElementById("estudianteModal"));
     modal.show();
@@ -89,11 +102,29 @@ export default function EstudiantesPage() {
 
   const handleDelete = async (id) => {
     if (window.confirm("¿Eliminar estudiante?")) {
-      await deleteEstudiante(id);
-      toast.success("Eliminado");
-      loadData();
+      try {
+        await deleteEstudiante(id);
+        toast.success("Eliminado");
+        loadData();
+      } catch (error) {
+        console.error("Error al eliminar:", error);
+        toast.error("No se pudo eliminar el estudiante");
+      }
     }
   };
+
+  const handleSearch = async (e) => {
+    const term = e.target.value;
+    try {
+      // Usamos axiosInstance para que use la URL base y el token de autenticación
+      const response = await axiosInstance.get(`/estudiantes/${term ? `?search=${term}` : ''}`);
+      // Normalizamos la respuesta considerando si viene paginada (results) o no
+      const data = response.data.results || response.data;
+      setEstudiantes(Array.isArray(data) ? data : []);
+  } catch (error) {
+    console.error("Error buscando:", error);
+  }
+};
 
 
   return (
@@ -106,6 +137,12 @@ export default function EstudiantesPage() {
         + Nuevo Estudiante
       </button>
 
+      <input 
+  type="text" 
+  className="form-control mb-3" 
+  placeholder="Buscar por nombre o DNI apoderado..." 
+  onChange={handleSearch} 
+/>
       <EstudianteTable
         data={estudiantes}
         onEdit={handleEdit}
@@ -130,6 +167,7 @@ export default function EstudiantesPage() {
                 aulas={aulas}
                 apoderados={apoderados}
                 isEditMode={isEditMode}
+                errors={serverErrors} // PASAR ERRORES AL FORMULARIO
               />
             </div>
           </div>

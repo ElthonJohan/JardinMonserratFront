@@ -4,8 +4,6 @@ export default function AulaForm({ onSubmit, initialData, isEditMode }) {
   const initialFormState = {
     nombre: "",
     capacidad: "",
-    edad_min: "",
-    edad_max: "",
   };
 
   const [form, setForm] = useState( initialFormState );
@@ -33,7 +31,7 @@ export default function AulaForm({ onSubmit, initialData, isEditMode }) {
   return (
     <div className="card-custom">
       <h5 className="mb-3">
-        {isEditMode ? "Editar Aula" : "Nueva Aula"}
+        {isEditMode ? "✍🏽 Editar Aula" : "➕ Nueva Aula"}
       </h5>
 
       <form onSubmit={handleSubmit}>
@@ -44,6 +42,9 @@ export default function AulaForm({ onSubmit, initialData, isEditMode }) {
               className="form-control mb-2"
               placeholder="Ej: 3 años"
               value={form.nombre}
+              type="text"
+              required
+              minLength={3}
               onChange={handleChange}
             />
           </div>
@@ -53,30 +54,17 @@ export default function AulaForm({ onSubmit, initialData, isEditMode }) {
               className="form-control mb-2"
               placeholder="Capacidad máxima"
               value={form.capacidad}
+              type="number"
+              min="1"
+              max="100"
+              required
+              step="1"
               onChange={handleChange}
             />
           </div>
         </div>
-        <div className="row">
-          <div className="col-md-6 mb-3">
-            <input
-              name="edad_min"
-              className="form-control mb-2"
-              placeholder="Edad mínima"
-              value={form.edad_min}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="col-md-6 mb-3">
-            <input
-              name="edad_max"
-              className="form-control mb-2"
-              placeholder="Edad máxima"
-              value={form.edad_max}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
+        
+        
         <div className="text-end">
             <button className="btn btn-primary px-4">
               {isEditMode ? "Actualizar" : "Crear"}

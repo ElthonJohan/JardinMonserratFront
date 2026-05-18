@@ -38,6 +38,7 @@ const AppNavbar = ({ title = 'Jardín Monserrat' }) => {
 
               <Dropdown.Menu align="end">
                 <Dropdown.Item href="/perfil">Perfil</Dropdown.Item>
+                <Dropdown.Item href="/conceptos">Conceptos de Pago</Dropdown.Item>
                 <Dropdown.Item href="/configuracion">Configuración</Dropdown.Item>
                 <Dropdown.Divider />
                 <Dropdown.Item onClick={handleLogout} className="text-danger">

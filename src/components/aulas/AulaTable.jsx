@@ -2,15 +2,14 @@ export default function AulaTable({ data, onEdit, onDelete }) {
   return (
     <div className="card-custom">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h5 className="mb-0">Lista de Aulas</h5>
+        <h5 className="mb-0">Lista de Aulas 🎈</h5>
       </div>
       <div className="table-responsive">
         <table className="table table-hover align-middle">
           <thead className="table-primary">
-            <tr>
+            <tr className="text-center">
               <th>Nombre</th>
               <th>Capacidad</th>
-              <th>Edad</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -18,12 +17,9 @@ export default function AulaTable({ data, onEdit, onDelete }) {
           <tbody>
             {Array.isArray(data) && data.length > 0 ? (
               data.map((a) => (
-                <tr key={a.id}>
+                <tr key={a.id} className="text-center fw-medium">
                   <td>{a.nombre}</td>
                   <td>{a.capacidad}</td>
-                  <td>
-                    {a.edad_min} - {a.edad_max}
-                  </td>
 
                   <td className="text-center">
                     <button

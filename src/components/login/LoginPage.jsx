@@ -49,10 +49,10 @@ export default function LoginPage() {
         <Row className="justify-content-center">
           <Col md={6} lg={5}>
             <Card className="shadow-lg border-0 login-card">
-              <Card.Body className="p-4">
+              <Card.Body className="p-3">
                 <div className="text-center mb-4">
-                  <h1 className="fw-bold text-primary">Jardín Monserrat</h1>
-                  <p className="text-muted">Sistema de Gestión Escolar</p>
+                  {/* <h1 className="fw-bold text-primary">Jardín Monserrat</h1>
+                  <p className="text-muted">Sistema de Gestión Escolar</p> */}
 
                   <img
                     src={logoJardin}
@@ -62,7 +62,7 @@ export default function LoginPage() {
                   <h1 className="fw-bold text-primary">
                     Jardín Nuestra Señora de Monserrat
                   </h1>
-                  <p className="text-muted small">Sistema de Gestión Escolar</p>
+                  {/* <p className="text-muted small">Sistema de Gestión Escolar</p> */}
                 </div>
 
                 {error && (
@@ -81,7 +81,7 @@ export default function LoginPage() {
                       onChange={(e) => setUsername(e.target.value)}
                       required
                       disabled={loading}
-                      className="form-control-lg"
+                      className="form-control-sm"
                     />
                   </Form.Group>
 
@@ -94,7 +94,7 @@ export default function LoginPage() {
                       onChange={(e) => setPassword(e.target.value)}
                       required
                       disabled={loading}
-                      className="form-control-lg"
+                      className="form-control-sm"
                     />
                   </Form.Group>
 
