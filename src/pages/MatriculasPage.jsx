@@ -45,7 +45,19 @@ export default function MatriculasPage() {
 
   const handleMatriculaInputChange = (e) => {
     const { name, value } = e.target;
-    setMatriculaForm((p) => ({ ...p, [name]: value }));
+
+    if (name === 'alumno') {
+      // Buscar el alumno seleccionado para obtener su aula
+      const alumno = alumnos.find((a) => String(a.id) === String(value));
+      // Determinar el ID del aula (manejando si viene como objeto o ID)
+      let aulaId = '';
+      if (alumno?.aula) {
+        aulaId = typeof alumno.aula === 'object' ? alumno.aula.id : alumno.aula;
+      }
+      setMatriculaForm((p) => ({ ...p, alumno: value, aula: aulaId }));
+    } else {
+      setMatriculaForm((p) => ({ ...p, [name]: value }));
+    }
   };
 
   const fetchAll = async () => {
