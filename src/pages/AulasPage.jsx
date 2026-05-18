@@ -14,6 +14,8 @@ import toast from "react-hot-toast";
 
 import { Modal } from "bootstrap";
 import { AppNavbar, Loading } from '../components/shared';
+import axios from "axios";
+import axiosInstance from "../api/axiosConfig";
 
 
 export default function AulasPage() {
@@ -85,6 +87,18 @@ export default function AulasPage() {
     }
   };
 
+  const handleSearch = async (e) => {
+    const term = e.target.value;
+    try {
+      const response = await axiosInstance.get(`/aulas/${term ? `?search=${term}` : ""}`);
+      const data = response.data.results || response.data;
+      setAulas(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Error buscando:", error);
+    }
+  };
+
+
   return (
     <>
     <AppNavbar />
@@ -93,6 +107,13 @@ export default function AulasPage() {
       <button className="btn btn-primary mb-3" onClick={openCreateModal}>
         + Nueva Aula
       </button>
+
+      <input 
+  type="text" 
+  className="form-control mb-3" 
+  placeholder="Buscar por nombre de aula..." 
+  onChange={handleSearch} 
+/>
 
       <AulaTable data={aulas} onEdit={handleEdit} onDelete={handleDelete} />
 
