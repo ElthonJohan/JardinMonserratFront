@@ -6,6 +6,8 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
   const initialFormState = {
     nombres: "",
     apellidos: "",
+    codigo_estudiante: "",
+    dni: "",
     fecha_nacimiento: "",
     aula: "",
     apoderado: {
@@ -46,6 +48,14 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
       if (value !== "" && !/^\d+$/.test(value)) return;
     }
 
+    if (name === "dni") {
+      if (value !== "" && !/^\d+$/.test(value)) return;
+    }
+
+    if (name === "codigo_estudiante") {
+      if (value !== "" && !/^[A-Za-z0-9]+$/.test(value)) return;
+    }
+
     if (name.startsWith("apoderado.")) {
       const key = name.split(".")[1];
       setForm({
@@ -76,7 +86,7 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
 
       <form onSubmit={handleSubmit}>
         {/* DATOS DEL ESTUDIANTE */}
-        <div className="row">
+        <div className="row"> 
           <div className="col-md-6 mb-3">
             <input
               name="nombres"
@@ -105,7 +115,35 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
               maxLength={50}
             />
           </div>
-
+          {isEditMode && (
+            <div className="col-md-6 mb-3">
+              <input
+                name="codigo_estudiante"
+                className="form-control"
+                placeholder="Código de estudiante"
+                onChange={handleChange}
+                value={form.codigo_estudiante}
+                type="text"
+                required
+                minLength={3}
+                maxLength={20}
+                readOnly
+              />
+            </div>
+          )}
+          <div className="col-md-6 mb-3">
+            <input
+              name="dni"
+              className="form-control"
+              placeholder="DNI del estudiante"
+              onChange={handleChange}
+              value={form.dni}
+              type="text"
+              required
+              minLength={8}
+              maxLength={8}
+            />
+          </div>
           {/* // Colocar un label para el campo de fecha de nacimiento */}
           <div className="col-md-6 mb-3">
             <label htmlFor="fecha_nacimiento" className="form-label mb-1 fw-bold text-secondary small">
