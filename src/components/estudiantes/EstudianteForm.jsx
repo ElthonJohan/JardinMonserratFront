@@ -106,6 +106,23 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
             />
           </div>
 
+          <div className="col-md-6 mb-3">
+            <input
+              name="dni"
+              className={`form-control ${errors?.dni ? 'is-invalid' : ''}`}
+              placeholder="DNI Estudiante"
+              onChange={handleChange}
+              value={form.dni || ""}
+              type="text"
+              maxLength={8}
+            />
+            {errors?.dni && (
+              <div className="invalid-feedback">
+                {errors.dni[0]}
+              </div>
+            )}
+          </div>
+
           {/* // Colocar un label para el campo de fecha de nacimiento */}
           <div className="col-md-6 mb-3">
             <label htmlFor="fecha_nacimiento" className="form-label mb-1 fw-bold text-secondary small">
