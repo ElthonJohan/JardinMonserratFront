@@ -18,6 +18,9 @@ import Register from "./pages/Register";
 import ApoderadosPage from "./pages/ApoderadosPage";
 import AulasPage from "./pages/AulasPage";
 import ConceptosPage from "./pages/ConceptosPage";
+import ConfiguracionPage from "./pages/ConfiguracionPage";
+import UsuariosPage from "./pages/UsuariosPage";
+import RolesPage from "./pages/RolesPage";
 import "./App.css";
 
 function App() {
@@ -43,7 +46,7 @@ function App() {
             <Route
               path="/estudiantes"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedPermissions={['view_estudiante']}>
                   {" "}
                   <EstudiantesPage />{" "}
                 </ProtectedRoute>
@@ -52,7 +55,7 @@ function App() {
             <Route
               path="/apoderados"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedPermissions={['view_apoderado']}>
                   <ApoderadosPage />
                 </ProtectedRoute>
               }
@@ -60,7 +63,7 @@ function App() {
             <Route
               path="/aulas"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedPermissions={['view_aula']}>
                   <AulasPage />
                 </ProtectedRoute>
               }
@@ -68,7 +71,7 @@ function App() {
             <Route
               path="/matriculas"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedPermissions={['view_matricula']}>
                   <MatriculasPage />
                 </ProtectedRoute>
               }
@@ -76,7 +79,7 @@ function App() {
             <Route
               path="/pagos"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedPermissions={['view_pago']}>
                   <PagosPage />
                 </ProtectedRoute>
               }
@@ -84,8 +87,32 @@ function App() {
             <Route
               path="/conceptos"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedPermissions={['view_conceptopago']}>
                   <ConceptosPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/configuracion"
+              element={
+                <ProtectedRoute allowedPermissions={['view_aula', 'view_conceptopago', 'view_apoderado', 'view_usuario', 'view_group']}>
+                  <ConfiguracionPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/usuarios"
+              element={
+                <ProtectedRoute allowedPermissions={['view_usuario']}>
+                  <UsuariosPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/roles"
+              element={
+                <ProtectedRoute allowedPermissions={['view_group']}>
+                  <RolesPage />
                 </ProtectedRoute>
               }
             />

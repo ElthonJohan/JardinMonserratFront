@@ -17,7 +17,12 @@ export const AuthProvider = ({ children }) => {
 
       if (token) {
         setIsAuthenticated(true);
-        setUser({ username: localStorage.getItem("username") });
+        setUser({
+            username: localStorage.getItem("username"),
+            role: localStorage.getItem("role"),
+            apoderado_id: localStorage.getItem("apoderado_id"),
+            permissions: JSON.parse(localStorage.getItem("permissions") || "[]")
+        });
       } else if (refresh) {
         try {
           const res = await axiosInstance.post("/refresh/", {
@@ -49,14 +54,19 @@ export const AuthProvider = ({ children }) => {
 
     console.log("LOGIN RESPONSE:", response.data); // 👈 DEBUG
 
-    const { access, refresh } = response.data;
+    const { access, refresh, role, apoderado_id, permissions } = response.data;
 
     localStorage.setItem("access_token", access);
     localStorage.setItem("refresh_token", refresh);
     localStorage.setItem("username", username);
+    localStorage.setItem("role", role);
+    localStorage.setItem("permissions", JSON.stringify(permissions || []));
+    if (apoderado_id) {
+        localStorage.setItem("apoderado_id", apoderado_id);
+    }
 
     setIsAuthenticated(true);
-    setUser({ username });
+    setUser({ username, role, apoderado_id, permissions: permissions || [] });
 
     toast.success("¡Bienvenido!");
     return true;
