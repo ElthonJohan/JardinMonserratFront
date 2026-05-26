@@ -20,8 +20,8 @@ const RolesPage = () => {
     try {
       setLoading(true);
       const [resRoles, resPerms] = await Promise.all([
-        axiosInstance.get('/roles/'),
-        axiosInstance.get('/permisos/')
+        axiosInstance.get('/auth/roles/'),
+        axiosInstance.get('/auth/permisos/')
       ]);
       setRoles(resRoles.data.results || resRoles.data);
       setPermisosAgrupados(resPerms.data.results || resPerms.data);
@@ -91,10 +91,10 @@ const RolesPage = () => {
       };
       
       if (formData.id) {
-        await axiosInstance.put(`/roles/${formData.id}/`, payload);
+        await axiosInstance.put(`/auth/roles/${formData.id}/`, payload);
         toast.success('Rol actualizado');
       } else {
-        await axiosInstance.post('/roles/', payload);
+        await axiosInstance.post('/auth/roles/', payload);
         toast.success('Rol creado');
       }
       

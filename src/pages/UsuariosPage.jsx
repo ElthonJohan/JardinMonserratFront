@@ -21,8 +21,8 @@ const UsuariosPage = () => {
     try {
       setLoading(true);
       const [resUsuarios, resRoles] = await Promise.all([
-        axiosInstance.get('/usuarios/'),
-        axiosInstance.get('/roles/')
+        axiosInstance.get('/auth/usuarios/'),
+        axiosInstance.get('/auth/roles/')
       ]);
       setUsuarios(resUsuarios.data.results || resUsuarios.data);
       setRoles(resRoles.data.results || resRoles.data);
@@ -55,14 +55,14 @@ const UsuariosPage = () => {
       }
       
       if (formData.id) {
-        await axiosInstance.put(`/usuarios/${formData.id}/`, payload);
+        await axiosInstance.put(`/auth/usuarios/${formData.id}/`, payload);
         toast.success('Usuario actualizado exitosamente');
       } else {
         if (!formData.password) {
             toast.error('La contraseña es requerida para un nuevo usuario');
             return;
         }
-        await axiosInstance.post('/register/', payload);
+        await axiosInstance.post('/auth/register/', payload);
         toast.success('Usuario creado exitosamente');
       }
       setShowModal(false);
@@ -89,7 +89,7 @@ const UsuariosPage = () => {
   const handleDelete = async (id) => {
     if (window.confirm('¿Está seguro de eliminar este usuario?')) {
       try {
-        await axiosInstance.delete(`/usuarios/${id}/`);
+        await axiosInstance.delete(`/auth/usuarios/${id}/`);
         toast.success('Usuario eliminado');
         fetchDatos();
       } catch (error) {

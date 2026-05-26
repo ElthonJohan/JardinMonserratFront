@@ -103,12 +103,16 @@ export default function LandinPage() {
                 ['Galería', 'galeria'],
                 ['Testimonios', 'testimonios'],
                 ['Contacto', 'contacto'],
-                ['Intranet', 'intranet'],
               ].map(([label, id]) => (
                 <Nav.Link key={id} onClick={() => scrollToSection(id)} className="nav-link">
                   {label}
                 </Nav.Link>
               ))}
+              <Nav.Link>
+                <button className="btn-login" onClick={() => navigate('/login-parent')}>
+                  Intranet
+                </button>
+              </Nav.Link>
               <Nav.Link>
                 <button className="btn-login" onClick={() => navigate('/login')}>
                   Ingreso

@@ -21,6 +21,10 @@ import ConceptosPage from "./pages/ConceptosPage";
 import ConfiguracionPage from "./pages/ConfiguracionPage";
 import UsuariosPage from "./pages/UsuariosPage";
 import RolesPage from "./pages/RolesPage";
+import Payments from "./pages/intranet/Payments";
+import LoginParent from "./pages/intranet/LoginParent";
+import IntranetLayout from "./pages/intranet/IntranetLayout";
+import ChangePassword from "./pages/intranet/ChangePassword";
 import "./App.css";
 
 function App() {
@@ -33,6 +37,21 @@ function App() {
             <Route path="/landing" element={<LandinPage />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/login-parent" element={<LoginParent />} />
+            <Route path="/change-password" element={<ChangePassword />} />
+            {/* ==================== INTRANET PARA APODERADOS ==================== */}
+            <Route
+              path="/intranet"
+              element={
+                <ProtectedRoute allowedPermissions={["parent"]}>
+                  <IntranetLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Payments />} />
+              <Route path="pagos" element={<Payments />} />
+            </Route>
+
             <Route
               path="/dashboard"
               element={
@@ -42,11 +61,10 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            
             <Route
               path="/estudiantes"
               element={
-                <ProtectedRoute allowedPermissions={['view_estudiante']}>
+                <ProtectedRoute allowedPermissions={["view_estudiante"]}>
                   {" "}
                   <EstudiantesPage />{" "}
                 </ProtectedRoute>
@@ -55,7 +73,7 @@ function App() {
             <Route
               path="/apoderados"
               element={
-                <ProtectedRoute allowedPermissions={['view_apoderado']}>
+                <ProtectedRoute allowedPermissions={["view_apoderado"]}>
                   <ApoderadosPage />
                 </ProtectedRoute>
               }
@@ -63,7 +81,7 @@ function App() {
             <Route
               path="/aulas"
               element={
-                <ProtectedRoute allowedPermissions={['view_aula']}>
+                <ProtectedRoute allowedPermissions={["view_aula"]}>
                   <AulasPage />
                 </ProtectedRoute>
               }
@@ -71,7 +89,7 @@ function App() {
             <Route
               path="/matriculas"
               element={
-                <ProtectedRoute allowedPermissions={['view_matricula']}>
+                <ProtectedRoute allowedPermissions={["view_matricula"]}>
                   <MatriculasPage />
                 </ProtectedRoute>
               }
@@ -79,7 +97,7 @@ function App() {
             <Route
               path="/pagos"
               element={
-                <ProtectedRoute allowedPermissions={['view_pago']}>
+                <ProtectedRoute allowedPermissions={["view_pago"]}>
                   <PagosPage />
                 </ProtectedRoute>
               }
@@ -87,7 +105,7 @@ function App() {
             <Route
               path="/conceptos"
               element={
-                <ProtectedRoute allowedPermissions={['view_conceptopago']}>
+                <ProtectedRoute allowedPermissions={["view_conceptopago"]}>
                   <ConceptosPage />
                 </ProtectedRoute>
               }
@@ -95,7 +113,15 @@ function App() {
             <Route
               path="/configuracion"
               element={
-                <ProtectedRoute allowedPermissions={['view_aula', 'view_conceptopago', 'view_apoderado', 'view_usuario', 'view_group']}>
+                <ProtectedRoute
+                  allowedPermissions={[
+                    "view_aula",
+                    "view_conceptopago",
+                    "view_apoderado",
+                    "view_usuario",
+                    "view_group",
+                  ]}
+                >
                   <ConfiguracionPage />
                 </ProtectedRoute>
               }
@@ -103,7 +129,7 @@ function App() {
             <Route
               path="/usuarios"
               element={
-                <ProtectedRoute allowedPermissions={['view_usuario']}>
+                <ProtectedRoute allowedPermissions={["view_usuario"]}>
                   <UsuariosPage />
                 </ProtectedRoute>
               }
@@ -111,7 +137,7 @@ function App() {
             <Route
               path="/roles"
               element={
-                <ProtectedRoute allowedPermissions={['view_group']}>
+                <ProtectedRoute allowedPermissions={["view_group"]}>
                   <RolesPage />
                 </ProtectedRoute>
               }
