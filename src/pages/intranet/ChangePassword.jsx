@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/ChangePassword.css';
+import  axiosInstance  from '../../api/axiosConfig'; // Asegúrate de configurar esto correctamente
 
 const ChangePassword = () => {
   const [formData, setFormData] = useState({
@@ -29,10 +30,14 @@ const ChangePassword = () => {
     setSuccess('');
 
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('access_token');
       
-      const response = await axios.post('http://localhost:8000/api/auth/change-password-first/', formData, {
-        headers: { Authorization: `Bearer ${token}` }
+      const response = await axiosInstance.post('/auth/change-password-first/', 
+        
+        formData,
+        {headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
 
       setSuccess(response.data.message);
@@ -43,6 +48,7 @@ const ChangePassword = () => {
       }, 2500);
 
     } catch (err) {
+      console.error('Error al cambiar la contraseña:', err);
       setError(err.response?.data?.detail || 'Error al cambiar la contraseña');
     } finally {
       setLoading(false);
