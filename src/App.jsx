@@ -10,6 +10,7 @@ import { ErrorBoundary, ProtectedRoute } from "./components/shared";
 import { LoginPage } from "./components/login";
 import { Toaster } from "react-hot-toast";
 import DashboardPage from "./pages/DashboardPage";
+import Dashboard from "./pages/intranet/Dashboard";
 import LandinPage from "./pages/LandinPage";
 import EstudiantesPage from "./pages/EstudiantesPage";
 import MatriculasPage from "./pages/MatriculasPage";
@@ -18,6 +19,14 @@ import Register from "./pages/Register";
 import ApoderadosPage from "./pages/ApoderadosPage";
 import AulasPage from "./pages/AulasPage";
 import ConceptosPage from "./pages/ConceptosPage";
+import ConfiguracionPage from "./pages/ConfiguracionPage";
+import UsuariosPage from "./pages/UsuariosPage";
+import RolesPage from "./pages/RolesPage";
+import Payments from "./pages/intranet/Payments";
+import LoginParent from "./pages/intranet/LoginParent";
+import IntranetLayout from "./pages/intranet/IntranetLayout";
+import ChangePassword from "./pages/intranet/ChangePassword";
+import Profile from "./pages/intranet/Profile";
 import "./App.css";
 
 function App() {
@@ -30,6 +39,23 @@ function App() {
             <Route path="/landing" element={<LandinPage />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/login-parent" element={<LoginParent />} />
+            <Route path="/change-password" element={<ChangePassword />} />
+            {/* ==================== INTRANET PARA APODERADOS ==================== */}
+            <Route
+              path="/intranet"
+              element={
+                <ProtectedRoute allowedPermissions={["parent"]}>
+                  <IntranetLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Dashboard />} />
+              <Route path="pagos" element={<Payments />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="profile" element={<Profile />} />
+            </Route>
+
             <Route
               path="/dashboard"
               element={
@@ -39,11 +65,10 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            
             <Route
               path="/estudiantes"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedPermissions={["view_estudiante"]}>
                   {" "}
                   <EstudiantesPage />{" "}
                 </ProtectedRoute>
@@ -52,7 +77,7 @@ function App() {
             <Route
               path="/apoderados"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedPermissions={["view_apoderado"]}>
                   <ApoderadosPage />
                 </ProtectedRoute>
               }
@@ -60,7 +85,7 @@ function App() {
             <Route
               path="/aulas"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedPermissions={["view_aula"]}>
                   <AulasPage />
                 </ProtectedRoute>
               }
@@ -68,7 +93,7 @@ function App() {
             <Route
               path="/matriculas"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedPermissions={["view_matricula"]}>
                   <MatriculasPage />
                 </ProtectedRoute>
               }
@@ -76,7 +101,7 @@ function App() {
             <Route
               path="/pagos"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedPermissions={["view_pago"]}>
                   <PagosPage />
                 </ProtectedRoute>
               }
@@ -84,8 +109,40 @@ function App() {
             <Route
               path="/conceptos"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowedPermissions={["view_conceptopago"]}>
                   <ConceptosPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/configuracion"
+              element={
+                <ProtectedRoute
+                  allowedPermissions={[
+                    "view_aula",
+                    "view_conceptopago",
+                    "view_apoderado",
+                    "view_usuario",
+                    "view_group",
+                  ]}
+                >
+                  <ConfiguracionPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/usuarios"
+              element={
+                <ProtectedRoute allowedPermissions={["view_usuario"]}>
+                  <UsuariosPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/roles"
+              element={
+                <ProtectedRoute allowedPermissions={["view_group"]}>
+                  <RolesPage />
                 </ProtectedRoute>
               }
             />

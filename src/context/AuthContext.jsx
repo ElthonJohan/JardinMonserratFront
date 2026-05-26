@@ -9,28 +9,26 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Verificar si hay token al cargar
+// Inicializar autenticación al cargar la página
   useEffect(() => {
-    const initAuth = async () => {
-      const token = localStorage.getItem("access_token");
-      const refresh = localStorage.getItem("refresh_token");
-
+    const initAuth = () => {
+      const token = localStorage.getItem("access_token") || localStorage.getItem("token");
+      
       if (token) {
-        setIsAuthenticated(true);
-        setUser({ username: localStorage.getItem("username") });
-      } else if (refresh) {
-        try {
-          const res = await axiosInstance.post("/refresh/", {
-            refresh,
-          });
+        const savedUser = JSON.parse(localStorage.getItem("userData") || "null");
+        const userType = localStorage.getItem("userType");
+        const permissions = JSON.parse(localStorage.getItem("permissions") || "[]");
 
-          localStorage.setItem("access_token", res.data.access);
-          setIsAuthenticated(true);
-        } catch {
-          logout();
+        if (savedUser) {
+          setUser({ ...savedUser, user_type: userType, permissions });
+        } else {
+          // Fallback para administrativos
+          const username = localStorage.getItem("username");
+          const role = localStorage.getItem("role");
+          setUser({ username, role, permissions });
         }
+        setIsAuthenticated(true);
       }
-
       setLoading(false);
     };
 
@@ -42,21 +40,26 @@ export const AuthProvider = ({ children }) => {
   try {
     setLoading(true);
 
-    const response = await axiosInstance.post("/login/", {
+    const response = await axiosInstance.post("/auth/login/", {
       username,
       password,
     });
 
     console.log("LOGIN RESPONSE:", response.data); // 👈 DEBUG
 
-    const { access, refresh } = response.data;
+    const { access, refresh, role, apoderado_id, permissions } = response.data;
 
     localStorage.setItem("access_token", access);
     localStorage.setItem("refresh_token", refresh);
     localStorage.setItem("username", username);
+    localStorage.setItem("role", role);
+    localStorage.setItem("permissions", JSON.stringify(permissions || []));
+    if (apoderado_id) {
+        localStorage.setItem("apoderado_id", apoderado_id);
+    }
 
     setIsAuthenticated(true);
-    setUser({ username });
+    setUser({ username, role, apoderado_id, permissions: permissions || [] });
 
     toast.success("¡Bienvenido!");
     return true;
@@ -75,41 +78,44 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }
 };
-  // const login = async (username, password) => {
-  //   try {
-  //     setLoading(true);
+ 
 
-  //     const response = await axiosInstance.post("/login/", {
-  //       username,
-  //       password,
-  //     });
+// Login para Apoderados
+  const loginParent = async (codigo_estudiante, password) => {
+    try {
+      const response = await axiosInstance.post("/auth/login-parent/", {
+        codigo_estudiante,
+        password,
+      });
 
-  //     const { access, refresh } = response.data;
+      const { token, user: userInfo, requires_password_change, refresh } = response.data;
 
-  //     localStorage.setItem("access_token", access);
-  //     localStorage.setItem("refresh_token", refresh);
-  //     localStorage.setItem("username", username);
+      const parentPermissions = ["parent"];
 
-  //     setIsAuthenticated(true);
-  //     setUser({ username });
-  //     toast.success("¡Bienvenido!");
-  //     return true;
-  //   } catch (error) {
-  //     const errorMessage = error.response?.data?.detail || "Error en el login";
-  //     toast.error(errorMessage);
-  //     return false;
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+      localStorage.setItem("access_token", token);
+      localStorage.setItem("refresh_token", refresh);
+      localStorage.setItem("userType", "parent");
+      localStorage.setItem("userData", JSON.stringify(userInfo));
+      localStorage.setItem("permissions", JSON.stringify(parentPermissions));
+
+      setIsAuthenticated(true);
+      setUser({ ...userInfo, user_type: "parent", permissions: parentPermissions });
+
+      toast.success("¡Bienvenido!");
+      return { success: true, requires_password_change };
+
+    } catch (error) {
+      const message = error.response?.data?.detail || "Credenciales incorrectas";
+      toast.error(message);
+      return { success: false };
+    }
+  };
 
   // Función de logout
-  const logout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    localStorage.removeItem("username");
-    setIsAuthenticated(false);
+const logout = () => {
+    localStorage.clear();
     setUser(null);
+    setIsAuthenticated(false);
     toast.success("Sesión cerrada");
   };
 
@@ -118,6 +124,7 @@ export const AuthProvider = ({ children }) => {
     loading,
     isAuthenticated,
     login,
+    loginParent,     // ← Importante
     logout,
   };
 

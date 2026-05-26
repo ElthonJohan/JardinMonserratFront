@@ -12,7 +12,7 @@
   border-top: 4px solid #667eea;
 }
 
-.dashboard-card:hover {
+.dashboard-card.card-hover:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
@@ -26,4 +26,17 @@
   margin-top: 1rem;
   font-weight: 600;
   color: #333;
+}
+
+.progress-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+
+.deuda-critica-row:hover {
+  background-color: #fff3f3;
+  transition: background-color 0.2s ease;
 }

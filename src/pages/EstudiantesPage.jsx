@@ -23,6 +23,7 @@ export default function EstudiantesPage() {
   const [selectedEstudiante, setSelectedEstudiante] = useState(null);
   const [serverErrors, setServerErrors] = useState({});
   const [isEditMode, setIsEditMode] = useState(false);
+  const [newCredentials, setNewCredentials] = useState(null);
 
   const loadData = async () => {
     try {
@@ -65,8 +66,20 @@ export default function EstudiantesPage() {
         await updateEstudiante(selectedEstudiante.id, data);
         toast.success("Actualizado correctamente");
       } else {
-        await createEstudiante(data);
-        toast.success("Creado correctamente");
+        const res = await createEstudiante(data);
+        
+        // Si el backend devolvió credenciales (porque se creó un usuario nuevo)
+        if (res && res.generated_credentials) {
+          setNewCredentials({
+            ...res.generated_credentials,
+            apoderado: `${res.apoderado?.nombres} ${res.apoderado?.apellidos}`,
+            estudiante: `${res.nombres} ${res.apellidos}`
+          });
+          // Abrimos el modal de credenciales después de que se cree el estudiante
+          const credModal = new Modal(document.getElementById("credentialsModal"));
+          credModal.show();
+        }
+        toast.success("Estudiante registrado correctamente");
       }
  
       const modalElement = document.getElementById("estudianteModal");
@@ -169,6 +182,44 @@ export default function EstudiantesPage() {
                 isEditMode={isEditMode}
                 errors={serverErrors} // PASAR ERRORES AL FORMULARIO
               />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Modal de Credenciales Generadas (Solo se muestra tras creación exitosa) */}
+      <div className="modal fade" id="credentialsModal" tabIndex="-1" data-bs-backdrop="static">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content border-0 shadow-lg">
+            <div className="modal-header bg-success text-white">
+              <h5 className="modal-title">✅ Usuario de Apoderado Creado</h5>
+              <button type="button" className="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div className="modal-body p-4 text-center">
+              <p className="text-muted mb-4">
+                Se ha generado automáticamente una cuenta de acceso para el apoderado. 
+                <strong className="d-block text-danger mt-2">Por favor, comparta estos datos ahora. Por seguridad, la contraseña no se volverá a mostrar.</strong>
+              </p>
+              
+              <div className="bg-light p-3 rounded border text-start mb-3">
+                <div className="mb-2 text-truncate"><strong>Apoderado:</strong> {newCredentials?.apoderado}</div>
+                <div className="mb-2 text-truncate"><strong>Estudiante:</strong> {newCredentials?.estudiante}</div>
+                <hr />
+                <div className="mb-2 d-flex justify-content-between align-items-center">
+                  <span className="text-secondary">Usuario:</span> 
+                  <code className="fs-5 text-dark fw-bold bg-white px-2 border">{newCredentials?.username}</code>
+                </div>
+                <div className="d-flex justify-content-between align-items-center">
+                  <span className="text-secondary">Contraseña:</span> 
+                  <code className="fs-5 text-dark fw-bold bg-white px-2 border font-monospace">{newCredentials?.password}</code>
+                </div>
+              </div>
+              <div className="alert alert-info mb-0 small">
+                💡 El apoderado podrá ingresar con su código de estudiante y esta contraseña temporal.
+              </div>
+            </div>
+            <div className="modal-footer border-0">
+              <button type="button" className="btn btn-primary w-100" data-bs-dismiss="modal">Confirmar y Cerrar</button>
             </div>
           </div>
         </div>

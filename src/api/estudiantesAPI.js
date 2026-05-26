@@ -69,3 +69,12 @@ export const getApoderados = async () => {
     throw error;
   } 
 };
+
+export const getEstudiantesByApoderado = async (apoderadoId) => {
+  try {
+    const response = await axiosInstance.get(`/estudiantes-por-apoderado/${apoderadoId}/`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  } 
+};

@@ -1,0 +1,301 @@
+/* ===== PAGE ===== */
+
+.payments-page{
+  padding:40px;
+  max-width:1400px;
+  margin:auto;
+}
+
+/* ===== HEADER ===== */
+
+.payments-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:35px;
+  flex-wrap:wrap;
+  gap:20px;
+}
+
+.payments-header h1{
+  font-size:36px;
+  color:#1e293b;
+}
+
+.payments-header p{
+  color:#64748b;
+  font-size:16px;
+}
+
+.payments-header span{
+  font-weight:600;
+  color:#2563eb;
+}
+
+/* ===== LOADING ===== */
+
+.loading-container{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:400px;
+}
+
+.loading-box{
+  text-align:center;
+}
+
+.spinner{
+  width:60px;
+  height:60px;
+  border:5px solid #e2e8f0;
+  border-top:5px solid #2563eb;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  margin:auto;
+}
+
+@keyframes spin{
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+.loading-box p{
+  margin-top:20px;
+  color:#64748b;
+}
+
+/* ===== ERROR ===== */
+
+.error-box{
+  background:#fee2e2;
+  color:#dc2626;
+  padding:20px;
+  border-radius:20px;
+  text-align:center;
+  font-weight:600;
+}
+
+/* ===== MAIN CARD ===== */
+
+.balance-card{
+  background:linear-gradient(135deg,#dc2626,#e11d48,#db2777);
+  color:white;
+  border-radius:30px;
+  padding:45px;
+  margin-bottom:40px;
+  box-shadow:0 15px 35px rgba(220,38,38,0.25);
+}
+
+.balance-content{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:30px;
+  flex-wrap:wrap;
+}
+
+.balance-label{
+  font-size:20px;
+  opacity:0.9;
+}
+
+.balance-amount{
+  font-size:64px;
+  font-weight:800;
+  margin-top:10px;
+}
+
+.pay-btn{
+  background:white;
+  color:#dc2626;
+  border:none;
+  padding:18px 35px;
+  border-radius:20px;
+  font-size:18px;
+  font-weight:700;
+  cursor:pointer;
+  transition:0.3s;
+  box-shadow:0 10px 25px rgba(0,0,0,0.15);
+}
+
+.pay-btn:hover{
+  transform:translateY(-3px);
+  background:#f8fafc;
+}
+
+/* ===== GRID ===== */
+
+.payments-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:30px;
+}
+
+/* ===== SECTION ===== */
+
+.section-card{
+  background:white;
+  border-radius:30px;
+  padding:30px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.05);
+}
+
+.section-title{
+  font-size:28px;
+  margin-bottom:25px;
+  color:#1e293b;
+}
+
+/* ===== EMPTY ===== */
+
+.empty-state{
+  text-align:center;
+  padding:60px 20px;
+}
+
+.empty-state .emoji{
+  font-size:70px;
+  margin-bottom:15px;
+}
+
+.empty-state p{
+  color:#16a34a;
+  font-size:20px;
+  font-weight:600;
+}
+
+/* ===== DEBT CARD ===== */
+
+.debt-item{
+  border:1px solid #f1f5f9;
+  border-radius:24px;
+  padding:25px;
+  margin-bottom:20px;
+  transition:0.3s;
+}
+
+.debt-item:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 25px rgba(0,0,0,0.06);
+}
+
+.debt-top{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.debt-title{
+  font-size:20px;
+  font-weight:700;
+  color:#1e293b;
+}
+
+.debt-subtitle{
+  color:#64748b;
+  margin-top:5px;
+}
+
+.debt-detail{
+  font-size:13px;
+  color:#94a3b8;
+  margin-top:5px;
+}
+
+.debt-price{
+  font-size:32px;
+  font-weight:800;
+  color:#dc2626;
+}
+
+.status-badge{
+  display:inline-block;
+  margin-top:10px;
+  background:#fee2e2;
+  color:#dc2626;
+  padding:8px 15px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.debt-date{
+  margin-top:15px;
+  font-size:13px;
+  color:#94a3b8;
+}
+
+/* ===== PAYMENTS ===== */
+
+.payment-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding-bottom:20px;
+  margin-bottom:20px;
+  border-bottom:1px solid #f1f5f9;
+}
+
+.payment-item:last-child{
+  border:none;
+  margin-bottom:0;
+}
+
+.payment-title{
+  font-weight:700;
+  color:#1e293b;
+}
+
+.payment-date{
+  margin-top:5px;
+  color:#64748b;
+  font-size:14px;
+}
+
+.payment-op{
+  margin-top:4px;
+  color:#94a3b8;
+  font-size:12px;
+}
+
+.payment-price{
+  font-size:28px;
+  font-weight:800;
+  color:#16a34a;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media(max-width:992px){
+
+  .payments-grid{
+    grid-template-columns:1fr;
+  }
+
+  .balance-amount{
+    font-size:50px;
+  }
+
+}
+
+@media(max-width:768px){
+
+  .payments-page{
+    padding:20px;
+  }
+
+  .payments-header h1{
+    font-size:28px;
+  }
+
+  .balance-card{
+    padding:30px;
+  }
+
+  .balance-amount{
+    font-size:40px;
+  }
+
+}

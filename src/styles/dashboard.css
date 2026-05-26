@@ -1,0 +1,282 @@
+/* ===== DASHBOARD ===== */
+
+.dashboard-page{
+  padding:40px;
+}
+
+/* ===== HEADER ===== */
+
+.dashboard-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:35px;
+  flex-wrap:wrap;
+  gap:20px;
+}
+
+.dashboard-title h1{
+  font-size:38px;
+  color:#0f172a;
+  font-weight:800;
+}
+
+.dashboard-title p{
+  color:#64748b;
+  margin-top:8px;
+}
+
+/* ===== DATE ===== */
+
+.dashboard-date{
+  background:white;
+  padding:15px 20px;
+  border-radius:18px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.05);
+  color:#475569;
+  font-weight:600;
+}
+
+/* ===== STATS ===== */
+
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:25px;
+  margin-bottom:35px;
+}
+
+/* ===== CARD ===== */
+
+.stat-card{
+  background:white;
+  border-radius:28px;
+  padding:28px;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 10px 25px rgba(0,0,0,0.05);
+  transition:0.3s;
+}
+
+.stat-card:hover{
+  transform:translateY(-5px);
+}
+
+.stat-card::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:6px;
+}
+
+.card-blue::before{
+  background:#2563eb;
+}
+
+.card-green::before{
+  background:#16a34a;
+}
+
+.card-orange::before{
+  background:#ea580c;
+}
+
+.card-purple::before{
+  background:#7c3aed;
+}
+
+/* ===== ICON ===== */
+
+.stat-icon{
+  width:65px;
+  height:65px;
+  border-radius:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:30px;
+  margin-bottom:20px;
+}
+
+.blue-icon{
+  background:#dbeafe;
+}
+
+.green-icon{
+  background:#dcfce7;
+}
+
+.orange-icon{
+  background:#ffedd5;
+}
+
+.purple-icon{
+  background:#ede9fe;
+}
+
+/* ===== CONTENT ===== */
+
+.stat-title{
+  color:#64748b;
+  font-size:15px;
+}
+
+.stat-value{
+  font-size:38px;
+  font-weight:800;
+  color:#0f172a;
+  margin-top:10px;
+}
+
+.stat-description{
+  margin-top:10px;
+  color:#94a3b8;
+  font-size:14px;
+}
+
+/* ===== CONTENT GRID ===== */
+
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:30px;
+}
+
+/* ===== PANELS ===== */
+
+.dashboard-panel{
+  background:white;
+  border-radius:30px;
+  padding:30px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.05);
+}
+
+.panel-title{
+  font-size:24px;
+  font-weight:700;
+  color:#0f172a;
+  margin-bottom:25px;
+}
+
+/* ===== ACTIVITIES ===== */
+
+.activity-item{
+  display:flex;
+  align-items:flex-start;
+  gap:15px;
+  padding-bottom:20px;
+  margin-bottom:20px;
+  border-bottom:1px solid #f1f5f9;
+}
+
+.activity-item:last-child{
+  border:none;
+  margin-bottom:0;
+  padding-bottom:0;
+}
+
+.activity-icon{
+  width:50px;
+  height:50px;
+  border-radius:16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#eff6ff;
+  font-size:24px;
+}
+
+.activity-title{
+  font-weight:700;
+  color:#0f172a;
+}
+
+.activity-text{
+  color:#64748b;
+  margin-top:5px;
+  line-height:1.5;
+}
+
+.activity-time{
+  margin-top:8px;
+  color:#94a3b8;
+  font-size:13px;
+}
+
+/* ===== PAYMENT STATUS ===== */
+
+.payment-status{
+  margin-bottom:25px;
+}
+
+.payment-status:last-child{
+  margin-bottom:0;
+}
+
+.payment-top{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+
+.payment-name{
+  font-weight:600;
+  color:#334155;
+}
+
+.payment-percent{
+  color:#2563eb;
+  font-weight:700;
+}
+
+.progress-bar{
+  width:100%;
+  height:12px;
+  background:#e2e8f0;
+  border-radius:999px;
+  overflow:hidden;
+}
+
+.progress-fill{
+  height:100%;
+  border-radius:999px;
+}
+
+.fill-blue{
+  width:90%;
+  background:#2563eb;
+}
+
+.fill-green{
+  width:75%;
+  background:#16a34a;
+}
+
+.fill-orange{
+  width:45%;
+  background:#ea580c;
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media(max-width:992px){
+
+  .dashboard-grid{
+    grid-template-columns:1fr;
+  }
+
+}
+
+@media(max-width:768px){
+
+  .dashboard-page{
+    padding:20px;
+  }
+
+  .dashboard-title h1{
+    font-size:30px;
+  }
+
+}
