@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext"; // Asegúrate de exportar esta función en tu contexto
-
+import "../../styles/loginParent.css"; // Asegúrate de crear este archivo CSS para estilos específicos
 
 const LoginParent = () => {
   const [codigo, setCodigo] = useState("");
@@ -41,64 +41,139 @@ const handleSubmit = async (e) => {
 };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-700 via-indigo-600 to-purple-700">
-      <div className="bg-white rounded-3xl shadow-2xl p-10 w-full max-w-md">
-        <div className="text-center mb-10">
-          <img src="/logo.png" alt="Logo" className="mx-auto mb-4 w-20" />
-          <h2 className="text-3xl font-bold text-gray-800">
-            Intranet de Padres
-          </h2>
-          <p className="text-gray-600 mt-2">
-            Jardín Nuestra Señora de Monserrat
+  <div className="login-page">
+
+    <div className="login-card">
+
+      <div className="login-inner">
+
+        {/* HEADER */}
+        <div className="login-header">
+
+          <div className="logo-box">
+            <img src="/logo.png" alt="Logo" />
+          </div>
+
+          <h1>
+            Bienvenido de nuevo
+          </h1>
+
+          <p>
+            Ingrese sus credenciales para
+            acceder al portal.
           </p>
+
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+        {/* FORM */}
+        <form onSubmit={handleSubmit} className="login-form">
+
+          {/* CODIGO */}
+          <div className="form-group">
+
+            <label className="form-label">
               Código de Estudiante
             </label>
-            <input
-              type="text"
-              value={codigo}
-              onChange={(e) => setCodigo(e.target.value)}
-              placeholder="Ej: ES0001"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500"
-              required
-            />
+
+            <div className="input-container">
+
+              <span className="input-icon">
+                👤
+              </span>
+
+              <input
+                type="text"
+                value={codigo}
+                onChange={(e) => setCodigo(e.target.value)}
+                placeholder="Ej: ES0001"
+                className="form-input"
+                required
+              />
+
+            </div>
+
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Contraseña
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Ingresa tu contraseña"
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500"
-              required
-            />
+          {/* PASSWORD */}
+          <div className="form-group">
+
+            <div className="password-top">
+
+              <label className="form-label">
+                Contraseña
+              </label>
+
+              <a href="#" className="forgot-link">
+                ¿Olvidó su contraseña?
+              </a>
+
+            </div>
+
+            <div className="input-container">
+
+              <span className="input-icon">
+                🔒
+              </span>
+
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Ingrese su contraseña"
+                className="form-input"
+                required
+              />
+
+            </div>
+
           </div>
 
-          {error && <p className="text-red-500 text-center text-sm">{error}</p>}
+          {/* ERROR */}
+          {error && (
+            <div className="error-message">
+              {error}
+            </div>
+          )}
 
+          {/* BUTTON */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 rounded-2xl transition disabled:opacity-70"
+            className="login-btn"
           >
-            {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
+            {loading
+              ? "Iniciando sesión..."
+              : "Iniciar Sesión →"}
           </button>
+
         </form>
 
-        <p className="text-center text-sm text-gray-500 mt-8">
-          ¿Problemas para ingresar? Contacta a la administración
-        </p>
+        {/* LINKS */}
+        <div className="login-links">
+
+          <a href="#" className="login-link-item">
+            🛠️ Soporte Técnico
+          </a>
+
+          <a href="#" className="login-link-item">
+            📄 Manual de Usuario
+          </a>
+
+        </div>
+
       </div>
+
+      {/* FOOTER */}
+      <div className="copyright">
+        © 2026 Nuestra Señora de Montserrat.
+        <br />
+        Todos los derechos reservados.
+      </div>
+
     </div>
-  );
+
+  </div>
+);
 };
 
 export default LoginParent;

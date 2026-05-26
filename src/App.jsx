@@ -10,6 +10,7 @@ import { ErrorBoundary, ProtectedRoute } from "./components/shared";
 import { LoginPage } from "./components/login";
 import { Toaster } from "react-hot-toast";
 import DashboardPage from "./pages/DashboardPage";
+import Dashboard from "./pages/intranet/Dashboard";
 import LandinPage from "./pages/LandinPage";
 import EstudiantesPage from "./pages/EstudiantesPage";
 import MatriculasPage from "./pages/MatriculasPage";
@@ -25,6 +26,7 @@ import Payments from "./pages/intranet/Payments";
 import LoginParent from "./pages/intranet/LoginParent";
 import IntranetLayout from "./pages/intranet/IntranetLayout";
 import ChangePassword from "./pages/intranet/ChangePassword";
+import Profile from "./pages/intranet/Profile";
 import "./App.css";
 
 function App() {
@@ -48,8 +50,10 @@ function App() {
                 </ProtectedRoute>
               }
             >
-              <Route index element={<Payments />} />
+              <Route index element={<Dashboard />} />
               <Route path="pagos" element={<Payments />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="profile" element={<Profile />} />
             </Route>
 
             <Route

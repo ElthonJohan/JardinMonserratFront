@@ -2,52 +2,114 @@ import React from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
+import '../../styles/intranetLayout.css';
+
 const IntranetLayout = () => {
+
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
-      {/* Sidebar */}
-      <div className="w-72 bg-white border-r shadow-sm flex flex-col">
-        <div className="p-6 border-b bg-blue-600 text-white">
-          <h1 className="font-bold text-2xl">Intranet</h1>
-          <p className="text-blue-100 text-sm">Jardín Monserrat</p>
+
+    <div className="intranet-container">
+
+      {/* SIDEBAR */}
+      <aside className="sidebar">
+
+        {/* LOGO */}
+        <div className="sidebar-header">
+          <h1>Intranet</h1>
+          <p>Jardín Monserrat</p>
         </div>
 
-        <div className="p-4 flex-1 overflow-auto">
-          <div className="mb-6 px-4 py-3 bg-blue-50 rounded-2xl">
-            <p className="text-xs text-gray-500">Apoderado</p>
-            <p className="font-semibold text-gray-800">{user?.full_name}</p>
-          </div>
-
-          <nav className="space-y-1">
-            <Link
-              to="/intranet"
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium ${
-                location.pathname === '/intranet' ? 'bg-blue-600 text-white' : 'hover:bg-gray-100 text-gray-700'
-              }`}
-            >
-              💰 Seguimiento de Pagos
-            </Link>
-          </nav>
+        {/* USER */}
+        <div className="user-card">
+          <p className="user-role">Apoderado</p>
+          <h2 className="user-name">
+            {user?.full_name}
+          </h2>
         </div>
 
-        <div className="p-4 border-t mt-auto">
+        {/* MENU */}
+        <nav className="nav-menu">
+          <Link
+            to="/intranet/dashboard"
+            className={`nav-link ${
+              location.pathname === '/intranet/dashboard' ? 'active' : ''
+            }`}
+          >
+            <span>🏠</span>
+            <span>Dashboard</span>
+          </Link>
+
+          <Link
+            to="/intranet/pagos"
+            className={`nav-link ${
+              location.pathname === '/intranet/pagos' ? 'active' : ''
+            }`}
+          >
+            <span>💰</span>
+            <span>Seguimiento de Pagos</span>
+          </Link>
+
+          
+
+          <Link
+            to="/intranet/profile"
+            className={`nav-link ${
+              location.pathname === '/intranet/profile' ? 'active' : ''
+            }`}
+          >
+            <span>👤</span>
+            <span>Perfil</span>
+          </Link>
+
+        </nav>
+
+
+        {/* FOOTER */}
+        <div className="sidebar-footer">
+
           <button
-            onClick={() => { logout(); navigate('/login-parent'); }}
-            className="w-full py-3 text-red-600 hover:bg-red-50 rounded-xl font-medium"
+            className="logout-btn"
+            onClick={() => {
+              logout();
+              navigate('/login-parent');
+            }}
           >
             Cerrar Sesión
           </button>
-        </div>
-      </div>
 
-      {/* Contenido Principal */}
-      <div className="flex-1 overflow-auto bg-gray-50">
-        <Outlet />
-      </div>
+        </div>
+
+      </aside>
+
+      {/* MAIN */}
+      <main className="main-content">
+
+        {/* TOPBAR */}
+        <div className="topbar">
+
+          <div>
+            <h2>Panel de Control</h2>
+            <p>Bienvenido nuevamente 👋</p>
+          </div>
+
+          <div className="topbar-user">
+            <h3>{user?.full_name}</h3>
+            <span>Apoderado</span>
+          </div>
+
+        </div>
+
+        {/* PAGE CONTENT */}
+        <div className="page-content">
+          <Outlet />
+        </div>
+
+      </main>
+
     </div>
   );
 };

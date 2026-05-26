@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import '../../styles/ChangePassword.css';
 
 const ChangePassword = () => {
   const [formData, setFormData] = useState({
@@ -48,71 +49,168 @@ const ChangePassword = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-700 to-indigo-600">
-      <div className="bg-white rounded-3xl shadow-2xl p-10 w-full max-w-md">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-800">Cambiar Contraseña</h2>
-          <p className="text-gray-600 mt-2">Es tu primer inicio de sesión.<br />Por seguridad, debes cambiar tu contraseña.</p>
+ return (
+  <div className="change-password-page">
+
+    <div className="change-password-card">
+
+      <div className="change-password-inner">
+
+        {/* HEADER */}
+        <div className="change-header">
+
+          <div className="change-icon">
+            🔐
+          </div>
+
+          <h1>
+            Cambiar Contraseña
+          </h1>
+
+          <p>
+            Es tu primer inicio de sesión.
+            <br />
+            Por seguridad debes actualizar
+            tu contraseña temporal.
+          </p>
+
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Contraseña Actual (Temporal)
+        {/* FORM */}
+        <form
+          onSubmit={handleSubmit}
+          className="change-form"
+        >
+
+          {/* OLD PASSWORD */}
+          <div className="form-group">
+
+            <label className="form-label">
+              Contraseña Actual
             </label>
-            <input
-              type="password"
-              name="old_password"
-              value={formData.old_password}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500"
-              required
-            />
+
+            <div className="input-container">
+
+              <span className="input-icon">
+                🔑
+              </span>
+
+              <input
+                type="password"
+                name="old_password"
+                value={formData.old_password}
+                onChange={handleChange}
+                className="form-input"
+                placeholder="Ingrese la contraseña temporal"
+                required
+              />
+
+            </div>
+
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          {/* NEW PASSWORD */}
+          <div className="form-group">
+
+            <label className="form-label">
               Nueva Contraseña
             </label>
-            <input
-              type="password"
-              name="new_password"
-              value={formData.new_password}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500"
-              required
-            />
+
+            <div className="input-container">
+
+              <span className="input-icon">
+                🔒
+              </span>
+
+              <input
+                type="password"
+                name="new_password"
+                value={formData.new_password}
+                onChange={handleChange}
+                className="form-input"
+                placeholder="Ingrese una nueva contraseña"
+                required
+              />
+
+            </div>
+
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Confirmar Nueva Contraseña
+          {/* CONFIRM PASSWORD */}
+          <div className="form-group">
+
+            <label className="form-label">
+              Confirmar Contraseña
             </label>
-            <input
-              type="password"
-              name="confirm_password"
-              value={formData.confirm_password}
-              onChange={handleChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:border-blue-500"
-              required
-            />
+
+            <div className="input-container">
+
+              <span className="input-icon">
+                ✅
+              </span>
+
+              <input
+                type="password"
+                name="confirm_password"
+                value={formData.confirm_password}
+                onChange={handleChange}
+                className="form-input"
+                placeholder="Repita la nueva contraseña"
+                required
+              />
+
+            </div>
+
           </div>
 
-          {error && <p className="text-red-500 text-center">{error}</p>}
-          {success && <p className="text-green-600 text-center">{success}</p>}
+          {/* ERROR */}
+          {error && (
+            <div className="error-message">
+              {error}
+            </div>
+          )}
 
+          {/* SUCCESS */}
+          {success && (
+            <div className="success-message">
+              {success}
+            </div>
+          )}
+
+          {/* BUTTON */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 rounded-2xl transition disabled:opacity-70"
+            className="change-btn"
           >
-            {loading ? 'Cambiando contraseña...' : 'Cambiar Contraseña'}
+            {loading
+              ? 'Actualizando contraseña...'
+              : 'Actualizar Contraseña'}
           </button>
+
         </form>
+
+        {/* SECURITY */}
+        <div className="security-box">
+
+          <h4>
+            🔒 Recomendación de seguridad
+          </h4>
+
+          <p>
+            Utilice una contraseña segura
+            con letras mayúsculas,
+            números y caracteres especiales.
+          </p>
+
+        </div>
+
       </div>
+
     </div>
-  );
+
+  </div>
+);
 };
 
 export default ChangePassword;
