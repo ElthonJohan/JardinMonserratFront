@@ -177,7 +177,6 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
               className="form-select"
               onChange={handleChange}
               value={form.aula}
-              required
             >
               <option value="">Seleccione aula</option>
               {Array.isArray(aulas) &&

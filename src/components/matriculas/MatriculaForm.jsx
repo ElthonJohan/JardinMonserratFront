@@ -49,12 +49,20 @@ export default function MatriculaForm({
         <Col md={6}>
           <Form.Group className="mb-3">
             <Form.Label>Aula *</Form.Label>
-            <Form.Control
+            <Form.Select name="aula" value={formData.aula} onChange={onChange}>
+              <option value="">-- Seleccionar aula --</option>
+              {aulas.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.nombre}
+                </option>
+              ))}
+            </Form.Select>
+            {/* <Form.Control
               type="text"
               value={aulas.find(a => String(a.id) === String(formData.aula))?.nombre || ''}
               readOnly
               placeholder="Seleccione un alumno para ver su aula"
-            />
+            /> */}
           </Form.Group>
         </Col>
       </Row>

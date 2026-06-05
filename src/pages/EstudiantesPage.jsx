@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import EstudianteForm from "../components/estudiantes/EstudianteForm";
 import EstudianteTable from "../components/estudiantes/EstudianteTable";
 import {
@@ -17,6 +18,7 @@ import { Modal } from "bootstrap";
 import { AppNavbar, Loading } from '../components/shared';
 
 export default function EstudiantesPage() {
+  const navigate = useNavigate();
   const [estudiantes, setEstudiantes] = useState([]);
   const [aulas, setAulas] = useState([]);
   const [apoderados, setApoderados] = useState([]);
@@ -113,6 +115,13 @@ export default function EstudiantesPage() {
     modal.show();
   };
 
+  const handleMatricula = (estudiante) => {
+    // Aquí podrías abrir un modal específico para matrículas, pasando el estudiante seleccionado
+    alert(`Gestionar matrículas para ${estudiante.nombres} ${estudiante.apellidos} (ID: ${estudiante.id})`);
+
+    
+  }
+
   const handleDelete = async (id) => {
     if (window.confirm("¿Eliminar estudiante?")) {
       try {
@@ -160,6 +169,7 @@ export default function EstudiantesPage() {
         data={estudiantes}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        onMatricula={handleMatricula}
       />
 
       <div className="modal fade" id="estudianteModal" tabIndex="-1">
