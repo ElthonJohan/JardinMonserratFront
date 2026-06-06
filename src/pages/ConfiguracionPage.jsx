@@ -36,6 +36,9 @@ const ConfiguracionPage = () => {
 
         {/* Short-cut Cards for static data management */}
         <Row className="justify-content-center g-4 mt-2">
+
+          
+
           {/* Card 1: Gestión de Aulas */}
           <Col md={4}>
             <Card 
@@ -126,6 +129,38 @@ const ConfiguracionPage = () => {
             </Card>
           </Col>
 
+          {/* Card: Periodos Académicos */}
+          {user?.permissions?.includes('view_periodoacademico') && (
+            <Col md={4} className="mt-md-0 mt-4">
+              <Card 
+                className="configuracion-card h-100 p-3" 
+                onClick={() => handleNavigation('/periodos')}
+              >
+                <Card.Body className="d-flex flex-column text-center">
+                  <div className="config-card-icon-wrapper">
+                    <span>📅</span>
+                  </div>
+                  <Card.Title className="configuracion-card-title">
+                    Periodos Académicos
+                  </Card.Title>
+                  <Card.Text className="configuracion-card-desc flex-grow-1">
+                    Configurar los años lectivos, fechas de inicio, fin y estados de apertura para los procesos de matrícula.
+                  </Card.Text>
+                  <Button 
+                    variant="info" 
+                    className="config-btn-action text-white mt-3 w-100 py-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation('/periodos');
+                    }}
+                  >
+                    Entrar a Periodos
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          )}
+
           {/* Card 4: Gestión de Usuarios */}
           {user?.permissions?.includes('view_usuario') && (
             <Col md={4} className="mt-4">
@@ -188,7 +223,12 @@ const ConfiguracionPage = () => {
                 </Card.Body>
               </Card>
             </Col>
+
+            
           )}
+
+
+          
         </Row>
       </Container>
     </div>

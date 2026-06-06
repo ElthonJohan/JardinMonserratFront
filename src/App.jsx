@@ -22,6 +22,7 @@ import ConceptosPage from "./pages/ConceptosPage";
 import ConfiguracionPage from "./pages/ConfiguracionPage";
 import UsuariosPage from "./pages/UsuariosPage";
 import RolesPage from "./pages/RolesPage";
+import PeriodosPage from "./pages/PeriodosPage";
 import Payments from "./pages/intranet/Payments";
 import LoginParent from "./pages/intranet/LoginParent";
 import IntranetLayout from "./pages/intranet/IntranetLayout";
@@ -119,6 +120,7 @@ function App() {
               element={
                 <ProtectedRoute
                   allowedPermissions={[
+                    "view_periodoacademico",
                     "view_aula",
                     "view_conceptopago",
                     "view_apoderado",
@@ -127,6 +129,14 @@ function App() {
                   ]}
                 >
                   <ConfiguracionPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/periodos"
+              element={
+                <ProtectedRoute allowedPermissions={["view_periodoacademico"]}>
+                  <PeriodosPage />
                 </ProtectedRoute>
               }
             />

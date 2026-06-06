@@ -78,7 +78,7 @@ return (
             alert("Próximamente: Integración de pago en línea")
           }
         >
-          Pagar Ahora
+          Pagar Ahora 
         </button>
 
       </div>
@@ -88,7 +88,7 @@ return (
     {/* GRID */}
     <div className="payments-grid">
 
-      {/* DEUDAS */}
+      {/* DEUDAS */}  
       <div className="section-card">
 
         <h3 className="section-title">
