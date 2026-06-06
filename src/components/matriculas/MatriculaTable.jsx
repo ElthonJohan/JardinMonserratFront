@@ -36,7 +36,11 @@ export default function MatriculaTable({
         label: 'Aula',
         render: (_v, row) => row.aula_detail?.nombre || aulaById.get(String(row.aula)) || '-'
       },
-      { key: 'anio', label: 'Año' },
+      {
+        key:'periodo_academico',
+        label: 'Año lectivo',
+        render: (_v, row) => row.periodo_academico_detail?.nombre || row.periodo_academico || '-'
+      },
       {
         key: 'fecha_matricula',
         label: 'Fecha',

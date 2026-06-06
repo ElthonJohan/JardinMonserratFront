@@ -66,3 +66,14 @@ export const searchMatriculas = async (query) => {
     throw error;
   }
 };
+
+export const getPeriodosAcademicos = async () => {
+  try {
+    const response = await axiosInstance.get('/matriculas/periodos-academicos/');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+

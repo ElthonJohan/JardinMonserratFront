@@ -10,7 +10,7 @@ import { buildComprobanteMatriculaHtml } from '../utils/matriculaComprobante';
 import {
   createMatricula,
   deleteMatricula,
-  
+  getPeriodosAcademicos,
   getMatriculas,
   updateMatricula
 } from '../api/matriculasAPI';
@@ -26,6 +26,7 @@ export default function MatriculasPage() {
   const [matriculas, setMatriculas] = useState([]);
   const [alumnos, setAlumnos] = useState([]);
   const [aulas, setAulas] = useState([]);
+  const [periodos, setPeriodos] = useState([]);
 
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -41,7 +42,7 @@ export default function MatriculasPage() {
   const [matriculaForm, setMatriculaForm] = useState({
     alumno: '',
     aula: '',
-    anio: currentYear,
+    periodo_academico: '',
     estado: 'Activa',
     observaciones: ''
   });
@@ -66,10 +67,11 @@ export default function MatriculasPage() {
   const fetchAll = async () => {
     setLoading(true);
     try {
-      const [mRes, aRes, aulasRes] = await Promise.all([
+      const [mRes, aRes, aulasRes, periodosRes] = await Promise.all([
         getMatriculas(),
         getEstudiantes(),
-        getAulas()
+        getAulas(),
+        getPeriodosAcademicos()
       ]);
 
       const toArray = (res) => (Array.isArray(res) ? res : res?.results || []);
@@ -77,6 +79,7 @@ export default function MatriculasPage() {
       setMatriculas(toArray(mRes));
       setAlumnos(toArray(aRes));
       setAulas(toArray(aulasRes));
+      setPeriodos(toArray(periodosRes));
     } catch (e) {
       toast.error('Error al cargar datos de matrículas');
       console.error(e);
@@ -100,14 +103,14 @@ export default function MatriculasPage() {
   // Abrir el formulario una vez que los alumnos estén cargados y la señal de autoOpen esté activa
   useEffect(() => {
     if (shouldOpenModalOnLoad && alumnos.length > 0) {
-      const { alumnoId, aulaId } = location.state; // location.state debería seguir disponible aquí
+      const { alumnoId, aulaId, periodoId } = location.state; // location.state debería seguir disponible aquí
 
       if (alumnoId) { // Asegurarse de que el alumnoId esté presente
         setEditingMatriculaId(null);
         setMatriculaForm({
           alumno: String(alumnoId),
           aula: aulaId ? (typeof aulaId === 'object' ? String(aulaId.id) : String(aulaId)) : '',
-          anio: currentYear,
+          periodo_academico: periodoId ? (typeof periodoId === 'object' ? String(periodoId.id) : String(periodoId)) : '',
           estado: 'Activa',
           observaciones: 'Pre-cargado desde gestión de alumnos'
         });
@@ -118,7 +121,7 @@ export default function MatriculasPage() {
         window.history.replaceState({}, document.title);
       }
     }
-  }, [location.state, alumnos, aulas, currentYear]);
+  }, [location.state, alumnos, aulas, periodos]);
 
   const filteredMatriculas = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
@@ -128,8 +131,8 @@ export default function MatriculasPage() {
       const alumno = m.alumno_detail;
       const full = alumno ? `${alumno.nombres} ${alumno.apellidos}`.toLowerCase() : '';
       const aula = m.aula_detail?.nombre?.toLowerCase?.() || '';
-      const anio = String(m.anio || '');
-      return full.includes(term) || aula.includes(term) || anio.includes(term);
+      const periodo = String(m.periodo_academico_detail?.nombre || '');
+      return full.includes(term) || aula.includes(term) || periodo.includes(term);
     });
   }, [matriculas, searchTerm]);
 
@@ -138,7 +141,7 @@ export default function MatriculasPage() {
     setMatriculaForm({
       alumno: '',
       aula: '',
-      anio: currentYear,
+      periodo_academico: '',
       estado: 'Activa',
       observaciones: ''
     });
@@ -150,7 +153,7 @@ export default function MatriculasPage() {
     setMatriculaForm({
       alumno: m?.alumno ?? '',
       aula: m?.aula ?? '',
-      anio: m?.anio ?? currentYear,
+      periodo_academico: m?.periodo_academico ?? '',
       estado: m?.estado ?? 'Activa',
       observaciones: m?.observaciones ?? ''
     });
@@ -190,8 +193,8 @@ export default function MatriculasPage() {
   };
 
   const handleSaveMatricula = async () => {
-    if (!matriculaForm.alumno || !matriculaForm.aula || !matriculaForm.anio) {
-      toast.error('Completa alumno, aula y año');
+    if (!matriculaForm.alumno || !matriculaForm.aula || !matriculaForm.periodo_academico) {
+      toast.error('Completa alumno, aula y período académico');
       return;
     }
 
@@ -199,7 +202,6 @@ export default function MatriculasPage() {
     try {
       const payload = {
         ...matriculaForm,
-        anio: Number(matriculaForm.anio)
       };
 
       if (editingMatriculaId) {
@@ -313,6 +315,7 @@ export default function MatriculasPage() {
             onChange={handleMatriculaInputChange}
             alumnos={alumnos}
             aulas={aulas}
+            periodos={periodos} // Aquí podrías cargar los períodos académicos si tienes esa API
           />
         </Modal>
 
