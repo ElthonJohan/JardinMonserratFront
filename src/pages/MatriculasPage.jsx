@@ -49,19 +49,10 @@ export default function MatriculasPage() {
 
   const handleMatriculaInputChange = (e) => {
     const { name, value } = e.target;
-
-    if (name === 'alumno') {
-      // Buscar el alumno seleccionado para obtener su aula
-      const alumno = alumnos.find((a) => String(a.id) === String(value));
-      // Determinar el ID del aula (manejando si viene como objeto o ID)
-      let aulaId = '';
-      if (alumno?.aula) {
-        aulaId = typeof alumno.aula === 'object' ? alumno.aula.id : alumno.aula;
-      }
-      setMatriculaForm((p) => ({ ...p, alumno: value, aula: aulaId }));
-    } else {
-      setMatriculaForm((p) => ({ ...p, [name]: value }));
-    }
+    setMatriculaForm((prev) => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   const fetchAll = async () => {
@@ -217,7 +208,15 @@ export default function MatriculasPage() {
       fetchAll();
     } catch (e) {
       const data = e?.response?.data;
-      const msg = data?.non_field_errors?.[0] || data?.detail || 'Error al registrar matrícula';
+      
+      // Lógica para extraer el mensaje de error de forma dinámica
+      const msg = 
+        data?.periodo_academico?.[0] || 
+        data?.alumno?.[0] || 
+        data?.non_field_errors?.[0] || 
+        data?.detail || 
+        'Error al registrar matrícula';
+        
       toast.error(msg);
       console.error(e);
     } finally {
