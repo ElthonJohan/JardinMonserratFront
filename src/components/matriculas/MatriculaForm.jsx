@@ -12,7 +12,8 @@ export default function MatriculaForm({
   formData,
   onChange,
   alumnos = [],
-  aulas = []
+  aulas = [],
+  periodos = []
 }) {
   return (
     <Form>
@@ -32,15 +33,15 @@ export default function MatriculaForm({
         </Col>
         <Col md={4}>
           <Form.Group className="mb-3">
-            <Form.Label>Año lectivo *</Form.Label>
-            <Form.Control
-              type="number"
-              name="anio"
-              value={formData.anio}
-              onChange={onChange}
-              min={2000}
-              max={2100}
-            />
+            <Form.Label>Período académico *</Form.Label>
+            <Form.Select name="periodo_academico" value={formData.periodo_academico} onChange={onChange}>
+              <option value="">-- Seleccionar período --</option>
+              {periodos.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.nombre} ({p.anio})
+                </option>
+              ))}
+            </Form.Select>
           </Form.Group>
         </Col>
       </Row>
