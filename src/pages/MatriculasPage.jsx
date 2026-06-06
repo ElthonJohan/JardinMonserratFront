@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import toast from 'react-hot-toast';
 import '../styles/MatriculasPage.css';
@@ -19,6 +20,7 @@ import { getAulas } from '../api/estudiantesAPI';
 
 
 export default function MatriculasPage() {
+  const location = useLocation();
   const [loading, setLoading] = useState(false);
 
   const [matriculas, setMatriculas] = useState([]);
@@ -30,6 +32,7 @@ export default function MatriculasPage() {
   const [showMatriculaModal, setShowMatriculaModal] = useState(false);
   const [showDetalleModal, setShowDetalleModal] = useState(false);
 
+  const [shouldOpenModalOnLoad, setShouldOpenModalOnLoad] = useState(false);
   const [selectedMatricula, setSelectedMatricula] = useState(null);
   const [editingMatriculaId, setEditingMatriculaId] = useState(null);
 
@@ -86,6 +89,36 @@ export default function MatriculasPage() {
     fetchAll();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Detectar si venimos redirigidos desde Estudiantes
+  useEffect(() => {
+    if (location.state?.autoOpen) {
+      setShouldOpenModalOnLoad(true);
+    }
+  }, [location.state]);
+
+  // Abrir el formulario una vez que los alumnos estén cargados y la señal de autoOpen esté activa
+  useEffect(() => {
+    if (shouldOpenModalOnLoad && alumnos.length > 0) {
+      const { alumnoId, aulaId } = location.state; // location.state debería seguir disponible aquí
+
+      if (alumnoId) { // Asegurarse de que el alumnoId esté presente
+        setEditingMatriculaId(null);
+        setMatriculaForm({
+          alumno: String(alumnoId),
+          aula: aulaId ? (typeof aulaId === 'object' ? String(aulaId.id) : String(aulaId)) : '',
+          anio: currentYear,
+          estado: 'Activa',
+          observaciones: 'Pre-cargado desde gestión de alumnos'
+        });
+        setShowMatriculaModal(true);
+
+        // Limpiar el estado y la bandera para evitar reabrir
+        setShouldOpenModalOnLoad(false);
+        window.history.replaceState({}, document.title);
+      }
+    }
+  }, [location.state, alumnos, aulas, currentYear]);
 
   const filteredMatriculas = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();

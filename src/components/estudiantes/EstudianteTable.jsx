@@ -1,6 +1,6 @@
 
 import "bootstrap/dist/css/bootstrap.min.css";
-export default function EstudianteTable({ data, onEdit, onDelete }) {
+export default function EstudianteTable({ data, onEdit, onDelete, onMatricula }) {
   return (
     <div className="card-custom">
       <div className="d-flex justify-content-between align-items-center mb-3">
@@ -38,7 +38,13 @@ export default function EstudianteTable({ data, onEdit, onDelete }) {
                   </td>
                   <td>{e.apoderado_nombre}</td>
 
+                  
+
                   <td className="text-center">
+                    <button className="btn btn-success btn-sm me-2" onClick={() => onMatricula(e)}>
+                      👁️
+                    </button>
+
                     <button
                       className="btn btn-warning btn-sm me-2"
                       onClick={() => onEdit(e)}

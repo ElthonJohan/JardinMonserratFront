@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext"; // Asegúrate de exportar esta función en tu contexto
 import "../../styles/loginParent.css"; // Asegúrate de crear este archivo CSS para estilos específicos
+import logoJardin from "../../images/logoJardin.png"; // Asegúrate de tener esta imagen en tu proyecto
 
 const LoginParent = () => {
   const [codigo, setCodigo] = useState("");
@@ -51,7 +52,7 @@ const handleSubmit = async (e) => {
         <div className="login-header">
 
           <div className="logo-box">
-            <img src="/logo.png" alt="Logo" />
+            <img src={logoJardin} alt="Logo" />
           </div>
 
           <h1>
