@@ -11,6 +11,7 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
     fecha_nacimiento: "",
     aula: "",
     apoderado: {
+      id: null,
       nombres: "",
       apellidos: "",
       telefono: "",
@@ -21,6 +22,7 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
   };
 
   const [form, setForm] = useState(initialFormState);
+  const [selectedApoderadoId, setSelectedApoderadoId] = useState("");
 
   useEffect(() => {
     if (initialData) {
@@ -32,6 +34,7 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
           ...(initialData.apoderado || {}),
         },
       });
+      setSelectedApoderadoId(initialData.apoderado?.id || "");
     } else {
       setForm(initialFormState);
     }
@@ -65,6 +68,8 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
           [key]: value,
         },
       });
+      // If user edits apoderado fields, clear selectedApoderadoId to indicate a custom/new apoderado
+      if (name !== "apoderado.dni") setSelectedApoderadoId("");
     } else {
       setForm({
         ...form,
@@ -73,9 +78,52 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
     }
   };
 
+  const handleSelectApoderado = (e) => {
+    const val = e.target.value;
+    setSelectedApoderadoId(val);
+
+    if (!val) {
+      // Nuevo apoderado
+      setForm({
+        ...form,
+        apoderado: { ...initialFormState.apoderado },
+      });
+      return;
+    }
+
+    const existing = Array.isArray(apoderados)
+      ? apoderados.find((a) => String(a.id) === String(val))
+      : null;
+
+    if (existing) {
+      setForm({
+        ...form,
+        apoderado: {
+          id: existing.id,
+          nombres: existing.nombres || "",
+          apellidos: existing.apellidos || "",
+          telefono: existing.telefono || "",
+          direccion: existing.direccion || "",
+          email: existing.email || "",
+          dni: existing.dni || "",
+        },
+      });
+    } else {
+      setForm({ ...form, apoderado: { ...initialFormState.apoderado } });
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(form);
+    // If an existing apoderado was selected, send only `apoderado_id` to avoid nested validation
+    const payload = { ...form };
+    if (selectedApoderadoId) {
+      payload.apoderado_id = selectedApoderadoId;
+      // remove nested apoderado object to avoid confusion
+      delete payload.apoderado;
+    }
+
+    onSubmit(payload);
   };
 
   return (
@@ -196,6 +244,23 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
         <h6 className="mb-3">Datos del Apoderado</h6>
 
         <div className="row">
+          <div className="col-md-12 mb-3">
+            <label className="form-label small">Apoderado existente</label>
+            <select
+              className="form-select"
+              value={selectedApoderadoId}
+              onChange={handleSelectApoderado}
+            >
+              <option value="">-- Nuevo apoderado --</option>
+              {Array.isArray(apoderados) &&
+                apoderados.map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {a.nombres} {a.apellidos} {a.dni ? `- ${a.dni}` : ""}
+                  </option>
+                ))}
+            </select>
+          </div>
+
           <div className="col-md-6 mb-3">
             <input
               name="apoderado.nombres"
