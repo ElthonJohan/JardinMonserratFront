@@ -40,7 +40,7 @@ export default function GestionCaja({ onCajaChange = null }) {
       }
 
       if (onCajaChange) {
-        onCajaChange(response.abierta || false);
+        onCajaChange(response.caja || null);
       }
     } catch (error) {
       console.error(error);
@@ -70,7 +70,7 @@ export default function GestionCaja({ onCajaChange = null }) {
       setMontoInicialForm('0.00');
 
       if (onCajaChange) {
-        onCajaChange(true);
+        onCajaChange(result.caja);
       }
     } catch (error) {
       const errorMsg = error.response?.data?.detail || 'Error al abrir la caja';
@@ -94,7 +94,7 @@ export default function GestionCaja({ onCajaChange = null }) {
         setResumen(null);
 
         if (onCajaChange) {
-          onCajaChange(false);
+          onCajaChange(null);
         }
       } catch (error) {
         toast.error('Error al cerrar la caja');

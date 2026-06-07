@@ -5,6 +5,31 @@ const PAGOS_URL = '/pagos/pagos';
 const DEUDAS_URL = '/pagos/deudas';
 const CAJA_URL = '/pagos/cajas';
 
+const fetchAllPages = async (url, params = {}) => {
+  let allResults = [];
+  let page = 1;
+  let hasNext = true;
+  
+  while (hasNext) {
+    const response = await axiosInstance.get(url, {
+      params: { ...params, page }
+    });
+    const data = response.data;
+    
+    if (data && data.results && Array.isArray(data.results)) {
+      allResults = [...allResults, ...data.results];
+      hasNext = !!data.next;
+      page += 1;
+    } else if (Array.isArray(data)) {
+      allResults = [...allResults, ...data];
+      hasNext = false;
+    } else {
+      return data;
+    }
+  }
+  return allResults;
+};
+
 // Conceptos de Pago
 export const getConceptosPago = async () => {
   try {
@@ -124,8 +149,7 @@ export const getDeudasByAlumno = async (alumnoId, incluirPagadas = false) => {
       alumno: alumnoId,
       incluir_pagadas: incluirPagadas
     };
-    const response = await axiosInstance.get(`${DEUDAS_URL}/`, { params });
-    return response.data;
+    return await fetchAllPages(`${DEUDAS_URL}/`, params);
   } catch (error) {
     throw error;
   }
@@ -191,10 +215,7 @@ export const getResumenIngresos = async (cajaId) => {
 // Auditoría y Historial
 export const getPagosByAlumno = async (alumnoId) => {
   try {
-    const response = await axiosInstance.get(`${PAGOS_URL}/`, {
-      params: { alumno: alumnoId, ordering: '-fecha_pago' }
-    });
-    return response.data;
+    return await fetchAllPages(`${PAGOS_URL}/`, { alumno: alumnoId, ordering: '-fecha_pago' });
   } catch (error) {
     throw error;
   }
@@ -202,9 +223,71 @@ export const getPagosByAlumno = async (alumnoId) => {
 
 export const getDeudasHistoricas = async (alumnoId) => {
   try {
-    const response = await axiosInstance.get(`${DEUDAS_URL}/`, {
-      params: { alumno: alumnoId, incluir_pagadas: true, ordering: 'fecha_vencimiento' }
-    });
+    return await fetchAllPages(`${DEUDAS_URL}/`, { alumno: alumnoId, incluir_pagadas: true, ordering: 'id' });
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Bancos y Aprobaciones
+export const getBancos = async (activosSolo = true) => {
+  try {
+    const params = activosSolo ? { activo: true } : {};
+    const response = await axiosInstance.get('/pagos/bancos/', { params });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createBanco = async (data) => {
+  try {
+    const response = await axiosInstance.post('/pagos/bancos/', data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateBanco = async (id, data) => {
+  try {
+    const response = await axiosInstance.put(`/pagos/bancos/${id}/`, data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteBanco = async (id) => {
+  try {
+    const response = await axiosInstance.delete(`/pagos/bancos/${id}/`);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getPagosPendientesAprobacion = async () => {
+  try {
+    const response = await axiosInstance.get(`${PAGOS_URL}/pendientes_aprobacion/`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getPagosPendientesCount = async () => {
+  try {
+    const response = await axiosInstance.get(`${PAGOS_URL}/pendientes_count/`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const procesarAprobacionPago = async (id, data) => {
+  try {
+    const response = await axiosInstance.post(`${PAGOS_URL}/${id}/procesar_aprobacion/`, data);
     return response.data;
   } catch (error) {
     throw error;

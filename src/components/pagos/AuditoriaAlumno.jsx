@@ -37,9 +37,7 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
       setPagos(pagosArray);
       setDeudas(deudasArray);
 
-      if (pagosArray.length === 0) {
-        toast.info('No hay pagos registrados para este alumno');
-      }
+      // Eliminamos el toast.info para que no se perciba como error cuando es un estado normal.
     } catch (error) {
       toast.error('Error al cargar datos de auditoría');
       console.error(error);
@@ -156,7 +154,7 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
 
   return (
     <div className="auditoria-alumno-container">
-      <Row className="mb-4">
+      <Row className="mb-4 align-items-end">
         <Col md={8}>
           <Form.Group>
             <Form.Label className="fw-bold">Selecciona Alumno para Auditoría</Form.Label>
@@ -173,6 +171,25 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
               ))}
             </Form.Select>
           </Form.Group>
+        </Col>
+        <Col md={4} className="mt-2 mt-md-0">
+          {alumnoSeleccionado && (
+            <Button
+              variant="outline-secondary"
+              size="sm"
+              onClick={() => cargarDatos(alumnoSeleccionado.id)}
+              disabled={loading}
+              className="d-flex align-items-center gap-1"
+            >
+              {loading ? (
+                <>
+                  <Spinner animation="border" size="sm" /> Cargando...
+                </>
+              ) : (
+                <>🔄 Actualizar Datos</>
+              )}
+            </Button>
+          )}
         </Col>
       </Row>
 
@@ -247,6 +264,7 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
                         <th style={{ width: '150px' }}>Fecha</th>
                         <th style={{ width: '100px' }}>Método</th>
                         <th>Operación</th>
+                        <th style={{ width: '100px' }}>Estado</th>
                         <th style={{ width: '120px' }}>Monto</th>
                         <th style={{ width: '80px' }}>Detalles</th>
                       </tr>
@@ -276,6 +294,24 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
                               </Badge>
                             </td>
                             <td>{pago.numero_operacion || '—'}</td>
+                            <td>
+                              <Badge
+                                bg={
+                                  pago.estado === 'APROBADO'
+                                    ? 'success'
+                                    : pago.estado === 'RECHAZADO'
+                                      ? 'danger'
+                                      : 'secondary'
+                                }
+                              >
+                                {pago.estado || 'REGISTRADO'}
+                              </Badge>
+                              {pago.estado === 'RECHAZADO' && pago.motivo_rechazo && (
+                                <div className="mt-1 text-danger" style={{ fontSize: '0.75rem', maxWidth: '150px' }}>
+                                  <strong>Motivo:</strong> {pago.motivo_rechazo}
+                                </div>
+                              )}
+                            </td>
                             <td className="fw-bold">S/ {parseFloat(pago.monto_total_entregado).toFixed(2)}</td>
                             <td className="text-center">
                               <Button
@@ -291,9 +327,9 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
                           </tr>
                           {expandedPagoId === pago.id && pago.asignaciones && (
                             <tr>
-                              <td colSpan="5">
+                              <td colSpan="6">
                                 <div className="p-3 bg-light rounded">
-                                  <h6 className="mb-3">📋 Desglose FIFO del Pago (Asignaciones)</h6>
+                                  <h6 className="mb-3">📋 Desglose de Asignación Manual</h6>
                                   {pago.asignaciones.length > 0 ? (
                                     <div className="table-responsive">
                                       <Table size="sm" bordered className="mb-0">
@@ -396,6 +432,7 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
                 striped
                 bordered
                 hover
+                paginated
               />
             </Card.Body>
           </Card>

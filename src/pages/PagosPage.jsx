@@ -5,6 +5,7 @@ import '../styles/PagosPage.css';
 import RegistroPago from '../components/pagos/RegistroPago';
 import GestionCaja from '../components/pagos/GestionCaja';
 import AuditoriaAlumno from '../components/pagos/AuditoriaAlumno';
+import ValidacionPagos from '../components/pagos/ValidacionPagos';
 import { AppNavbar, ErrorBoundary } from '../components/shared';
 import { getEstudiantes } from '../api/estudiantesAPI';
 
@@ -99,6 +100,16 @@ export default function PagosPage() {
                     <AuditoriaAlumno alumnos={alumnos} />
                   </ErrorBoundary>
                 )}
+              </Card.Body>
+            </Card>
+          </Tab>
+
+          <Tab eventKey="validacion" title="✅ Validación de Pagos">
+            <Card className="mt-3">
+              <Card.Body>
+                <ErrorBoundary>
+                  <ValidacionPagos />
+                </ErrorBoundary>
               </Card.Body>
             </Card>
           </Tab>
