@@ -60,9 +60,9 @@ export default function RegistroPago({
   };
 
   const handleCheckboxChange = (deudaId) => {
-    setSelectedDeudas(prev => 
-      prev.includes(deudaId) 
-        ? prev.filter(id => id !== deudaId) 
+    setSelectedDeudas(prev =>
+      prev.includes(deudaId)
+        ? prev.filter(id => id !== deudaId)
         : [...prev, deudaId]
     );
   };
@@ -73,41 +73,41 @@ export default function RegistroPago({
     setSelectedDeudas([]);
 
     if (!alumnoId) {
-        setDeudas([]);
-        setAlumnoSeleccionado(null);
-        setPagosHistorico([]);
-        return;
+      setDeudas([]);
+      setAlumnoSeleccionado(null);
+      setPagosHistorico([]);
+      return;
     }
 
     setLoadingDeudas(true);
     try {
-        const alumno = alumnos.find((a) => String(a.id) === String(alumnoId));
-        setAlumnoSeleccionado(alumno);
+      const alumno = alumnos.find((a) => String(a.id) === String(alumnoId));
+      setAlumnoSeleccionado(alumno);
 
-        const [deudasRes, pagosRes] = await Promise.all([
+      const [deudasRes, pagosRes] = await Promise.all([
         getDeudasByAlumno(alumnoId, false),
         getPagosByAlumno(alumnoId)
-        ]);
+      ]);
 
-        const deudasArray = Array.isArray(deudasRes) ? deudasRes : deudasRes?.results || [];
-        const pagosArray = Array.isArray(pagosRes) ? pagosRes : pagosRes?.results || [];
+      const deudasArray = Array.isArray(deudasRes) ? deudasRes : deudasRes?.results || [];
+      const pagosArray = Array.isArray(pagosRes) ? pagosRes : pagosRes?.results || [];
 
-        setDeudas(deudasArray);
-        setPagosHistorico(pagosArray);
+      setDeudas(deudasArray);
+      setPagosHistorico(pagosArray);
 
-        if (deudasArray.length === 0) {
+      if (deudasArray.length === 0) {
         toast.info('El alumno no tiene deudas pendientes', {
-            icon: 'ℹ️',
-            duration: 3000
+          icon: 'ℹ️',
+          duration: 3000
         });
-        }
+      }
     } catch (error) {
-        toast.error('Error al cargar los datos. Intenta nuevamente.');
-        console.error('Error fetching data:', error);
-        setDeudas([]);
-        setPagosHistorico([]);
+      toast.error('Error al cargar los datos. Intenta nuevamente.');
+      console.error('Error fetching data:', error);
+      setDeudas([]);
+      setPagosHistorico([]);
     } finally {
-        setLoadingDeudas(false);
+      setLoadingDeudas(false);
     }
   };
 
@@ -208,21 +208,33 @@ export default function RegistroPago({
   const deudasColumns = [
     {
       key: 'select',
-      label: 'Seleccionar',
-      render: (_, row) => (
-        <Form.Check 
-          type="checkbox"
-          checked={selectedDeudas.includes(row.id)}
-          onChange={() => handleCheckboxChange(row.id)}
-        />
-      )
+      label: 'Acción',
+      render: (_, row) => {
+        const isSelected = selectedDeudas.includes(row.id);
+        return (
+          <div className="text-center">
+            <Button
+              variant={isSelected ? "success" : "outline-primary"}
+              size="sm"
+              onClick={() => handleCheckboxChange(row.id)}
+              className="fw-bold"
+              style={{ minWidth: '110px' }}
+            >
+              {isSelected ? "✓ Seleccionado" : "Seleccionar"}
+            </Button>
+          </div>
+        );
+      }
     },
     {
       key: 'concepto_detail',
       label: 'Concepto',
       render: (val, row) => {
+        const index = deudas.findIndex(d => d.id === row.id);
+        const numero = index !== -1 ? `${index + 1}` : '';
         const nombre = val?.nombre || 'N/A';
-        return row.detalle_adicional ? `${nombre} - ${row.detalle_adicional}` : nombre;
+        const displayNombre = row.detalle_adicional ? `${nombre} - ${row.detalle_adicional}` : nombre;
+        return `${numero}. ${displayNombre}`;
       }
     },
     {
@@ -231,8 +243,8 @@ export default function RegistroPago({
       render: (val) => {
         if (!val) return 'Anual';
         const meses = [
-          'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
-          'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
+          'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
         ];
         return meses[val - 1] || val;
       }
@@ -264,7 +276,7 @@ export default function RegistroPago({
         <Row>
           <Col md={8}>
             <Form.Group className="mb-3">
-              <Form.Label>Alumno *</Form.Label>
+              <Form.Label>Alumno <span style={{ color: 'red' }}>*</span></Form.Label>
               <Form.Select
                 name="alumno"
                 value={formData.alumno}
@@ -294,7 +306,7 @@ export default function RegistroPago({
         <Row>
           <Col md={4}>
             <Form.Group className="mb-3">
-              <Form.Label>Método de Pago *</Form.Label>
+              <Form.Label>Método de Pago <span style={{ color: 'red' }}>*</span></Form.Label>
               <Form.Select
                 name="metodo_pago"
                 value={formData.metodo_pago}
@@ -310,7 +322,7 @@ export default function RegistroPago({
           </Col>
           <Col md={4}>
             <Form.Group className="mb-3">
-              <Form.Label>Banco Destino {['Transferencia', 'Depósito'].includes(formData.metodo_pago) && '*'}</Form.Label>
+              <Form.Label>Banco Destino <span style={{ color: 'red' }}>{['Transferencia', 'Depósito'].includes(formData.metodo_pago) && '*'}</span></Form.Label>
               <Form.Select
                 name="banco"
                 value={formData.banco}
@@ -327,8 +339,7 @@ export default function RegistroPago({
           <Col md={4}>
             <Form.Group className="mb-3">
               <Form.Label>
-                Número de Operación
-                {formData.metodo_pago !== 'Efectivo' && ' *'}
+                Número de Operación <span style={{ color: 'red' }}>{formData.metodo_pago !== 'Efectivo' && '*'}</span>
               </Form.Label>
               <Form.Control
                 type="text"
@@ -354,7 +365,7 @@ export default function RegistroPago({
                 Registrando...
               </>
             ) : (
-              '✅ Enviar Pago para Revisión'
+              'Registrar Pago'
             )}
           </Button>
           <Button

@@ -129,13 +129,23 @@ export default function GestionCaja({ onCajaChange = null }) {
                 <div className="d-flex justify-content-between align-items-center">
                   <div>
                     <Card.Title className="mb-0">✅ Caja Abierta</Card.Title>
-                    <small>ID: {cajaActual.id}</small>
+                    <small className="fw-bold">ID: {cajaActual.id}</small>
                   </div>
-                  <div className="text-end">
-                    <div className="fw-bold" style={{ fontSize: '1.5rem' }}>
-                      S/ {parseFloat(cajaActual.monto_inicial || 0).toFixed(2)}
+                  <div className="d-flex gap-4 align-items-center">
+                    <div className="text-end">
+                      <div className="fw-bold" style={{ fontSize: '1.3rem' }}>
+                        S/ {parseFloat(cajaActual.monto_inicial || 0).toFixed(2)}
+                      </div>
+                      <small>Monto Inicial</small>
                     </div>
-                    <small>Monto Inicial</small>
+                    {resumen && (
+                      <div className="text-end border-start border-white-50 ps-4">
+                        <div className="fw-bold" style={{ fontSize: '1.3rem', color: '#fff' }}>
+                          S/ {parseFloat(resumen.total_con_inicial || 0).toFixed(2)}
+                        </div>
+                        <small className="text-white fw-bold">Total en Caja</small>
+                      </div>
+                    )}
                   </div>
                 </div>
               </Card.Header>

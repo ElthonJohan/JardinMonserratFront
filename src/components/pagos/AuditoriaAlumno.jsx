@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Alert, Badge, Button, Card, Col, Form, Row, Spinner, Table } from 'react-bootstrap';
 import toast from 'react-hot-toast';
+import { useReactToPrint } from 'react-to-print';
 import { DataTable } from '../shared';
 import { getDeudasHistoricas, getPagosByAlumno } from '../../api/pagosAPI';
 import ModalNuevoCargo from './ModalNuevoCargo';
+import ComprobantePago from './ComprobantePago';
 
 const getAlumnoLabel = (a) => {
   if (!a) return '';
@@ -18,6 +20,20 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
   const [loading, setLoading] = useState(false);
   const [expandedPagoId, setExpandedPagoId] = useState(null);
   const [showModalNuevoCargo, setShowModalNuevoCargo] = useState(false);
+
+  const [pagoAImprimir, setPagoAImprimir] = useState(null);
+  const componentRef = useRef(null);
+
+  const handlePrint = useReactToPrint({
+    contentRef: componentRef,
+    onAfterPrint: () => setPagoAImprimir(null)
+  });
+
+  useEffect(() => {
+    if (pagoAImprimir) {
+      handlePrint();
+    }
+  }, [pagoAImprimir]);
 
   const handleNuevoCargoSuccess = () => {
     cargarDatos(alumnoSeleccionado.id);
@@ -266,7 +282,7 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
                         <th>Operación</th>
                         <th style={{ width: '100px' }}>Estado</th>
                         <th style={{ width: '120px' }}>Monto</th>
-                        <th style={{ width: '80px' }}>Detalles</th>
+                        <th style={{ width: '120px' }}>Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -314,15 +330,28 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
                             </td>
                             <td className="fw-bold">S/ {parseFloat(pago.monto_total_entregado).toFixed(2)}</td>
                             <td className="text-center">
-                              <Button
-                                variant="outline-primary"
-                                size="sm"
-                                onClick={() =>
-                                  setExpandedPagoId(expandedPagoId === pago.id ? null : pago.id)
-                                }
-                              >
-                                {expandedPagoId === pago.id ? '▼' : '▶'}
-                              </Button>
+                              <div className="d-flex gap-2 justify-content-center">
+                                <Button
+                                  variant="outline-primary"
+                                  size="sm"
+                                  onClick={() =>
+                                    setExpandedPagoId(expandedPagoId === pago.id ? null : pago.id)
+                                  }
+                                  title="Ver desglose"
+                                >
+                                  {expandedPagoId === pago.id ? '▼' : '▶'}
+                                </Button>
+                                {pago.estado === 'APROBADO' && (
+                                  <Button
+                                    variant="outline-secondary"
+                                    size="sm"
+                                    onClick={() => setPagoAImprimir(pago)}
+                                    title="Imprimir Comprobante"
+                                  >
+                                    🖨️
+                                  </Button>
+                                )}
+                              </div>
                             </td>
                           </tr>
                           {expandedPagoId === pago.id && pago.asignaciones && (
@@ -337,7 +366,7 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
                                           <tr style={{ backgroundColor: '#e7f3ff' }}>
                                             <th>Concepto</th>
                                             <th>Mes</th>
-                                            <th>Vencimiento</th>
+                                            {/* <th>Vencimiento</th> */}
                                             <th>Monto Facturado</th>
                                             <th>Monto Aplicado</th>
                                             <th>Saldo Restante</th>
@@ -352,31 +381,31 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
                                               <td>
                                                 {asignacion.deuda_detail?.mes
                                                   ? (() => {
-                                                      const meses = [
-                                                        'Enero',
-                                                        'Febrero',
-                                                        'Marzo',
-                                                        'Abril',
-                                                        'Mayo',
-                                                        'Junio',
-                                                        'Julio',
-                                                        'Agosto',
-                                                        'Septiembre',
-                                                        'Octubre',
-                                                        'Noviembre',
-                                                        'Diciembre'
-                                                      ];
-                                                      return meses[
-                                                        asignacion.deuda_detail.mes - 1
-                                                      ];
-                                                    })()
+                                                    const meses = [
+                                                      'Enero',
+                                                      'Febrero',
+                                                      'Marzo',
+                                                      'Abril',
+                                                      'Mayo',
+                                                      'Junio',
+                                                      'Julio',
+                                                      'Agosto',
+                                                      'Septiembre',
+                                                      'Octubre',
+                                                      'Noviembre',
+                                                      'Diciembre'
+                                                    ];
+                                                    return meses[
+                                                      asignacion.deuda_detail.mes - 1
+                                                    ];
+                                                  })()
                                                   : 'Anual'}
                                               </td>
-                                              <td>
+                                              {/* <td>
                                                 {asignacion.deuda_detail?.monto_total
                                                   ? '—'
                                                   : '—'}
-                                              </td>
+                                              </td> */}
                                               <td>
                                                 S/ {parseFloat(asignacion.deuda_detail?.monto_total).toFixed(2)}
                                               </td>
@@ -416,8 +445,8 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
           <Card>
             <Card.Header className="bg-warning text-dark d-flex justify-content-between align-items-center">
               <Card.Title className="mb-0">📄 Estado de Cuenta Completo</Card.Title>
-              <Button 
-                variant="outline-dark" 
+              <Button
+                variant="outline-dark"
                 size="sm"
                 onClick={() => setShowModalNuevoCargo(true)}
               >
@@ -436,13 +465,19 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
               />
             </Card.Body>
           </Card>
-          
+
           <ModalNuevoCargo
             show={showModalNuevoCargo}
             handleClose={() => setShowModalNuevoCargo(false)}
             alumnoId={alumnoSeleccionado.id}
             onSuccess={handleNuevoCargoSuccess}
           />
+
+          <div className="d-none d-print-block">
+            {pagoAImprimir && (
+              <ComprobantePago ref={componentRef} pago={pagoAImprimir} />
+            )}
+          </div>
         </>
       )}
     </div>
