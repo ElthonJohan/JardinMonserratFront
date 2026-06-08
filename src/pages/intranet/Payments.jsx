@@ -4,6 +4,8 @@ import '../../styles/intranetPagos.css'; // Asegúrate de crear este archivo CSS
 
 const Payments = () => {
   const [dashboard, setDashboard] = useState(null);
+  const [selectedAlumno, setSelectedAlumno] =
+  useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -12,6 +14,15 @@ const Payments = () => {
       try {
             const response = await axiosInstance.get('/pagos/parent/pagos/'); // URL correcta según backend
         setDashboard(response.data);
+
+if (
+  response.data.alumnos &&
+  response.data.alumnos.length > 0
+) {
+  setSelectedAlumno(
+    response.data.alumnos[0]
+  );
+}
       } catch (err) {
         console.error(err);
         setError("No se pudo cargar la información de pagos.");
@@ -53,9 +64,69 @@ return (
           Apoderado:
           <span> {dashboard.apoderado_nombre}</span>
         </p>
+        <div className="family-summary">
+
+  <div className="summary-card">
+
+    <h4>
+      👨‍👩‍👧‍👦 Hijos
+    </h4>
+
+    <span>
+      {dashboard.cantidad_hijos}
+    </span>
+
+  </div>
+
+  <div className="summary-card">
+
+    <h4>
+      💰 Deuda Familiar
+    </h4>
+
+    <span>
+      S/
+      {
+        Number(
+          dashboard.total_pendiente
+        ).toFixed(2)
+      }
+    </span>
+
+  </div>
+
+</div>
       </div>
 
     </div>
+
+    <div className="student-selector">
+
+  {
+    dashboard.alumnos?.map(
+      alumno => (
+
+        <button
+          key={alumno.id}
+          className={
+            selectedAlumno?.id === alumno.id
+              ? "student-btn active"
+              : "student-btn"
+          }
+          onClick={() =>
+            setSelectedAlumno(alumno)
+          }
+        >
+
+          👦 {alumno.nombre}
+
+        </button>
+
+      )
+    )
+  }
+
+</div>
 
     {/* BALANCE */}
     <div className="balance-card">
@@ -64,11 +135,15 @@ return (
 
         <div>
           <p className="balance-label">
-            Saldo Pendiente Total
-          </p>
+  Saldo Pendiente de
+  {" "}
+  {selectedAlumno?.nombre}
+</p>
 
           <h2 className="balance-amount">
-            S/ {Number(dashboard.total_pendiente).toFixed(2)}
+            S/ {Number(
+  selectedAlumno?.total_pendiente || 0
+).toFixed(2)}
           </h2>
         </div>
 
@@ -95,7 +170,7 @@ return (
           📅 Deudas Pendientes
         </h3>
 
-        {dashboard.deudas_pendientes.length === 0 ? (
+        {selectedAlumno?.deudas?.length === 0 ? (
 
           <div className="empty-state">
             <div className="emoji">🎉</div>
@@ -104,7 +179,7 @@ return (
 
         ) : (
 
-          dashboard.deudas_pendientes.map((deuda) => (
+          selectedAlumno?.deudas?.map((deuda) => (
 
             <div key={deuda.id} className="debt-item">
 
@@ -165,7 +240,7 @@ return (
           💰 Últimos Pagos
         </h3>
 
-        {dashboard.pagos_recientes.length === 0 ? (
+        {selectedAlumno?.pagos_recientes.length === 0 ? (
 
           <div className="empty-state">
             <p>No hay pagos registrados</p>
@@ -173,7 +248,7 @@ return (
 
         ) : (
 
-          dashboard.pagos_recientes.map((pago) => (
+          selectedAlumno?.pagos_recientes?.map((pago) => (
 
             <div key={pago.id} className="payment-item">
 

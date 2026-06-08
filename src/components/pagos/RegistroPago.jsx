@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Button, Col, Form, Row, Spinner } from 'react-bootstrap';
 import toast from 'react-hot-toast';
+import AsyncSelect from 'react-select/async';
+import axiosInstance from '../../api/axiosConfig';
 import { DataTable } from '../shared';
 import { createPago, getDeudasByAlumno, getPagosByAlumno, getBancos } from '../../api/pagosAPI';
 import { useNumeroOperacionDuplicado } from '../../hooks/useNumeroOperacionDuplicado';
@@ -31,6 +33,31 @@ export default function RegistroPago({
   const [alumnoSeleccionado, setAlumnoSeleccionado] = useState(null);
   const [pagosHistorico, setPagosHistorico] = useState([]);
   const { validarDuplicado } = useNumeroOperacionDuplicado(pagosHistorico);
+  const [selectedAlumnoOption, setSelectedAlumnoOption] = useState(null);
+
+  // Opciones iniciales para el buscador de alumnos basadas en la prop 'alumnos'
+  const alumnoOptions = useMemo(() =>
+    alumnos.map(a => ({
+      value: String(a.id),
+      label: getAlumnoLabel(a),
+      studentData: a
+    })), [alumnos]
+  );
+
+  // Función para buscar alumnos en el servidor dinámicamente
+  const loadOptions = async (search) => {
+    try {
+      const res = await axiosInstance.get(`/estudiantes/?search=${search}`);
+      const data = res.data.results || res.data;
+      return data.map(a => ({
+        value: String(a.id),
+        label: getAlumnoLabel(a),
+        studentData: a
+      }));
+    } catch {
+      return [];
+    }
+  };
 
   useEffect(() => {
     const fetchBancos = async () => {
@@ -67,8 +94,9 @@ export default function RegistroPago({
     );
   };
 
-  const handleAlumnoChange = async (e) => {
-    const alumnoId = e.target.value;
+  const handleAlumnoChange = async (selectedOption) => {
+    const alumnoId = selectedOption ? selectedOption.value : '';
+    setSelectedAlumnoOption(selectedOption);
     setFormData((prev) => ({ ...prev, alumno: alumnoId }));
     setSelectedDeudas([]);
 
@@ -81,8 +109,7 @@ export default function RegistroPago({
 
     setLoadingDeudas(true);
     try {
-      const alumno = alumnos.find((a) => String(a.id) === String(alumnoId));
-      setAlumnoSeleccionado(alumno);
+      setAlumnoSeleccionado(selectedOption.studentData);
 
       const [deudasRes, pagosRes] = await Promise.all([
         getDeudasByAlumno(alumnoId, false),
@@ -189,6 +216,7 @@ export default function RegistroPago({
       setDeudas([]);
       setSelectedDeudas([]);
       setAlumnoSeleccionado(null);
+      setSelectedAlumnoOption(null);
       setPagosHistorico([]);
 
       if (onPagoRegistrado) {
@@ -277,18 +305,17 @@ export default function RegistroPago({
           <Col md={8}>
             <Form.Group className="mb-3">
               <Form.Label>Alumno <span style={{ color: 'red' }}>*</span></Form.Label>
-              <Form.Select
-                name="alumno"
-                value={formData.alumno}
+              <AsyncSelect
+                cacheOptions
+                defaultOptions={alumnoOptions}
+                loadOptions={loadOptions}
+                placeholder="Escribe para buscar un alumno..."
+                value={selectedAlumnoOption}
                 onChange={handleAlumnoChange}
-              >
-                <option value="">-- Seleccionar alumno --</option>
-                {alumnos.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {getAlumnoLabel(a)}
-                  </option>
-                ))}
-              </Form.Select>
+                isClearable
+                noOptionsMessage={() => "No se encontraron alumnos"}
+                loadingMessage={() => "Buscando..."}
+              />
             </Form.Group>
           </Col>
           <Col md={4}>
@@ -381,6 +408,7 @@ export default function RegistroPago({
               setDeudas([]);
               setSelectedDeudas([]);
               setAlumnoSeleccionado(null);
+              setSelectedAlumnoOption(null);
             }}
           >
             Limpiar

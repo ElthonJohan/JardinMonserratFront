@@ -5,6 +5,17 @@ const ESTUDIANTES_URL = '/estudiantes';
 const AULAS_URL = '/aulas/';
 const APODERADOS_URL = '/apoderados/';
 
+export const getRegistroAlumnos = async () => {
+  try {
+    const response = await axiosInstance.get('/registro-alumno/'
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
 export const getEstudiantes = async () => {
   try {
     const response = await axiosInstance.get(`${ESTUDIANTES_URL}/`);
