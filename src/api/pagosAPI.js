@@ -30,6 +30,39 @@ const fetchAllPages = async (url, params = {}) => {
   return allResults;
 };
 
+export const getPagosPendientes = async () => {
+
+  const response = await axiosInstance.get(
+    "/pagos/pendientes/"
+  );
+
+  return response.data;
+};
+
+export const aprobarPago = async (id) => {
+
+  const response = await axiosInstance.post(
+    `/pagos/${id}/aprobar/`
+  );
+
+  return response.data;
+};
+
+export const rechazarPago = async (
+  id,
+  motivo
+) => {
+
+  const response = await axiosInstance.post(
+    `/pagos/${id}/rechazar/`,
+    {
+      motivo
+    }
+  );
+
+  return response.data;
+};
+
 // Conceptos de Pago
 export const getConceptosPago = async () => {
   try {
