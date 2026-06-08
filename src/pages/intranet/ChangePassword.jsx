@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../../styles/ChangePassword.css';
+import '../../styles/changePassword.css';
 import  axiosInstance  from '../../api/axiosConfig'; // Asegúrate de configurar esto correctamente
 
 const ChangePassword = () => {

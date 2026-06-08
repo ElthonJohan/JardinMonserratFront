@@ -107,7 +107,15 @@ export default function LoginPage() {
                   >
                     {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
                   </Button>
-                  <p className="text-center mt-3">
+                  <Button
+                    variant="outline-secondary"
+                    size="lg"
+                    className="w-100 fw-bold mt-2"
+                    onClick={() => navigate("/")}
+                  >
+                    Inicio
+                  </Button>
+                  {/* <p className="text-center mt-3">
                     ¿No tienes una cuenta?{" "}
                     <span
                       className="link-register"
@@ -115,7 +123,7 @@ export default function LoginPage() {
                     >
                       Regístrate
                     </span>
-                  </p>
+                  </p> */}
                 </Form>
 
                 <div className="text-center mt-4">

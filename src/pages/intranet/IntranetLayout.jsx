@@ -75,7 +75,7 @@ const IntranetLayout = () => {
             className="logout-btn"
             onClick={() => {
               logout();
-              navigate('/login-parent');
+              navigate('/', { replace: true });
             }}
           >
             Cerrar Sesión

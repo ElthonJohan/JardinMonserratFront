@@ -228,7 +228,37 @@ const ConfiguracionPage = () => {
           )}
 
 
-          
+          {/* Card 6: Gestión de Bancos */}
+          {user?.permissions?.includes('view_banco') && (
+            <Col md={4} className="mt-4">
+              <Card 
+                className="configuracion-card h-100 p-3" 
+                onClick={() => handleNavigation('/bancos')}
+              >
+                <Card.Body className="d-flex flex-column text-center">
+                  <div className="config-card-icon-wrapper">
+                    <span>🏦</span>
+                  </div>
+                  <Card.Title className="configuracion-card-title">
+                    Gestión de Bancos
+                  </Card.Title>
+                  <Card.Text className="configuracion-card-desc flex-grow-1">
+                    Administrar entidades financieras, cuentas y CCIs para pagos automáticos.
+                  </Card.Text>
+                  <Button 
+                    variant="dark" 
+                    className="config-btn-action text-white mt-3 w-100 py-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation('/bancos');
+                    }}
+                  >
+                    Entrar a Bancos
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          )}
         </Row>
       </Container>
     </div>
