@@ -1,17 +1,26 @@
 import { useEffect, useState } from "react";
 
 import "bootstrap/dist/css/bootstrap.min.css";
+import { buscarApoderadoPorDni } from "../../api/estudiantesAPI";
+import toast from "react-hot-toast";
 
-export default function EstudianteForm({ onSubmit, initialData, aulas, apoderados, isEditMode, errors }) {
+export default function EstudianteForm({
+  onSubmit,
+  initialData,
+  aulas,
+  isEditMode,
+  errors,
+}) {
   const initialFormState = {
-    nombres: "",
-    apellidos: "",
-    codigo_estudiante: "",
-    dni: "",
-    fecha_nacimiento: "",
-    aula: "",
+    estudiante: {
+      nombres: "",
+      apellidos: "",
+      dni: "",
+      fecha_nacimiento: "",
+      aula: "",
+    },
+
     apoderado: {
-      id: null,
       nombres: "",
       apellidos: "",
       telefono: "",
@@ -19,10 +28,47 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
       email: "",
       dni: "",
     },
+
+    tipo_relacion: "MADRE",
+    es_principal: true,
   };
 
   const [form, setForm] = useState(initialFormState);
-  const [selectedApoderadoId, setSelectedApoderadoId] = useState("");
+
+
+  const buscarApoderado = async (dni) => {
+
+  if (dni.length !== 8) return;
+
+  try {
+
+    const response =
+      await buscarApoderadoPorDni(dni);
+
+    if (response.exists) {
+
+      setForm(prev => ({
+        ...prev,
+        apoderado: {
+          ...response.data
+        }
+      }));
+
+      toast.success(
+        "Apoderado encontrado"
+      );
+    }
+
+  } catch (error) {
+
+    console.log(
+      "Apoderado no encontrado"
+    );
+    toast.error(
+      "No se encontró un apoderado con ese DNI"
+    );
+  }
+};
 
   useEffect(() => {
     if (initialData) {
@@ -34,7 +80,6 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
           ...(initialData.apoderado || {}),
         },
       });
-      setSelectedApoderadoId(initialData.apoderado?.id || "");
     } else {
       setForm(initialFormState);
     }
@@ -42,6 +87,20 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
   // const handleChange = (e) => {
   //   setForm({ ...form, [e.target.name]: e.target.value });
   // };
+
+  useEffect(() => {
+
+  const dni = form.apoderado.dni;
+
+  if (dni.length !== 8) return;
+
+  const timer = setTimeout(() => {
+    buscarApoderado(dni);
+  }, 500);
+
+  return () => clearTimeout(timer);
+
+}, [form.apoderado.dni]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -59,23 +118,38 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
       if (value !== "" && !/^[A-Za-z0-9]+$/.test(value)) return;
     }
 
-    if (name.startsWith("apoderado.")) {
-      const key = name.split(".")[1];
-      setForm({
-        ...form,
-        apoderado: {
-          ...form.apoderado,
-          [key]: value,
+    if (name.startsWith("estudiante.")) {
+      const field = name.split(".")[1];
+
+      setForm((prev) => ({
+        ...prev,
+        estudiante: {
+          ...prev.estudiante,
+          [field]: value,
         },
-      });
-      // If user edits apoderado fields, clear selectedApoderadoId to indicate a custom/new apoderado
-      if (name !== "apoderado.dni") setSelectedApoderadoId("");
-    } else {
-      setForm({
-        ...form,
-        [name]: value,
-      });
+      }));
+
+      return;
     }
+
+    if (name.startsWith("apoderado.")) {
+      const field = name.split(".")[1];
+
+      setForm((prev) => ({
+        ...prev,
+        apoderado: {
+          ...prev.apoderado,
+          [field]: value,
+        },
+      }));
+
+      return;
+    }
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSelectApoderado = (e) => {
@@ -113,18 +187,12 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // If an existing apoderado was selected, send only `apoderado_id` to avoid nested validation
-    const payload = { ...form };
-    if (selectedApoderadoId) {
-      payload.apoderado_id = selectedApoderadoId;
-      // remove nested apoderado object to avoid confusion
-      delete payload.apoderado;
-    }
+const handleSubmit = (e) => {
 
-    onSubmit(payload);
-  };
+  e.preventDefault();
+
+  onSubmit(form);
+};
 
   return (
     <div className="card-custom">
@@ -134,14 +202,14 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
 
       <form onSubmit={handleSubmit}>
         {/* DATOS DEL ESTUDIANTE */}
-        <div className="row"> 
+        <div className="row">
           <div className="col-md-6 mb-3">
             <input
               name="nombres"
               className="form-control"
               placeholder="Nombres"
               onChange={handleChange}
-              value={form.nombres}
+              value={form.estudiante.nombres}
               type="text"
               required
               autoFocus
@@ -156,7 +224,7 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
               className="form-control"
               placeholder="Apellidos"
               onChange={handleChange}
-              value={form.apellidos}
+              value={form.estudiante.apellidos}
               type="text"
               required
               minLength={3}
@@ -164,21 +232,18 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
             />
           </div>
 
-
           <div className="col-md-6 mb-3">
             <input
               name="dni"
-              className={`form-control ${errors?.dni ? 'is-invalid' : ''}`}
+              className={`form-control ${errors?.dni ? "is-invalid" : ""}`}
               placeholder="DNI Estudiante"
               onChange={handleChange}
-              value={form.dni || ""}
+              value={form.estudiante.dni || ""}
               type="text"
               maxLength={8}
             />
             {errors?.dni && (
-              <div className="invalid-feedback">
-                {errors.dni[0]}
-              </div>
+              <div className="invalid-feedback">{errors.dni[0]}</div>
             )}
           </div>
 
@@ -189,7 +254,7 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
                 className="form-control"
                 placeholder="Código de estudiante"
                 onChange={handleChange}
-                value={form.codigo_estudiante}
+                value={form.estudiante.codigo_estudiante}
                 type="text"
                 required
                 minLength={3}
@@ -198,33 +263,38 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
               />
             </div>
           )}
-          
+
           {/* // Colocar un label para el campo de fecha de nacimiento */}
           <div className="col-md-6 mb-3">
-            <label htmlFor="fecha_nacimiento" className="form-label mb-1 fw-bold text-secondary small">
+            <label
+              htmlFor="fecha_nacimiento"
+              className="form-label mb-1 fw-bold text-secondary small"
+            >
               Fecha de nacimiento
             </label>
             <input
-
               type="date"
               name="fecha_nacimiento"
               className="form-control"
               placeholder="Fecha de nacimiento"
               onChange={handleChange}
-              value={form.fecha_nacimiento}
+              value={form.estudiante.fecha_nacimiento}
               required
             />
           </div>
 
           <div className="col-md-6 mb-3">
-            <label htmlFor="aula" className="form-label mb-1 fw-bold text-secondary small">
+            <label
+              htmlFor="aula"
+              className="form-label mb-1 fw-bold text-secondary small"
+            >
               Aula
             </label>
             <select
               name="aula"
               className="form-select"
               onChange={handleChange}
-              value={form.aula}
+              value={form.estudiante.aula}
             >
               <option value="">Seleccione aula</option>
               {Array.isArray(aulas) &&
@@ -244,7 +314,7 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
         <h6 className="mb-3">Datos del Apoderado</h6>
 
         <div className="row">
-          <div className="col-md-12 mb-3">
+          {/* <div className="col-md-12 mb-3">
             <label className="form-label small">Apoderado existente</label>
             <select
               className="form-select"
@@ -259,7 +329,7 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
                   </option>
                 ))}
             </select>
-          </div>
+          </div> */}
 
           <div className="col-md-6 mb-3">
             <input
@@ -301,19 +371,17 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
             />
           </div>
 
-                {/*Validar que dni sea único*/}
+          {/*Validar que dni sea único*/}
           <div className="col-md-4 mb-3">
             <input
               name="apoderado.dni"
               className="form-control"
-              placeholder="DNI"
-              onChange={handleChange}
-              value={form.apoderado.dni || ""}
-              type="text"
-              required
-              minLength={8}
-              maxLength={8}
-              
+              value={form.apoderado.dni}
+              onChange={(e) => {
+                handleChange(e);
+
+                buscarApoderado(e.target.value);
+              }}
             />
             {errors?.apoderado?.dni && (
               <div className="text-danger small mt-1">
@@ -343,9 +411,25 @@ export default function EstudianteForm({ onSubmit, initialData, aulas, apoderado
               placeholder="Dirección"
               onChange={handleChange}
               value={form.apoderado.direccion}
-              
             />
           </div>
+        </div>
+
+        <div className="col-md-6 mb-3">
+          <label className="form-label">Relación</label>
+
+          <select
+            className="form-select"
+            name="tipo_relacion"
+            value={form.tipo_relacion}
+            onChange={handleChange}
+          >
+            <option value="MADRE">Madre</option>
+            <option value="PADRE">Padre</option>
+            <option value="TUTOR">Tutor</option>
+            <option value="ABUELO">Abuelo</option>
+            <option value="OTRO">Otro</option>
+          </select>
         </div>
 
         {/* BOTÓN */}

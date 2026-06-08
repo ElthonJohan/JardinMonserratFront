@@ -78,3 +78,21 @@ export const getEstudiantesByApoderado = async (apoderadoId) => {
     throw error;
   } 
 };
+
+export const createRegistroAlumno = async (data) => {
+  try {
+    const response = await axiosInstance.post('/registro-alumno/', data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  } 
+};
+
+export const buscarApoderadoPorDni = async (dni) => {
+
+  const response = await axiosInstance.get(
+    `/apoderados/buscar/?dni=${dni}`
+  );
+
+  return response.data;
+};

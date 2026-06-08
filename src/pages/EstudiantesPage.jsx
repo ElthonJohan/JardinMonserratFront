@@ -9,6 +9,7 @@ import {
   deleteEstudiante,
   getAulas,
   getApoderados,
+  createRegistroAlumno,
 } from "../api/estudiantesAPI";
 import axiosInstance from "../api/axiosConfig";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -21,7 +22,6 @@ export default function EstudiantesPage() {
   const navigate = useNavigate();
   const [estudiantes, setEstudiantes] = useState([]);
   const [aulas, setAulas] = useState([]);
-  const [apoderados, setApoderados] = useState([]);
   const [selectedEstudiante, setSelectedEstudiante] = useState(null);
   const [serverErrors, setServerErrors] = useState({});
   const [isEditMode, setIsEditMode] = useState(false);
@@ -29,20 +29,17 @@ export default function EstudiantesPage() {
 
   const loadData = async () => {
     try {
-      const [estRes, aulaRes, apoRes] = await Promise.all([
+      const [estRes, aulaRes] = await Promise.all([
         getEstudiantes(),
         getAulas(),
-        getApoderados(),
       ]);
 
       // 🔥 NORMALIZAR TODO
       const estudiantesData = estRes.results || estRes.data;
       const aulasData = aulaRes.results || aulaRes.data;
-      const apoderadosData = apoRes.results || apoRes.data;
 
       setEstudiantes(Array.isArray(estudiantesData) ? estudiantesData : []);
       setAulas(Array.isArray(aulasData) ? aulasData : []);
-      setApoderados(Array.isArray(apoderadosData) ? apoderadosData : []);
     } catch (error) {
       console.error("ERROR COMPLETO 👉", error);
 
@@ -52,6 +49,8 @@ export default function EstudiantesPage() {
   useEffect(() => {
     loadData();
   }, []);
+
+
 
   const openCreateModal = () => {
     setSelectedEstudiante({});
@@ -68,7 +67,7 @@ export default function EstudiantesPage() {
         await updateEstudiante(selectedEstudiante.id, data);
         toast.success("Actualizado correctamente");
       } else {
-        const res = await createEstudiante(data);
+        const res = await createRegistroAlumno(data);
         
         // Si el backend devolvió credenciales (porque se creó un usuario nuevo)
         if (res && res.generated_credentials) {
@@ -188,7 +187,6 @@ export default function EstudiantesPage() {
                 onSubmit={handleSubmit}
                 initialData={selectedEstudiante}
                 aulas={aulas}
-                apoderados={apoderados}
                 isEditMode={isEditMode}
                 errors={serverErrors} // PASAR ERRORES AL FORMULARIO
               />
