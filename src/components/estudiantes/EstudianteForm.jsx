@@ -7,7 +7,6 @@ import toast from "react-hot-toast";
 export default function EstudianteForm({
   onSubmit,
   initialData,
-  aulas,
   isEditMode,
   errors,
 }) {
@@ -17,7 +16,6 @@ export default function EstudianteForm({
       apellidos: "",
       dni: "",
       fecha_nacimiento: "",
-      aula: "",
     },
 
     apoderado: {
@@ -46,6 +44,8 @@ export default function EstudianteForm({
       await buscarApoderadoPorDni(dni);
 
     if (response.exists) {
+
+      
 
       setForm(prev => ({
         ...prev,
@@ -107,14 +107,23 @@ export default function EstudianteForm({
 
     // Validación preventiva: Solo permitir números en el DNI
     if (name === "apoderado.dni") {
-      if (value !== "" && !/^\d+$/.test(value)) return;
+        
+      setForm(prev => ({
+        ...prev,
+        apoderado: {
+            ...prev.apoderado,
+            id: undefined,
+            dni: value
+        }
+    }));
+        return;
     }
 
-    if (name === "dni") {
-      if (value !== "" && !/^\d+$/.test(value)) return;
-    }
+    if (name === "estudiante.dni") {
+  if (value !== "" && !/^\d+$/.test(value)) return;
+}
 
-    if (name === "codigo_estudiante") {
+    if (name === "estudiante.codigo_estudiante") {
       if (value !== "" && !/^[A-Za-z0-9]+$/.test(value)) return;
     }
 
@@ -152,40 +161,6 @@ export default function EstudianteForm({
     }));
   };
 
-  const handleSelectApoderado = (e) => {
-    const val = e.target.value;
-    setSelectedApoderadoId(val);
-
-    if (!val) {
-      // Nuevo apoderado
-      setForm({
-        ...form,
-        apoderado: { ...initialFormState.apoderado },
-      });
-      return;
-    }
-
-    const existing = Array.isArray(apoderados)
-      ? apoderados.find((a) => String(a.id) === String(val))
-      : null;
-
-    if (existing) {
-      setForm({
-        ...form,
-        apoderado: {
-          id: existing.id,
-          nombres: existing.nombres || "",
-          apellidos: existing.apellidos || "",
-          telefono: existing.telefono || "",
-          direccion: existing.direccion || "",
-          email: existing.email || "",
-          dni: existing.dni || "",
-        },
-      });
-    } else {
-      setForm({ ...form, apoderado: { ...initialFormState.apoderado } });
-    }
-  };
 
 const handleSubmit = (e) => {
 
@@ -205,7 +180,7 @@ const handleSubmit = (e) => {
         <div className="row">
           <div className="col-md-6 mb-3">
             <input
-              name="nombres"
+              name="estudiante.nombres"
               className="form-control"
               placeholder="Nombres"
               onChange={handleChange}
@@ -220,7 +195,7 @@ const handleSubmit = (e) => {
 
           <div className="col-md-6 mb-3">
             <input
-              name="apellidos"
+              name="estudiante.apellidos"
               className="form-control"
               placeholder="Apellidos"
               onChange={handleChange}
@@ -234,7 +209,7 @@ const handleSubmit = (e) => {
 
           <div className="col-md-6 mb-3">
             <input
-              name="dni"
+              name="estudiante.dni"
               className={`form-control ${errors?.dni ? "is-invalid" : ""}`}
               placeholder="DNI Estudiante"
               onChange={handleChange}
@@ -250,7 +225,7 @@ const handleSubmit = (e) => {
           {isEditMode && (
             <div className="col-md-6 mb-3">
               <input
-                name="codigo_estudiante"
+                name="estudiante.codigo_estudiante"
                 className="form-control"
                 placeholder="Código de estudiante"
                 onChange={handleChange}
@@ -274,7 +249,7 @@ const handleSubmit = (e) => {
             </label>
             <input
               type="date"
-              name="fecha_nacimiento"
+              name="estudiante.fecha_nacimiento"
               className="form-control"
               placeholder="Fecha de nacimiento"
               onChange={handleChange}
@@ -283,28 +258,7 @@ const handleSubmit = (e) => {
             />
           </div>
 
-          <div className="col-md-6 mb-3">
-            <label
-              htmlFor="aula"
-              className="form-label mb-1 fw-bold text-secondary small"
-            >
-              Aula
-            </label>
-            <select
-              name="aula"
-              className="form-select"
-              onChange={handleChange}
-              value={form.estudiante.aula}
-            >
-              <option value="">Seleccione aula</option>
-              {Array.isArray(aulas) &&
-                aulas.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.nombre}
-                  </option>
-                ))}
-            </select>
-          </div>
+          
         </div>
 
         {/* SEPARADOR */}
@@ -331,6 +285,25 @@ const handleSubmit = (e) => {
             </select>
           </div> */}
 
+{/*Validar que dni sea único*/}
+          <div className="col-md-4 mb-3">
+            <input
+              name="apoderado.dni"
+              className="form-control"
+              value={form.apoderado.dni}
+              placeholder="DNI Apoderado"
+              required
+              maxLength={8}
+              onChange={(e) => {
+                handleChange(e);
+              }}
+            />
+            {errors?.apoderado?.dni && (
+              <div className="text-danger small mt-1">
+                {errors.apoderado.dni[0]}
+              </div>
+            )}
+          </div>
           <div className="col-md-6 mb-3">
             <input
               name="apoderado.nombres"
@@ -371,24 +344,7 @@ const handleSubmit = (e) => {
             />
           </div>
 
-          {/*Validar que dni sea único*/}
-          <div className="col-md-4 mb-3">
-            <input
-              name="apoderado.dni"
-              className="form-control"
-              value={form.apoderado.dni}
-              onChange={(e) => {
-                handleChange(e);
-
-                buscarApoderado(e.target.value);
-              }}
-            />
-            {errors?.apoderado?.dni && (
-              <div className="text-danger small mt-1">
-                {errors.apoderado.dni[0]}
-              </div>
-            )}
-          </div>
+          
 
           <div className="col-md-4 mb-3">
             <input

@@ -21,7 +21,6 @@ import { AppNavbar, Loading } from '../components/shared';
 export default function EstudiantesPage() {
   const navigate = useNavigate();
   const [estudiantes, setEstudiantes] = useState([]);
-  const [aulas, setAulas] = useState([]);
   const [selectedEstudiante, setSelectedEstudiante] = useState(null);
   const [serverErrors, setServerErrors] = useState({});
   const [isEditMode, setIsEditMode] = useState(false);
@@ -29,17 +28,14 @@ export default function EstudiantesPage() {
 
   const loadData = async () => {
     try {
-      const [estRes, aulaRes] = await Promise.all([
+      const [estRes] = await Promise.all([
         getEstudiantes(),
-        getAulas(),
       ]);
 
       // 🔥 NORMALIZAR TODO
       const estudiantesData = estRes.results || estRes.data;
-      const aulasData = aulaRes.results || aulaRes.data;
 
       setEstudiantes(Array.isArray(estudiantesData) ? estudiantesData : []);
-      setAulas(Array.isArray(aulasData) ? aulasData : []);
     } catch (error) {
       console.error("ERROR COMPLETO 👉", error);
 
@@ -186,7 +182,6 @@ export default function EstudiantesPage() {
                 key={selectedEstudiante ? selectedEstudiante.id : Date.now()} // 🔥 FORZAR RECREACIÓN
                 onSubmit={handleSubmit}
                 initialData={selectedEstudiante}
-                aulas={aulas}
                 isEditMode={isEditMode}
                 errors={serverErrors} // PASAR ERRORES AL FORMULARIO
               />

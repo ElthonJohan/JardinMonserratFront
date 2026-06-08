@@ -5,7 +5,7 @@ import "../../styles/loginParent.css"; // Asegúrate de crear este archivo CSS p
 import logoJardin from "../../images/logoJardin.png"; // Asegúrate de tener esta imagen en tu proyecto
 
 const LoginParent = () => {
-  const [codigo, setCodigo] = useState("");
+  const [dni, setDni] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -20,7 +20,7 @@ const handleSubmit = async (e) => {
 
   try {
     // Usamos la función del contexto que ya maneja la API y el estado
-    const result = await loginParent(codigo, password);
+    const result = await loginParent(dni, password);
 
     if (result.success) {
       console.log("✅ Login de padre exitoso");
@@ -73,7 +73,7 @@ const handleSubmit = async (e) => {
           <div className="form-group">
 
             <label className="form-label">
-              Código de Estudiante
+              DNI
             </label>
 
             <div className="input-container">
@@ -84,8 +84,8 @@ const handleSubmit = async (e) => {
 
               <input
                 type="text"
-                value={codigo}
-                onChange={(e) => setCodigo(e.target.value)}
+                value={dni}
+                onChange={(e) => setDni(e.target.value)}
                 placeholder="Ej: ES0001"
                 className="form-input"
                 required

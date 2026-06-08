@@ -11,7 +11,7 @@ const ProtectedRoute = ({ children, allowedPermissions = [] }) => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   // ==================== LÓGICA PARA APODERADOS ====================
@@ -20,7 +20,7 @@ const ProtectedRoute = ({ children, allowedPermissions = [] }) => {
                      localStorage.getItem("userType") === "parent";
     
     if (!isParent) {
-      return <Navigate to="/login" replace />;
+      return <Navigate to="/" replace />;
     }
     return children;   // Permitir acceso a intranet
   }
