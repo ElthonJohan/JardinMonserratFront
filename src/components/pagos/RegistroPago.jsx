@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { Alert, Button, Col, Form, Row, Spinner } from 'react-bootstrap';
+import React, { useEffect, useState, useMemo } from 'react';
+import { Button, Col, Form, Row, Spinner } from 'react-bootstrap';
 import toast from 'react-hot-toast';
+import AsyncSelect from 'react-select/async';
+import axiosInstance from '../../api/axiosConfig';
 import { DataTable } from '../shared';
-import { createPago, getDeudasByAlumno, getPagosByAlumno } from '../../api/pagosAPI';
+import { createPago, getDeudasByAlumno, getPagosByAlumno, getBancos } from '../../api/pagosAPI';
 import { useNumeroOperacionDuplicado } from '../../hooks/useNumeroOperacionDuplicado';
 
 const getAlumnoLabel = (a) => {
@@ -13,72 +15,133 @@ const getAlumnoLabel = (a) => {
 
 export default function RegistroPago({
   alumnos = [],
-  cajaAbierta = false,
+  cajaAbierta = null,
   onPagoRegistrado = null
 }) {
   const [formData, setFormData] = useState({
     alumno: '',
-    monto_total_entregado: '',
+    banco: '',
     metodo_pago: 'Efectivo',
     numero_operacion: ''
   });
 
+  const [bancos, setBancos] = useState([]);
   const [deudas, setDeudas] = useState([]);
+  const [selectedDeudas, setSelectedDeudas] = useState([]);
   const [loadingDeudas, setLoadingDeudas] = useState(false);
   const [loadingPago, setLoadingPago] = useState(false);
   const [alumnoSeleccionado, setAlumnoSeleccionado] = useState(null);
   const [pagosHistorico, setPagosHistorico] = useState([]);
   const { validarDuplicado } = useNumeroOperacionDuplicado(pagosHistorico);
+  const [selectedAlumnoOption, setSelectedAlumnoOption] = useState(null);
+
+  // Opciones iniciales para el buscador de alumnos basadas en la prop 'alumnos'
+  const alumnoOptions = useMemo(() =>
+    alumnos.map(a => ({
+      value: String(a.id),
+      label: getAlumnoLabel(a),
+      studentData: a
+    })), [alumnos]
+  );
+
+  // Función para buscar alumnos en el servidor dinámicamente
+  const loadOptions = async (search) => {
+    try {
+      const res = await axiosInstance.get(`/estudiantes/?search=${search}`);
+      const data = res.data.results || res.data;
+      return data.map(a => ({
+        value: String(a.id),
+        label: getAlumnoLabel(a),
+        studentData: a
+      }));
+    } catch {
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    const fetchBancos = async () => {
+      try {
+        const res = await getBancos();
+        const bancosArray = Array.isArray(res) ? res : res?.results || [];
+        setBancos(bancosArray);
+      } catch (error) {
+        console.error("Error fetching bancos", error);
+      }
+    };
+    fetchBancos();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => {
+      const nextData = { ...prev, [name]: value };
+      if (name === 'metodo_pago' && ['Efectivo', 'Yape', 'Plin'].includes(value)) {
+        nextData.banco = '';
+      }
+      if (name === 'metodo_pago' && value === 'Efectivo') {
+        nextData.numero_operacion = '';
+      }
+      return nextData;
+    });
   };
 
-  const handleAlumnoChange = async (e) => {
-    const alumnoId = e.target.value;
+  const handleCheckboxChange = (deudaId) => {
+    setSelectedDeudas(prev =>
+      prev.includes(deudaId)
+        ? prev.filter(id => id !== deudaId)
+        : [...prev, deudaId]
+    );
+  };
+
+  const handleAlumnoChange = async (selectedOption) => {
+    const alumnoId = selectedOption ? selectedOption.value : '';
+    setSelectedAlumnoOption(selectedOption);
     setFormData((prev) => ({ ...prev, alumno: alumnoId }));
+    setSelectedDeudas([]);
 
     if (!alumnoId) {
-        setDeudas([]);
-        setAlumnoSeleccionado(null);
-        setPagosHistorico([]);
-        return;
+      setDeudas([]);
+      setAlumnoSeleccionado(null);
+      setPagosHistorico([]);
+      return;
     }
 
     setLoadingDeudas(true);
     try {
-        const alumno = alumnos.find((a) => String(a.id) === String(alumnoId));
-        setAlumnoSeleccionado(alumno);
+      setAlumnoSeleccionado(selectedOption.studentData);
 
-        const [deudasRes, pagosRes] = await Promise.all([
+      const [deudasRes, pagosRes] = await Promise.all([
         getDeudasByAlumno(alumnoId, false),
         getPagosByAlumno(alumnoId)
-        ]);
+      ]);
 
-        const deudasArray = Array.isArray(deudasRes) ? deudasRes : deudasRes?.results || [];
-        const pagosArray = Array.isArray(pagosRes) ? pagosRes : pagosRes?.results || [];
+      const deudasArray = Array.isArray(deudasRes) ? deudasRes : deudasRes?.results || [];
+      const pagosArray = Array.isArray(pagosRes) ? pagosRes : pagosRes?.results || [];
 
-        setDeudas(deudasArray);
-        setPagosHistorico(pagosArray);
+      setDeudas(deudasArray);
+      setPagosHistorico(pagosArray);
 
-        // ✅ Cambiado: Solo info, no error
-        if (deudasArray.length === 0) {
+      if (deudasArray.length === 0) {
         toast.info('El alumno no tiene deudas pendientes', {
-            icon: 'ℹ️',
-            duration: 3000
+          icon: 'ℹ️',
+          duration: 3000
         });
-        }
+      }
     } catch (error) {
-        // ✅ Solo aquí va el error (problemas de red, servidor, etc.)
-        toast.error('Error al cargar los datos. Intenta nuevamente.');
-        console.error('Error fetching data:', error);
-        setDeudas([]);
-        setPagosHistorico([]);
+      toast.error('Error al cargar los datos. Intenta nuevamente.');
+      console.error('Error fetching data:', error);
+      setDeudas([]);
+      setPagosHistorico([]);
     } finally {
-        setLoadingDeudas(false);
+      setLoadingDeudas(false);
     }
-    };
+  };
+
+  const montoTotalSeleccionado = selectedDeudas.reduce((acc, deudaId) => {
+    const deuda = deudas.find(d => d.id === deudaId);
+    return acc + (deuda ? parseFloat(deuda.saldo_pendiente) : 0);
+  }, 0);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -88,8 +151,14 @@ export default function RegistroPago({
       return;
     }
 
-    if (!formData.monto_total_entregado || parseFloat(formData.monto_total_entregado) <= 0) {
-      toast.error('Ingresa un monto válido mayor a cero');
+    if (selectedDeudas.length === 0) {
+      toast.error('Selecciona al menos una deuda para pagar');
+      return;
+    }
+
+    const requiereBanco = ['Transferencia', 'Depósito'].includes(formData.metodo_pago);
+    if (requiereBanco && !formData.banco) {
+      toast.error('El banco es obligatorio para transferencias o depósitos');
       return;
     }
 
@@ -105,11 +174,28 @@ export default function RegistroPago({
 
     setLoadingPago(true);
     try {
+      const detalles_pago = selectedDeudas.map(id => {
+        const deuda = deudas.find(d => d.id === id);
+        return {
+          deuda_id: id,
+          monto_asignado: parseFloat(deuda.saldo_pendiente)
+        };
+      });
+
       const payloadData = {
         alumno: parseInt(formData.alumno),
-        monto_total_entregado: parseFloat(formData.monto_total_entregado),
-        metodo_pago: formData.metodo_pago
+        monto_total_entregado: montoTotalSeleccionado,
+        metodo_pago: formData.metodo_pago,
+        detalles_pago: detalles_pago
       };
+
+      if (cajaAbierta && cajaAbierta.id) {
+        payloadData.caja = cajaAbierta.id;
+      }
+
+      if (formData.metodo_pago !== 'Efectivo' && formData.banco) {
+        payloadData.banco = parseInt(formData.banco);
+      }
 
       if (formData.numero_operacion.trim()) {
         payloadData.numero_operacion = formData.numero_operacion.trim();
@@ -118,17 +204,19 @@ export default function RegistroPago({
       const result = await createPago(payloadData);
 
       toast.success(
-        `Pago registrado correctamente. Monto aplicado: S/ ${result.monto_aplicado || result.monto_total_entregado}`
+        `Pago registrado correctamente. Estado: ${result.estado || 'REGISTRADO'}`
       );
 
       setFormData({
         alumno: '',
-        monto_total_entregado: '',
+        banco: '',
         metodo_pago: 'Efectivo',
         numero_operacion: ''
       });
       setDeudas([]);
+      setSelectedDeudas([]);
       setAlumnoSeleccionado(null);
+      setSelectedAlumnoOption(null);
       setPagosHistorico([]);
 
       if (onPagoRegistrado) {
@@ -136,7 +224,6 @@ export default function RegistroPago({
       }
     } catch (error) {
       const errorMsg = error.response?.data?.numero_operacion?.[0] ||
-        error.response?.data?.caja?.[0] ||
         error.response?.data?.detail ||
         'Error al registrar el pago';
       toast.error(errorMsg);
@@ -148,11 +235,34 @@ export default function RegistroPago({
 
   const deudasColumns = [
     {
+      key: 'select',
+      label: 'Acción',
+      render: (_, row) => {
+        const isSelected = selectedDeudas.includes(row.id);
+        return (
+          <div className="text-center">
+            <Button
+              variant={isSelected ? "success" : "outline-primary"}
+              size="sm"
+              onClick={() => handleCheckboxChange(row.id)}
+              className="fw-bold"
+              style={{ minWidth: '110px' }}
+            >
+              {isSelected ? "✓ Seleccionado" : "Seleccionar"}
+            </Button>
+          </div>
+        );
+      }
+    },
+    {
       key: 'concepto_detail',
       label: 'Concepto',
       render: (val, row) => {
+        const index = deudas.findIndex(d => d.id === row.id);
+        const numero = index !== -1 ? `${index + 1}` : '';
         const nombre = val?.nombre || 'N/A';
-        return row.detalle_adicional ? `${nombre} - ${row.detalle_adicional}` : nombre;
+        const displayNombre = row.detalle_adicional ? `${nombre} - ${row.detalle_adicional}` : nombre;
+        return `${numero}. ${displayNombre}`;
       }
     },
     {
@@ -161,8 +271,8 @@ export default function RegistroPago({
       render: (val) => {
         if (!val) return 'Anual';
         const meses = [
-          'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
-          'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
+          'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
         ];
         return meses[val - 1] || val;
       }
@@ -190,58 +300,44 @@ export default function RegistroPago({
 
   return (
     <div className="registro-pago-container">
-      {!cajaAbierta && (
-        <Alert variant="warning" className="mb-4">
-          ⚠️ La caja no está abierta. Abre una caja para registrar pagos.
-        </Alert>
-      )}
-
-      <Form onSubmit={handleSubmit} disabled={!cajaAbierta}>
+      <Form onSubmit={handleSubmit}>
         <Row>
           <Col md={8}>
             <Form.Group className="mb-3">
-              <Form.Label>Alumno *</Form.Label>
-              <Form.Select
-                name="alumno"
-                value={formData.alumno}
+              <Form.Label>Alumno <span style={{ color: 'red' }}>*</span></Form.Label>
+              <AsyncSelect
+                cacheOptions
+                defaultOptions={alumnoOptions}
+                loadOptions={loadOptions}
+                placeholder="Escribe para buscar un alumno..."
+                value={selectedAlumnoOption}
                 onChange={handleAlumnoChange}
-                disabled={!cajaAbierta}
-              >
-                <option value="">-- Seleccionar alumno --</option>
-                {alumnos.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {getAlumnoLabel(a)}
-                  </option>
-                ))}
-              </Form.Select>
+                isClearable
+                noOptionsMessage={() => "No se encontraron alumnos"}
+                loadingMessage={() => "Buscando..."}
+              />
             </Form.Group>
           </Col>
           <Col md={4}>
             <Form.Group className="mb-3">
-              <Form.Label>Monto Entregado *</Form.Label>
-              <Form.Control
-                type="number"
-                name="monto_total_entregado"
-                value={formData.monto_total_entregado}
-                onChange={handleInputChange}
-                placeholder="0.00"
-                step="0.01"
-                min="0"
-                disabled={!cajaAbierta}
-              />
+              <Form.Label>Monto a Pagar</Form.Label>
+              <div className="p-2 bg-light border border-success rounded d-flex align-items-center justify-content-center">
+                <span className="fw-bold text-success" style={{ fontSize: '1.25rem' }}>
+                  S/ {montoTotalSeleccionado.toFixed(2)}
+                </span>
+              </div>
             </Form.Group>
           </Col>
         </Row>
 
         <Row>
-          <Col md={6}>
+          <Col md={4}>
             <Form.Group className="mb-3">
-              <Form.Label>Método de Pago *</Form.Label>
+              <Form.Label>Método de Pago <span style={{ color: 'red' }}>*</span></Form.Label>
               <Form.Select
                 name="metodo_pago"
                 value={formData.metodo_pago}
                 onChange={handleInputChange}
-                disabled={!cajaAbierta}
               >
                 <option value="Efectivo">Efectivo</option>
                 <option value="Yape">Yape</option>
@@ -251,11 +347,26 @@ export default function RegistroPago({
               </Form.Select>
             </Form.Group>
           </Col>
-          <Col md={6}>
+          <Col md={4}>
+            <Form.Group className="mb-3">
+              <Form.Label>Banco Destino <span style={{ color: 'red' }}>{['Transferencia', 'Depósito'].includes(formData.metodo_pago) && '*'}</span></Form.Label>
+              <Form.Select
+                name="banco"
+                value={formData.banco}
+                onChange={handleInputChange}
+                disabled={['Efectivo', 'Yape', 'Plin'].includes(formData.metodo_pago)}
+              >
+                <option value="">-- Seleccionar banco --</option>
+                {bancos.map(b => (
+                  <option key={b.id} value={b.id}>{b.nombre}</option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+          </Col>
+          <Col md={4}>
             <Form.Group className="mb-3">
               <Form.Label>
-                Número de Operación
-                {formData.metodo_pago !== 'Efectivo' && ' *'}
+                Número de Operación <span style={{ color: 'red' }}>{formData.metodo_pago !== 'Efectivo' && '*'}</span>
               </Form.Label>
               <Form.Control
                 type="text"
@@ -263,7 +374,7 @@ export default function RegistroPago({
                 value={formData.numero_operacion}
                 onChange={handleInputChange}
                 placeholder={formData.metodo_pago === 'Efectivo' ? 'No requerido' : 'Ingresa el número'}
-                disabled={!cajaAbierta}
+                disabled={formData.metodo_pago === 'Efectivo'}
               />
             </Form.Group>
           </Col>
@@ -273,7 +384,7 @@ export default function RegistroPago({
           <Button
             variant="primary"
             type="submit"
-            disabled={!cajaAbierta || loadingPago}
+            disabled={loadingPago || selectedDeudas.length === 0}
           >
             {loadingPago ? (
               <>
@@ -281,7 +392,7 @@ export default function RegistroPago({
                 Registrando...
               </>
             ) : (
-              '✅ Registrar Pago'
+              'Registrar Pago'
             )}
           </Button>
           <Button
@@ -290,14 +401,15 @@ export default function RegistroPago({
             onClick={() => {
               setFormData({
                 alumno: '',
-                monto_total_entregado: '',
+                banco: '',
                 metodo_pago: 'Efectivo',
                 numero_operacion: ''
               });
               setDeudas([]);
+              setSelectedDeudas([]);
               setAlumnoSeleccionado(null);
+              setSelectedAlumnoOption(null);
             }}
-            disabled={!cajaAbierta}
           >
             Limpiar
           </Button>
@@ -317,8 +429,7 @@ export default function RegistroPago({
           />
           {!loadingDeudas && deudas.length > 0 && (
             <div className="alert alert-info mt-3">
-              💡 <strong>Nota:</strong> El sistema distribuirá el pago automáticamente (FIFO)
-              a las deudas más antiguas primero.
+              💡 <strong>Instrucciones:</strong> Marca las deudas que deseas pagar. El monto total se calculará automáticamente y el pago entrará en revisión.
             </div>
           )}
         </div>

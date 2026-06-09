@@ -81,10 +81,10 @@ export const AuthProvider = ({ children }) => {
  
 
 // Login para Apoderados
-  const loginParent = async (codigo_estudiante, password) => {
+  const loginParent = async (dni, password) => {
     try {
       const response = await axiosInstance.post("/auth/login-parent/", {
-        codigo_estudiante,
+        dni,
         password,
       });
 

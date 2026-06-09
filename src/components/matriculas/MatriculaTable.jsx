@@ -39,7 +39,7 @@ export default function MatriculaTable({
       {
         key:'periodo_academico',
         label: 'Año lectivo',
-        render: (_v, row) => row.periodo_academico_detail?.nombre || row.periodo_academico || '-'
+        render: (_v, row) => `${row.periodo_academico_detail?.nombre} - ${row.periodo_academico_detail?.anio}` || row.periodo_academico || '-'
       },
       {
         key: 'fecha_matricula',

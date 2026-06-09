@@ -1,7 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
 import '../../styles/intranetProfile.css';
-import { getEstudiantesByApoderado } from '../../api/estudiantesAPI';
 import  axiosInstance  from '../../api/axiosConfig';
 import { useEffect, useState } from 'react';
 
@@ -26,7 +25,7 @@ console.log(response.data);
         };
 
         fetchProfile();
-    }, [user.id]);
+    }, [user]);
 
 if (!userData) {
     return <p>Cargando perfil...</p>;
@@ -63,6 +62,14 @@ if (!userData) {
           <h2>
             {userData.nombres} {userData.apellidos}
           </h2>
+
+          <h2>
+  {userData.nombres} {userData.apellidos}
+</h2>
+
+<p className="text-muted">
+  Hijos registrados: {userData.hijos?.length || 0}
+</p>
 
           <span className="profile-role">
             {userData.role}
@@ -138,41 +145,70 @@ if (!userData) {
         {/* STUDENTS */}
         <div className="profile-card">
 
-          <h3 className="profile-card-title">
-            Hijos Registrados
-          </h3>
+  <h3 className="profile-card-title">
+    Hijos Registrados
+  </h3>
 
-          {userData.estudiantes?.map((student) => (
+  {
+    userData.hijos?.length > 0 ? (
 
-            <div
-              key={student.id}
-              className="student-card"
-            >
+      userData.hijos.map((hijo) => (
 
-              <div className="student-avatar">
-                👦
-              </div>
+        <div
+          key={hijo.id}
+          className="student-card"
+        >
 
-              <div className="student-info">
-                <h3>
-                    {student.codigo_estudiante}
-                </h3>
+          <div className="student-avatar">
+            👦
+          </div>
 
-                <h4>
-                  {student.nombres} {student.apellidos}
-                </h4>
+          <div className="student-info">
 
-                <p>
-                  {student.aula_nombre}
-                </p>
+            <h3>
+              {hijo.codigo_estudiante}
+            </h3>
 
-              </div>
+            <h4>
+              {hijo.nombre}
+            </h4>
 
-            </div>
+            <p>
+              Relación: {hijo.tipo_relacion}
+            </p>
+            <p>
+  {hijo.tipo_relacion === "PADRE" && "👨 Padre"}
+  {hijo.tipo_relacion === "MADRE" && "👩 Madre"}
+  {hijo.tipo_relacion === "TUTOR" && "🧑 Tutor"}
+  {hijo.tipo_relacion === "ABUELO" && "👴 Abuelo"}
+</p>
 
-          ))}
+            {
+              hijo.es_principal && (
+                <span
+                  className="badge bg-success"
+                >
+                  Principal
+                </span>
+              )
+            }
+
+          </div>
 
         </div>
+
+      ))
+
+    ) : (
+
+      <div className="alert alert-info">
+        No tiene hijos registrados.
+      </div>
+
+    )
+  }
+
+</div>
 
       </div>
 

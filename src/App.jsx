@@ -23,6 +23,9 @@ import ConfiguracionPage from "./pages/ConfiguracionPage";
 import UsuariosPage from "./pages/UsuariosPage";
 import RolesPage from "./pages/RolesPage";
 import PeriodosPage from "./pages/PeriodosPage";
+import BancosPage from "./pages/BancosPage";
+import ValidacionPagos from "./components/pagos/ValidacionPagos";
+import PagosPendientesPage from "./pages/PagosPendientesPage";
 import Payments from "./pages/intranet/Payments";
 import LoginParent from "./pages/intranet/LoginParent";
 import IntranetLayout from "./pages/intranet/IntranetLayout";
@@ -108,10 +111,26 @@ function App() {
               }
             />
             <Route
+              path="/validacion-pagos"
+              element={
+                <ProtectedRoute allowedPermissions={["view_pago"]}>
+                  <ValidacionPagos />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/conceptos"
               element={
                 <ProtectedRoute allowedPermissions={["view_conceptopago"]}>
                   <ConceptosPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/pagos-pendientes"
+              element={
+                <ProtectedRoute allowedPermissions={["view_pago"]}>
+                  <PagosPendientesPage />
                 </ProtectedRoute>
               }
             />
@@ -153,6 +172,14 @@ function App() {
               element={
                 <ProtectedRoute allowedPermissions={["view_group"]}>
                   <RolesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/bancos"
+              element={
+                <ProtectedRoute allowedPermissions={["view_banco"]}>
+                  <BancosPage />
                 </ProtectedRoute>
               }
             />
