@@ -1,7 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { Alert, Badge, Button, Card, Col, Form, Row, Spinner, Table } from 'react-bootstrap';
 import toast from 'react-hot-toast';
 import { useReactToPrint } from 'react-to-print';
+import AsyncSelect from 'react-select/async';
+import axiosInstance from '../../api/axiosConfig';
 import { DataTable } from '../shared';
 import { getDeudasHistoricas, getPagosByAlumno } from '../../api/pagosAPI';
 import ModalNuevoCargo from './ModalNuevoCargo';
@@ -23,6 +25,30 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
 
   const [pagoAImprimir, setPagoAImprimir] = useState(null);
   const componentRef = useRef(null);
+
+  // Opciones iniciales para el buscador de alumnos
+  const alumnoOptions = useMemo(() =>
+    alumnos.map(a => ({
+      value: String(a.id),
+      label: getAlumnoLabel(a),
+      studentData: a
+    })), [alumnos]
+  );
+
+  // Función para buscar alumnos en el servidor dinámicamente
+  const loadOptions = async (search) => {
+    try {
+      const res = await axiosInstance.get(`/estudiantes/?search=${search}`);
+      const data = res.data.results || res.data;
+      return data.map(a => ({
+        value: String(a.id),
+        label: getAlumnoLabel(a),
+        studentData: a
+      }));
+    } catch {
+      return [];
+    }
+  };
 
   const handlePrint = useReactToPrint({
     contentRef: componentRef,
@@ -64,18 +90,17 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
     }
   };
 
-  const handleAlumnoChange = (e) => {
-    const alumnoId = e.target.value;
-    if (!alumnoId) {
+  const handleAlumnoChange = (selectedOption) => {
+    if (!selectedOption) {
       setAlumnoSeleccionado(null);
       setPagos([]);
       setDeudas([]);
       return;
     }
 
-    const alumno = alumnos.find((a) => String(a.id) === String(alumnoId));
+    const alumno = selectedOption.studentData;
     setAlumnoSeleccionado(alumno);
-    cargarDatos(alumnoId);
+    cargarDatos(alumno.id);
   };
 
   const calcularTotalesPorAlumno = () => {
@@ -174,18 +199,20 @@ export default function AuditoriaAlumno({ alumnos = [] }) {
         <Col md={8}>
           <Form.Group>
             <Form.Label className="fw-bold">Selecciona Alumno para Auditoría</Form.Label>
-            <Form.Select
-              value={alumnoSeleccionado?.id || ''}
+            <AsyncSelect
+              cacheOptions
+              defaultOptions={alumnoOptions}
+              loadOptions={loadOptions}
+              placeholder="Escribe para buscar un alumno..."
+              value={alumnoSeleccionado ? { 
+                value: String(alumnoSeleccionado.id), 
+                label: getAlumnoLabel(alumnoSeleccionado) 
+              } : null}
               onChange={handleAlumnoChange}
-              size="sm"
-            >
-              <option value="">-- Seleccionar alumno --</option>
-              {alumnos.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {getAlumnoLabel(a)}
-                </option>
-              ))}
-            </Form.Select>
+              isClearable
+              noOptionsMessage={() => "No se encontraron alumnos"}
+              loadingMessage={() => "Buscando..."}
+            />
           </Form.Group>
         </Col>
         <Col md={4} className="mt-2 mt-md-0">
