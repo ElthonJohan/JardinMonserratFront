@@ -29,6 +29,24 @@ const fetchAllPages = async (url, params = {}) => {
   }
   return allResults;
 };
+export const registrarPagoParent = async (
+  formData
+) => {
+
+  const response =
+    await axiosInstance.post(
+      "/pagos/parent/registrar-pago/",
+      formData,
+      {
+        headers: {
+          "Content-Type":
+            "multipart/form-data"
+        }
+      }
+    );
+
+  return response.data;
+};
 
 export const getPagosPendientes = async () => {
 

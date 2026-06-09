@@ -17,6 +17,7 @@ import {
 
 import PagosPendientesTable
 from "../components/pagos/PagosPendientesTable";
+import { AppNavbar } from "../components/shared";
 
 export default function PagosPendientesPage() {
     
@@ -147,6 +148,8 @@ async () => {
 
 return (
 <>
+<AppNavbar />
+
 <div className="container">
 
   <h2 className="mb-4">

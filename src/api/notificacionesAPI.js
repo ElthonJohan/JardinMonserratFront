@@ -19,3 +19,13 @@ export const marcarNotificacionLeida = async (id) => {
     throw error;
   }
 };
+
+export const marcarTodasLeidas = async () => {
+
+  const response =
+    await axiosInstance.patch(
+      "/notificaciones/marcar_todas/"
+    );
+
+  return response.data;
+};

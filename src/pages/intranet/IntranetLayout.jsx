@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import CampanitaNotificaciones from '../../components/shared/CampanitaNotificaciones';
 
 import '../../styles/intranetLayout.css';
 
@@ -97,9 +98,15 @@ const IntranetLayout = () => {
           </div>
 
           <div className="topbar-user">
-            <h3>{user?.full_name}</h3>
-            <span>Apoderado</span>
-          </div>
+
+  <CampanitaNotificaciones />
+
+  <div className="user-info">
+    <h4>{user?.full_name}</h4>
+    <span>Apoderado</span>
+  </div>
+
+</div>
 
         </div>
 
