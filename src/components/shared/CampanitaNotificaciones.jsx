@@ -76,47 +76,47 @@ export default function CampanitaNotificaciones() {
   useEffect(() => {
     fetchNotificaciones();
 
-    const interval = setInterval(fetchNotificaciones, 30000);
+    const interval = setInterval(fetchNotificaciones, 5000);
 
     return () => clearInterval(interval);
   }, [fetchNotificaciones]);
 
-const handleNotificacionClick = async (notificacion) => {
+  const handleNotificacionClick = async (notificacion) => {
 
-  try {
+    try {
 
-    if (!notificacion.leido) {
+      if (!notificacion.leido) {
 
-      await marcarNotificacionLeida(
-        notificacion.id
-      );
+        await marcarNotificacionLeida(
+          notificacion.id
+        );
 
-      setNotificaciones((prev) =>
-        prev.map((n) =>
-          n.id === notificacion.id
-            ? { ...n, leido: true }
-            : n
-        ),
-      );
+        setNotificaciones((prev) =>
+          prev.map((n) =>
+            n.id === notificacion.id
+              ? { ...n, leido: true }
+              : n
+          ),
+        );
 
+
+      }
+
+      if (notificacion.ruta) {
+
+        navigate(
+          notificacion.ruta
+        );
+
+      }
+
+    } catch (error) {
+
+      console.error(error);
 
     }
 
-    if (notificacion.ruta) {
-
-      navigate(
-        notificacion.ruta
-      );
-
-    }
-
-  } catch (error) {
-
-    console.error(error);
-
-  }
-
-};
+  };
 
   const handleMarcarTodas = async () => {
     try {
@@ -237,7 +237,7 @@ const handleNotificacionClick = async (notificacion) => {
                 </strong>
 
                 {!n.leido && (
-                  <Badge bg="primary" pill>
+                  <Badge bg="primary text-white" pill>
                     Nuevo
                   </Badge>
                 )}

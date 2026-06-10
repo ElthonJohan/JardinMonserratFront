@@ -1,27 +1,73 @@
-// src/components/intranet/PagoModal.jsx
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal } from "react-bootstrap";
 import toast from "react-hot-toast";
 
-import { registrarPagoParent } from "../../api/pagosAPI";
+import { registrarPagoParent, getBancos } from "../../api/pagosAPI";
 
 export default function PagoModal({ show, onHide, deudas, onSuccess }) {
-  console.log("DEUDAS RECIBIDAS:",deudas);
+  console.log("DEUDAS RECIBIDAS:", deudas);
 
   const [loading, setLoading] = useState(false);
+  const [selectedDeudas, setSelectedDeudas] = useState([]);
+  const [bancos, setBancos] = useState([]);
 
   const [formData, setFormData] = useState({
-    deuda_id: "",
-    monto: "",
     metodo_pago: "Yape",
     numero_operacion: "",
+    banco: "",
     comprobante_img: null,
   });
 
+  // Cargar bancos al montar el componente
+  useEffect(() => {
+    const fetchBancos = async () => {
+      try {
+        const res = await getBancos();
+        const bancosArray = Array.isArray(res) ? res : res?.results || [];
+        setBancos(bancosArray);
+      } catch (err) {
+        console.error("Error al obtener bancos:", err);
+      }
+    };
+    fetchBancos();
+  }, []);
+
+  // Resetear estados cuando se abre/cierra el modal
+  useEffect(() => {
+    if (show) {
+      setSelectedDeudas([]);
+      setFormData({
+        metodo_pago: "Yape",
+        numero_operacion: "",
+        banco: "",
+        comprobante_img: null,
+      });
+    }
+  }, [show]);
+
+  const montoTotalSeleccionado = selectedDeudas.reduce((acc, deudaId) => {
+    const deuda = deudas.find((d) => d.id === deudaId);
+    return acc + (deuda ? parseFloat(deuda.saldo_pendiente) : 0);
+  }, 0);
+
+  const handleToggleDeuda = (deudaId) => {
+    setSelectedDeudas((prev) =>
+      prev.includes(deudaId)
+        ? prev.filter((id) => id !== deudaId)
+        : [...prev, deudaId]
+    );
+  };
+
   const handleSubmit = async () => {
-    if (!formData.deuda_id) {
-      toast.error("Seleccione una deuda");
+    if (selectedDeudas.length === 0) {
+      toast.error("Seleccione al menos una deuda");
+      return;
+    }
+
+    const requiereBanco = ["Transferencia", "Depósito"].includes(formData.metodo_pago);
+
+    if (requiereBanco && !formData.banco) {
+      toast.error("Seleccione el banco");
       return;
     }
 
@@ -39,35 +85,39 @@ export default function PagoModal({ show, onHide, deudas, onSuccess }) {
       setLoading(true);
 
       const data = new FormData();
+      // Enviar deuda_id para compatibilidad con backend antiguo si existiese
+      data.append("deuda_id", selectedDeudas[0]);
+      
+      // Enviar lista de ids para soporte de múltiples deudas
+      selectedDeudas.forEach((id) => {
+        data.append("deudas_ids", id);
+      });
 
-      data.append("deuda_id", formData.deuda_id);
-
-      data.append("monto", formData.monto);
-
+      data.append("monto", montoTotalSeleccionado.toFixed(2));
       data.append("metodo_pago", formData.metodo_pago);
-
       data.append("numero_operacion", formData.numero_operacion);
-
       data.append("comprobante_img", formData.comprobante_img);
+
+      if (requiereBanco && formData.banco) {
+        data.append("banco", formData.banco);
+      }
 
       await registrarPagoParent(data);
 
       toast.success("Pago registrado correctamente");
 
+      setSelectedDeudas([]);
       setFormData({
-        deuda_id: "",
-        monto: "",
         metodo_pago: "Yape",
         numero_operacion: "",
+        banco: "",
         comprobante_img: null,
       });
 
       onSuccess();
-
       onHide();
     } catch (error) {
       console.error(error);
-
       toast.error(error?.response?.data?.message || "Error al registrar pago");
     } finally {
       setLoading(false);
@@ -82,51 +132,67 @@ export default function PagoModal({ show, onHide, deudas, onSuccess }) {
 
       <Modal.Body>
         <div className="mb-3">
-          <label>Deuda</label>
+          <label className="form-label fw-bold">Seleccionar deudas a pagar</label>
+          {deudas?.length === 0 ? (
+            <div className="text-muted small">No hay deudas pendientes.</div>
+          ) : (
+            <div className="list-group" style={{ maxHeight: "250px", overflowY: "auto" }}>
+              {deudas?.map((deuda) => {
+                const getNombreMes = (num) => {
+                  const meses = [
+                    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+                  ];
+                  return meses[num - 1] || "";
+                };
 
-          <select
-            className="form-select"
-            value={formData.deuda_id}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                deuda_id: e.target.value,
-              })
-            }
-          >
-            <option value="">Seleccione</option>
+                const conceptoNombre = deuda.concepto_detail?.nombre || deuda.concepto_nombre || "Concepto";
+                const mesNombre = deuda.mes ? ` - ${getNombreMes(deuda.mes)} ${deuda.anio}` : "";
+                const detalleAdicional = deuda.detalle_adicional ? ` (${deuda.detalle_adicional})` : "";
+                const isSelected = selectedDeudas.includes(deuda.id);
 
-            {deudas?.map((deuda) => (
-              <option key={deuda.id} value={deuda.id}>
-                {deuda.alumno_nombre}
-
-                {" - "}
-
-                {deuda.concepto_nombre}
-
-                {" - S/"}
-
-                {deuda.saldo_pendiente}
-              </option>
-            ))}
-          </select>
+                return (
+                  <label 
+                    key={deuda.id} 
+                    className={`list-group-item d-flex justify-content-between align-items-center ${isSelected ? 'list-group-item-success' : ''}`}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <div className="d-flex align-items-center">
+                      <input
+                        type="checkbox"
+                        className="form-check-input me-3"
+                        checked={isSelected}
+                        onChange={() => handleToggleDeuda(deuda.id)}
+                      />
+                      <div>
+                        <span className="fw-semibold small">{conceptoNombre}{mesNombre}</span>
+                        {detalleAdicional && <div className="text-muted" style={{ fontSize: "0.75rem" }}>{detalleAdicional}</div>}
+                        <div className="text-muted" style={{ fontSize: "0.75rem" }}>
+                          Vence: {new Date(deuda.fecha_vencimiento).toLocaleDateString("es-PE")}
+                        </div>
+                      </div>
+                    </div>
+                    <span className="fw-bold text-success small">
+                      S/ {Number(deuda.saldo_pendiente).toFixed(2)}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+          )}
         </div>
+
         <div className="mb-3">
-          <label>Monto a pagar</label>
-            <input
-              className="form-control"
-                value={formData.monto}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    monto: e.target.value,
-                  })
-                }
-              />
+          <label className="form-label fw-bold">Monto a pagar</label>
+          <div className="p-2 bg-light border border-success rounded d-flex align-items-center justify-content-center">
+            <span className="fw-bold text-success" style={{ fontSize: '1.25rem' }}>
+              S/ {montoTotalSeleccionado.toFixed(2)}
+            </span>
+          </div>
         </div>
 
         <div className="mb-3">
-          <label>Método de pago</label>
+          <label className="form-label fw-bold">Método de pago</label>
 
           <select
             className="form-select"
@@ -135,21 +201,42 @@ export default function PagoModal({ show, onHide, deudas, onSuccess }) {
               setFormData({
                 ...formData,
                 metodo_pago: e.target.value,
+                banco: ["Transferencia", "Depósito"].includes(e.target.value) ? formData.banco : "",
               })
             }
           >
             <option>Yape</option>
-
             <option>Plin</option>
-
             <option>Transferencia</option>
-
             <option>Depósito</option>
           </select>
         </div>
 
+        {["Transferencia", "Depósito"].includes(formData.metodo_pago) && (
+          <div className="mb-3">
+            <label className="form-label fw-bold">Banco</label>
+            <select
+              className="form-select"
+              value={formData.banco}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  banco: e.target.value,
+                })
+              }
+            >
+              <option value="">-- Seleccionar banco --</option>
+              {bancos.map((b) => (
+                <option key={b.id} value={b.id}>
+                  {b.nombre} {b.numero_cuenta ? `- ${b.numero_cuenta}` : ""}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
         <div className="mb-3">
-          <label>Número operación</label>
+          <label className="form-label fw-bold">Número operación</label>
 
           <input
             className="form-control"
@@ -164,7 +251,7 @@ export default function PagoModal({ show, onHide, deudas, onSuccess }) {
         </div>
 
         <div className="mb-3">
-          <label>Voucher</label>
+          <label className="form-label fw-bold">Voucher</label>
 
           <input
             type="file"
@@ -182,21 +269,15 @@ export default function PagoModal({ show, onHide, deudas, onSuccess }) {
 
       <Modal.Footer>
         <button
-          className="
-            btn
-            btn-secondary
-          "
+          className="btn btn-secondary"
           onClick={onHide}
         >
           Cancelar
         </button>
 
         <button
-          className="
-            btn
-            btn-primary
-          "
-          disabled={loading}
+          className="btn btn-primary"
+          disabled={loading || selectedDeudas.length === 0}
           onClick={handleSubmit}
         >
           {loading ? "Registrando..." : "Registrar Pago"}

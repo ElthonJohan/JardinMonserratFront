@@ -145,86 +145,96 @@ export default function ValidacionPagos() {
                 </div>
               ) : (
                 <div className="table-responsive">
-              <Table striped bordered hover align="middle">
-                <thead className="table-light">
-                  <tr>
-                    <th>Fecha Registro</th>
-                    <th>Alumno</th>
-                    <th>Monto</th>
-                    <th>Método / Banco</th>
-                    <th>Operación</th>
-                    <th>Voucher</th>
-                    <th className="text-center">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pagosFiltrados.map((pago) => (
-                    <tr key={pago.id}>
-                      <td>{new Date(pago.fecha_pago).toLocaleString('es-PE')}</td>
-                      <td>
-                        {pago.alumno_detail?.nombres} {pago.alumno_detail?.apellidos}
-                        <br />
-                        <small className="text-muted">ID: {pago.alumno}</small>
-                      </td>
-                      <td className="fw-bold text-success">
-                        S/ {parseFloat(pago.monto_total_entregado).toFixed(2)}
-                      </td>
-                      <td>
-                        <Badge bg={pago.metodo_pago === 'Efectivo' ? 'success' : 'info'}>
-                          {pago.metodo_pago}
-                        </Badge>
-                        {pago.banco && (
-                          <div className="mt-1 small text-muted">Banco ID: {pago.banco}</div>
-                        )}
-                      </td>
-                      <td>{pago.numero_operacion || 'N/A'}</td>
-                      <td>
-                        {pago.comprobante_img ? (
-                          <Button 
-                            variant="outline-secondary" 
-                            size="sm"
-                            onClick={() => {
-                              setCurrentImage(pago.comprobante_img);
-                              setShowImageModal(true);
-                            }}
-                          >
-                            📷 Ver Foto
-                          </Button>
-                        ) : (
-                          <span className="text-muted small">Sin imagen</span>
-                        )}
-                      </td>
-                      <td className="text-center">
-                        <Button 
-                          variant="success" 
-                          size="sm" 
-                          className="me-2"
-                          disabled={!cajaActiva}
-                          onClick={() => {
-                            setPagoAprobar(pago);
-                            setShowAprobarModal(true);
-                          }}
-                        >
-                          ✅ Aprobar
-                        </Button>
-                        <Button 
-                          variant="danger" 
-                          size="sm"
-                          onClick={() => {
-                            setPagoRechazar(pago);
-                            setShowRechazarModal(true);
-                          }}
-                        >
-                          ❌ Rechazar
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </div>
-            )}
-          </>
+                  <table className="table table-hover align-middle">
+                    <thead>
+                      <tr>
+                        <th>Alumno</th>
+                        <th>Apoderado</th>
+                        <th>Concepto</th>
+                        <th>Monto</th>
+                        <th>Método</th>
+                        <th>Fecha</th>
+                        <th className="text-center">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pagosFiltrados.map((pago) => {
+                        const alumnoNombre = pago.alumno_detail
+                          ? `${pago.alumno_detail.nombres} ${pago.alumno_detail.apellidos}`
+                          : `ID: ${pago.alumno}`;
+                        
+                        const conceptoNombre = pago.asignaciones && pago.asignaciones.length > 0
+                          ? pago.asignaciones.map(a => {
+                              const detail = a.deuda_detail;
+                              const mesName = detail?.mes ? ` (${detail.mes})` : '';
+                              return `${detail?.concepto || 'N/A'}${mesName}`;
+                            }).join(', ')
+                          : 'N/A';
+
+                        return (
+                          <tr key={pago.id}>
+                            <td>{alumnoNombre}</td>
+                            <td>{pago.apoderado_nombre || 'N/A'}</td>
+                            <td>{conceptoNombre}</td>
+                            <td>
+                              S/ {parseFloat(pago.monto_total_entregado).toFixed(2)}
+                            </td>
+                            <td>
+                              <Badge bg={pago.metodo_pago === 'Efectivo' ? 'success' : 'info'}>
+                                {pago.metodo_pago}
+                              </Badge>
+                              {pago.banco_detail && (
+                                <div className="mt-1 small text-muted">
+                                  {pago.banco_detail.nombre}
+                                </div>
+                              )}
+                            </td>
+                            <td>
+                              {new Date(pago.fecha_pago).toLocaleDateString('es-PE')}
+                            </td>
+                            <td className="text-center">
+                              {pago.comprobante_img && (
+                                <button
+                                  className="btn btn-info btn-sm me-2 text-white"
+                                  onClick={() => {
+                                    setCurrentImage(pago.comprobante_img);
+                                    setShowImageModal(true);
+                                  }}
+                                  title="Ver Voucher"
+                                >
+                                  👁
+                                </button>
+                              )}
+                              <button
+                                className="btn btn-success btn-sm me-2"
+                                disabled={!cajaActiva}
+                                onClick={() => {
+                                  setPagoAprobar(pago);
+                                  setShowAprobarModal(true);
+                                }}
+                                title="Aprobar Pago"
+                              >
+                                ✓
+                              </button>
+                              <button
+                                className="btn btn-danger btn-sm"
+                                onClick={() => {
+                                  setPagoRechazar(pago);
+                                  setShowRechazarModal(true);
+                                }}
+                                title="Rechazar Pago"
+                              >
+                                ✕
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </>
           )}
         </Card.Body>
       </Card>

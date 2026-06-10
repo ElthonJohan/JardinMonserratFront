@@ -8,6 +8,7 @@ import {
 
 import ApoderadoForm from "../components/apoderados/ApoderadoForm.jsx";
 import ApoderadoTable from "../components/apoderados/ApoderadoTable.jsx";
+import { AppNavbar } from "../components/shared";
 
 export default function ApoderadosPage() {
   const [apoderados, setApoderados] = useState([]);
@@ -43,16 +44,19 @@ export default function ApoderadosPage() {
   };
 
   return (
-    <div className="container mt-4">
-      <h2>Gestión de Apoderados</h2>
+    <>
+      <AppNavbar />
+      <div className="container mt-4">
+        <h2>Gestión de Apoderados</h2>
 
-      <ApoderadoForm onSubmit={handleSubmit} initialData={editData} />
+        <ApoderadoForm onSubmit={handleSubmit} initialData={editData} />
 
-      <ApoderadoTable
-        data={apoderados}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
-    </div>
+        <ApoderadoTable
+          data={apoderados}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
+      </div>
+    </>
   );
 }
