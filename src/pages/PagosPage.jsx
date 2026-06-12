@@ -15,7 +15,7 @@ export default function PagosPage() {
   const [cajaAbierta, setCajaAbierta] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
 const activeTab =
   searchParams.get("tab") || "registro";
