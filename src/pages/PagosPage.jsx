@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Card, Col, Container, Row, Tabs, Tab, Spinner } from 'react-bootstrap';
 import toast from 'react-hot-toast';
 import '../styles/PagosPage.css';
@@ -13,6 +14,10 @@ export default function PagosPage() {
   const [alumnos, setAlumnos] = useState([]);
   const [cajaAbierta, setCajaAbierta] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [searchParams] = useSearchParams();
+
+const activeTab =
+  searchParams.get("tab") || "registro";
 
   const cargarAlumnos = async () => {
     setLoading(true);
@@ -53,7 +58,7 @@ export default function PagosPage() {
           </Col>
         </Row>
 
-        <Tabs defaultActiveKey="registro" className="mb-4" id="pagos-tabs">
+        <Tabs defaultActiveKey={activeTab} className="mb-4" id="pagos-tabs">
           <Tab eventKey="registro" title="📝 Registro de Pago">
             <Card className="mt-3">
               <Card.Body>

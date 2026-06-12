@@ -53,12 +53,16 @@ function App() {
                 </ProtectedRoute>
               }
             >
+
               <Route index element={<Dashboard />} />
               <Route path="pagos" element={<Payments />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="profile" element={<Profile />} />
             </Route>
 
+
+            
+      
             <Route
               path="/dashboard"
               element={
