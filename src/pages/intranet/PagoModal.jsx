@@ -54,7 +54,7 @@ export default function PagoModal({ show, onHide, deudas, onSuccess }) {
     setSelectedDeudas((prev) =>
       prev.includes(deudaId)
         ? prev.filter((id) => id !== deudaId)
-        : [...prev, deudaId]
+        : [...prev, deudaId],
     );
   };
 
@@ -64,7 +64,9 @@ export default function PagoModal({ show, onHide, deudas, onSuccess }) {
       return;
     }
 
-    const requiereBanco = ["Transferencia", "Depósito"].includes(formData.metodo_pago);
+    const requiereBanco = ["Transferencia", "Depósito"].includes(
+      formData.metodo_pago,
+    );
 
     if (requiereBanco && !formData.banco) {
       toast.error("Seleccione el banco");
@@ -87,7 +89,7 @@ export default function PagoModal({ show, onHide, deudas, onSuccess }) {
       const data = new FormData();
       // Enviar deuda_id para compatibilidad con backend antiguo si existiese
       data.append("deuda_id", selectedDeudas[0]);
-      
+
       // Enviar lista de ids para soporte de múltiples deudas
       selectedDeudas.forEach((id) => {
         data.append("deudas_ids", id);
@@ -132,43 +134,94 @@ export default function PagoModal({ show, onHide, deudas, onSuccess }) {
 
       <Modal.Body>
         <div className="mb-3">
-          <label className="form-label fw-bold">Seleccionar deudas a pagar</label>
+          <label className="form-label fw-bold">
+            Seleccionar deudas a pagar
+          </label>
           {deudas?.length === 0 ? (
             <div className="text-muted small">No hay deudas pendientes.</div>
           ) : (
-            <div className="list-group" style={{ maxHeight: "250px", overflowY: "auto" }}>
+            <div
+              className="list-group"
+              style={{ maxHeight: "250px", overflowY: "auto" }}
+            >
               {deudas?.map((deuda) => {
                 const getNombreMes = (num) => {
                   const meses = [
-                    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-                    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+                    "Enero",
+                    "Febrero",
+                    "Marzo",
+                    "Abril",
+                    "Mayo",
+                    "Junio",
+                    "Julio",
+                    "Agosto",
+                    "Septiembre",
+                    "Octubre",
+                    "Noviembre",
+                    "Diciembre",
                   ];
                   return meses[num - 1] || "";
                 };
 
-                const conceptoNombre = deuda.concepto_detail?.nombre || deuda.concepto_nombre || "Concepto";
-                const mesNombre = deuda.mes ? ` - ${getNombreMes(deuda.mes)} ${deuda.anio}` : "";
-                const detalleAdicional = deuda.detalle_adicional ? ` (${deuda.detalle_adicional})` : "";
+                const conceptoNombre =
+                  deuda.concepto_detail?.nombre ||
+                  deuda.concepto_nombre ||
+                  "Concepto";
+                const mesNombre = deuda.mes
+                  ? ` - ${getNombreMes(deuda.mes)} ${deuda.anio}`
+                  : "";
+                const detalleAdicional = deuda.detalle_adicional
+                  ? ` (${deuda.detalle_adicional})`
+                  : "";
                 const isSelected = selectedDeudas.includes(deuda.id);
 
                 return (
-                  <label 
-                    key={deuda.id} 
-                    className={`list-group-item d-flex justify-content-between align-items-center ${isSelected ? 'list-group-item-success' : ''}`}
-                    style={{ cursor: "pointer" }}
+                  <label
+                    key={deuda.id}
+                    className={`list-group-item d-flex justify-content-between align-items-center ${isSelected ? "list-group-item-success" : ""}`}
+                    style={{
+                      cursor: deuda.tiene_pago_pendiente
+                        ? "not-allowed"
+                        : "pointer",
+                      opacity: deuda.tiene_pago_pendiente ? 0.6 : 1,
+                    }}
                   >
                     <div className="d-flex align-items-center">
                       <input
                         type="checkbox"
                         className="form-check-input me-3"
                         checked={isSelected}
+                        disabled={deuda.tiene_pago_pendiente}
                         onChange={() => handleToggleDeuda(deuda.id)}
                       />
                       <div>
-                        <span className="fw-semibold small">{conceptoNombre}{mesNombre}</span>
-                        {detalleAdicional && <div className="text-muted" style={{ fontSize: "0.75rem" }}>{detalleAdicional}</div>}
-                        <div className="text-muted" style={{ fontSize: "0.75rem" }}>
-                          Vence: {new Date(deuda.fecha_vencimiento).toLocaleDateString("es-PE")}
+                        <span className="fw-semibold small">
+                          {conceptoNombre}
+                          {mesNombre}
+                        </span>
+                        {deuda.tiene_pago_pendiente && (
+                          <div className="mt-1">
+                            <span className="badge bg-warning text-dark">
+                              ⏳ Pago pendiente de validación
+                            </span>
+                          </div>
+                        )}
+                        {detalleAdicional && (
+                          <div
+                            className="text-muted"
+                            style={{ fontSize: "0.75rem" }}
+                          >
+                            {detalleAdicional}
+                          </div>
+                        )}
+                        <div
+                          className="text-muted"
+                          style={{ fontSize: "0.75rem" }}
+                        >
+                          Vence:{" "}
+                          {new Date(deuda.fecha_vencimiento).toLocaleDateString(
+                            "es-PE",
+                          )}
                         </div>
                       </div>
                     </div>
@@ -185,7 +238,10 @@ export default function PagoModal({ show, onHide, deudas, onSuccess }) {
         <div className="mb-3">
           <label className="form-label fw-bold">Monto a pagar</label>
           <div className="p-2 bg-light border border-success rounded d-flex align-items-center justify-content-center">
-            <span className="fw-bold text-success" style={{ fontSize: '1.25rem' }}>
+            <span
+              className="fw-bold text-success"
+              style={{ fontSize: "1.25rem" }}
+            >
               S/ {montoTotalSeleccionado.toFixed(2)}
             </span>
           </div>
@@ -201,7 +257,9 @@ export default function PagoModal({ show, onHide, deudas, onSuccess }) {
               setFormData({
                 ...formData,
                 metodo_pago: e.target.value,
-                banco: ["Transferencia", "Depósito"].includes(e.target.value) ? formData.banco : "",
+                banco: ["Transferencia", "Depósito"].includes(e.target.value)
+                  ? formData.banco
+                  : "",
               })
             }
           >
@@ -268,10 +326,7 @@ export default function PagoModal({ show, onHide, deudas, onSuccess }) {
       </Modal.Body>
 
       <Modal.Footer>
-        <button
-          className="btn btn-secondary"
-          onClick={onHide}
-        >
+        <button className="btn btn-secondary" onClick={onHide}>
           Cancelar
         </button>
 

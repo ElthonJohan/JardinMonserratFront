@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
 import { Card, Col, Container, Row, Tabs, Tab, Spinner } from 'react-bootstrap';
 import toast from 'react-hot-toast';
 import '../styles/PagosPage.css';
@@ -9,12 +8,14 @@ import AuditoriaAlumno from '../components/pagos/AuditoriaAlumno';
 import ValidacionPagos from '../components/pagos/ValidacionPagos';
 import { AppNavbar, ErrorBoundary } from '../components/shared';
 import { getEstudiantes } from '../api/estudiantesAPI';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function PagosPage() {
   const [alumnos, setAlumnos] = useState([]);
   const [cajaAbierta, setCajaAbierta] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
 const activeTab =
   searchParams.get("tab") || "registro";
@@ -58,7 +59,14 @@ const activeTab =
           </Col>
         </Row>
 
-        <Tabs defaultActiveKey={activeTab} className="mb-4" id="pagos-tabs">
+        <Tabs
+  activeKey={activeTab}
+  onSelect={(tab) => {
+    navigate(`/pagos?tab=${tab}`);
+  }}
+  className="mb-4"
+  id="pagos-tabs"
+>
           <Tab eventKey="registro" title="📝 Registro de Pago">
             <Card className="mt-3">
               <Card.Body>

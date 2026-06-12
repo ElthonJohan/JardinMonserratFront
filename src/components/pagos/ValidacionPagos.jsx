@@ -90,6 +90,23 @@ export default function ValidacionPagos() {
     }
   }, [alumnoId, pagos]);
 
+  useEffect(() => {
+  if (!alumnoId) {
+    setSearchTerm("");
+    return;
+  }
+
+  const pagoAlumno = pagos.find(
+    p => String(p.alumno) === String(alumnoId)
+  );
+
+  if (pagoAlumno?.alumno_detail) {
+    setSearchTerm(
+      pagoAlumno.alumno_detail.nombres
+    );
+  }
+}, [alumnoId, pagos]);
+
   const handleAprobar = async () => {
     if (!cajaActiva) {
       toast.error("Necesitas una caja abierta para aprobar el pago.");
@@ -166,8 +183,11 @@ export default function ValidacionPagos() {
           >
             🔄 Refrescar
           </Button>
+          
         </Card.Header>
         <Card.Body>
+
+          
           {!cajaActiva && (
             <div className="alert alert-warning">
               ⚠️ No tienes una Caja abierta en este momento. Podrás rechazar
@@ -203,12 +223,14 @@ export default function ValidacionPagos() {
     navigate('/pagos?tab=validacion', {
       replace: true
     });
+    toast.success("Mostrando todos los pagos pendientes.");
   }}
 >
   👥 Ver todos los pagos pendientes
 </Button>
   </div>
 )}
+
 
               {pagosFiltrados.length === 0 ? (
                 <div className="text-center py-5 text-muted">
@@ -226,6 +248,7 @@ export default function ValidacionPagos() {
     🔔 Mostrando pagos del alumno seleccionado desde una notificación.
   </div>
 )}
+              
                   <table className="table table-hover align-middle">
                     <thead>
                       <tr>

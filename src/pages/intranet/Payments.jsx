@@ -3,6 +3,7 @@ import axiosInstance from "../../api/axiosConfig";
 import "../../styles/intranetPagos.css"; // Asegúrate de crear este archivo CSS para estilos específicos
 import PagoModal from "./PagoModal";
 import toast from "react-hot-toast";
+import { Modal } from "react-bootstrap";
 
 const Payments = () => {
   const [dashboard, setDashboard] = useState(null);
@@ -17,6 +18,11 @@ const Payments = () => {
     comprobante: null,
   });
   const [showPagoModal, setShowPagoModal] = useState(false);
+
+  const [showDetallePago, setShowDetallePago] = useState(false);
+
+const [pagoSeleccionado, setPagoSeleccionado] =
+  useState(null);
 
   const loadDashboard = async (isRefresh = false) => {
     if (isRefresh) {
@@ -57,6 +63,53 @@ const Payments = () => {
     loadDashboard(false);
   }, []);
 
+
+const getEstadoBadge = (estado) => {
+  switch (estado) {
+    case "APROBADO":
+      return (
+        <span className="badge bg-success">
+          ✅ Pago Validado
+        </span>
+      );
+
+    case "RECHAZADO":
+      return (
+        <span className="badge bg-danger">
+          ❌ Pago Rechazado
+        </span>
+      );
+
+    default:
+      return (
+        <span className="badge bg-warning text-dark">
+          ⏳ Pendiente de Validación
+        </span>
+      );
+  }
+};
+
+const getNombreMes = (mes) => {
+  const meses = [
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
+  ];
+
+  return meses[mes - 1] || "";
+};
+
+
+
   if (loading) {
     return (
       <div className="loading-container">
@@ -69,6 +122,15 @@ const Payments = () => {
   }
 
   console.log("DASHBOARD DATA:", dashboard.deudas_pendientes);
+
+  const voucherUrl =
+  pagoSeleccionado?.comprobante_img
+    ? (
+        pagoSeleccionado.comprobante_img.startsWith("http")
+          ? pagoSeleccionado.comprobante_img
+          : `http://localhost:8000${pagoSeleccionado.comprobante_img}`
+      )
+    : null;
 
   if (error || !dashboard) {
     return <div className="error-box">{error || "Error al cargar datos"}</div>;
@@ -252,8 +314,33 @@ const Payments = () => {
 
               const badge = getBadgeProps(pago.estado);
 
+              console.log(
+  "PAGO",
+  pago.id,
+  pago.asignaciones
+);
+
               return (
-                <div key={pago.id} className="payment-item">
+                <div
+  key={pago.id}
+  className="payment-item"
+  style={{
+  cursor: "pointer",
+  transition: "all .2s ease"
+}}
+onMouseEnter={(e) => {
+  e.currentTarget.style.transform =
+    "translateY(-2px)";
+}}
+onMouseLeave={(e) => {
+  e.currentTarget.style.transform =
+    "translateY(0)";
+}}
+  onClick={() => {
+    setPagoSeleccionado(pago);
+    setShowDetallePago(true);
+  }}
+>
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '4px' }}>
                       <h4 className="payment-title" style={{ margin: 0 }}>
@@ -297,6 +384,220 @@ const Payments = () => {
         deudas={selectedAlumno?.deudas || []}
         onSuccess={loadDashboard}
       />
+
+      <Modal
+  show={showDetallePago}
+  onHide={() => setShowDetallePago(false)}
+  centered
+  size="lg"
+>
+  <Modal.Header closeButton>
+    <Modal.Title>
+      Detalle del Pago
+    </Modal.Title>
+  </Modal.Header>
+
+<Modal.Body>
+  
+
+  {pagoSeleccionado && (
+    
+    <>
+
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h5 className="mb-0">
+          Información del Pago
+        </h5>
+
+        {getEstadoBadge(
+          pagoSeleccionado.estado
+        )}
+      </div>
+
+      <div className="row g-3">
+
+        <div className="col-md-6">
+          <strong>Método:</strong>
+          <div>
+            {pagoSeleccionado.metodo_pago}
+          </div>
+        </div>
+
+        <div className="col-md-6">
+          <strong>N° Operación:</strong>
+          <div>
+            {pagoSeleccionado.numero_operacion || "-"}
+          </div>
+        </div>
+
+        <div className="col-md-6">
+          <strong>Fecha de Registro:</strong>
+          <div>
+            {new Date(
+              pagoSeleccionado.fecha_pago
+            ).toLocaleDateString("es-PE")}
+          </div>
+        </div>
+
+        {pagoSeleccionado.fecha_aprobacion && (
+          <div className="col-md-6">
+            <strong>Fecha de Validación:</strong>
+            <div>
+              {new Date(
+                pagoSeleccionado.fecha_aprobacion
+              ).toLocaleDateString("es-PE")}
+            </div>
+          </div>
+        )}
+
+      </div>
+
+      <div
+        className="mt-4 p-3 rounded text-center"
+        style={{
+          background:
+            "linear-gradient(135deg,#2563eb,#1d4ed8)",
+          color: "white",
+        }}
+      >
+        <small>Total Pagado</small>
+
+        <h2 className="mb-0">
+          S/ {Number(
+            pagoSeleccionado.monto_total_entregado
+          ).toFixed(2)}
+        </h2>
+      </div>
+
+      <hr className="my-4" />
+
+      <h5 className="mb-3">
+        📚 Cuotas Incluidas
+      </h5>
+
+      {pagoSeleccionado.asignaciones?.length > 0 ? (
+
+        pagoSeleccionado.asignaciones.map(
+          (item) => {
+
+            const detalle =
+              item.deuda_detail;
+
+            const nombreConcepto =
+              detalle.mes
+                ? `📅 ${detalle.concepto} - ${getNombreMes(
+                    detalle.mes
+                  )} ${detalle.anio}`
+                : `📚 ${detalle.concepto}`;
+
+            return (
+
+              <div
+                key={item.id}
+                className="d-flex justify-content-between align-items-center border rounded p-2 mb-2"
+              >
+                <span>
+                  {nombreConcepto}
+                </span>
+
+                <strong className="text-success">
+                  S/ {Number(
+                    item.monto_aplicado
+                  ).toFixed(2)}
+                </strong>
+              </div>
+
+            );
+
+          }
+        )
+
+      ) : (
+
+        <div className="alert alert-warning">
+          No se encontraron cuotas asociadas.
+        </div>
+
+      )}
+
+      {pagoSeleccionado.estado ===
+        "RECHAZADO" &&
+        pagoSeleccionado.motivo_rechazo && (
+
+        <div className="alert alert-danger mt-4">
+
+          <h6>
+            ❌ Motivo del Rechazo
+          </h6>
+
+          <div>
+            {pagoSeleccionado.motivo_rechazo}
+          </div>
+
+        </div>
+
+      )}
+
+      {pagoSeleccionado.comprobante_img && (
+
+
+        <>
+        
+
+          <hr className="my-4" />
+
+          <h5 className="mb-3">
+            📄 Voucher Enviado
+          </h5>
+
+          <div className="text-center">
+
+            <img
+              src={voucherUrl}
+              alt="Voucher"
+              className="img-fluid rounded border shadow-sm"
+              style={{
+                maxHeight: "350px",
+                objectFit: "contain",
+              }}
+            />
+
+            <div className="mt-3">
+
+              <a
+                href={
+                  voucherUrl
+                }
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn-outline-primary"
+              >
+                🔍 Ver Voucher Completo
+              </a>
+
+            </div>
+            
+
+          </div>
+
+        </>
+
+      )}
+
+    </>
+  )}
+
+</Modal.Body>
+
+<Modal.Footer>
+  <button
+    className="btn btn-secondary"
+    onClick={() => setShowDetallePago(false)}
+  >
+    Cerrar
+  </button>
+</Modal.Footer>
+</Modal>
     </div>
   );
 };
