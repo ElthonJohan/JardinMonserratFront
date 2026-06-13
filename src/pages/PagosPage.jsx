@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Col, Container, Row, Tabs, Tab, Spinner } from 'react-bootstrap';
+import { Col, Row, Spinner } from 'react-bootstrap';
 import toast from 'react-hot-toast';
 import '../styles/PagosPage.css';
 import RegistroPago from '../components/pagos/RegistroPago';
@@ -9,10 +9,18 @@ import ValidacionPagos from '../components/pagos/ValidacionPagos';
 import { AppNavbar, ErrorBoundary } from '../components/shared';
 import { getEstudiantes } from '../api/estudiantesAPI';
 
+const TABS = [
+  { key: 'registro',   label: 'Registro de Pago',   icon: '📝' },
+  { key: 'caja',       label: 'Gestión de Caja',    icon: '💼' },
+  { key: 'auditoria',  label: 'Auditoría de Pagos', icon: '📊' },
+  { key: 'validacion', label: 'Validación de Pagos', icon: '✅' },
+];
+
 export default function PagosPage() {
   const [alumnos, setAlumnos] = useState([]);
   const [cajaAbierta, setCajaAbierta] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('registro');
 
   const cargarAlumnos = async () => {
     setLoading(true);
@@ -40,81 +48,92 @@ export default function PagosPage() {
     setCajaAbierta(abierta);
   };
 
+  /* ── Render tab content ── */
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'registro':
+        return loading ? (
+          <div className="pagos-loading">
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Cargando...</span>
+            </Spinner>
+          </div>
+        ) : (
+          <ErrorBoundary>
+            <RegistroPago
+              alumnos={alumnos}
+              cajaAbierta={cajaAbierta}
+              onPagoRegistrado={handlePagoRegistrado}
+            />
+          </ErrorBoundary>
+        );
+
+      case 'caja':
+        return (
+          <ErrorBoundary>
+            <GestionCaja onCajaChange={handleCajaChange} />
+          </ErrorBoundary>
+        );
+
+      case 'auditoria':
+        return loading ? (
+          <div className="pagos-loading">
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Cargando...</span>
+            </Spinner>
+          </div>
+        ) : (
+          <ErrorBoundary>
+            <AuditoriaAlumno alumnos={alumnos} />
+          </ErrorBoundary>
+        );
+
+      case 'validacion':
+        return (
+          <ErrorBoundary>
+            <ValidacionPagos />
+          </ErrorBoundary>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
-    <ErrorBoundary>
+    <div className="pagos-container">
       <AppNavbar />
-      <Container className="mt-4 mb-5" style={{ maxWidth: '1200px' }}>
-        <Row className="mb-4">
-          <Col>
-            <h1 className="display-5 fw-bold">Tesorería - Gestión de Pagos</h1>
-            <p className="text-muted">
-              Registro de pagos y control de caja diaria
-            </p>
-          </Col>
-        </Row>
 
-        <Tabs defaultActiveKey="registro" className="mb-4" id="pagos-tabs">
-          <Tab eventKey="registro" title="📝 Registro de Pago">
-            <Card className="mt-3">
-              <Card.Body>
-                {loading ? (
-                  <div className="text-center py-5">
-                    <Spinner animation="border" role="status">
-                      <span className="visually-hidden">Cargando...</span>
-                    </Spinner>
-                  </div>
-                ) : (
-                  <ErrorBoundary>
-                    <RegistroPago
-                      alumnos={alumnos}
-                      cajaAbierta={cajaAbierta}
-                      onPagoRegistrado={handlePagoRegistrado}
-                    />
-                  </ErrorBoundary>
-                )}
-              </Card.Body>
-            </Card>
-          </Tab>
+      <div className="container-pagos">
 
-          <Tab eventKey="caja" title="💼 Gestión de Caja">
-            <Card className="mt-3">
-              <Card.Body>
-                <ErrorBoundary>
-                  <GestionCaja onCajaChange={handleCajaChange} />
-                </ErrorBoundary>
-              </Card.Body>
-            </Card>
-          </Tab>
+        {/* ── Page Header ── */}
+        <div className="pagos-header">
+          <h1>Tesorería - Gestión de Pagos</h1>
+          <p>Registro de pagos y control de caja diaria</p>
+        </div>
 
-          <Tab eventKey="auditoria" title="📊 Auditoría de Pagos">
-            <Card className="mt-3">
-              <Card.Body>
-                {loading ? (
-                  <div className="text-center py-5">
-                    <Spinner animation="border" role="status">
-                      <span className="visually-hidden">Cargando...</span>
-                    </Spinner>
-                  </div>
-                ) : (
-                  <ErrorBoundary>
-                    <AuditoriaAlumno alumnos={alumnos} />
-                  </ErrorBoundary>
-                )}
-              </Card.Body>
-            </Card>
-          </Tab>
+        {/* ── Custom Tabs ── */}
+        <div className="pagos-tabs">
+          {TABS.map((tab) => (
+            <button
+              key={tab.key}
+              className={`pagos-tab-btn${activeTab === tab.key ? ' active' : ''}`}
+              onClick={() => setActiveTab(tab.key)}
+            >
+              <span className="pagos-tab-icon">{tab.icon}</span>
+              {tab.label}
+            </button>
+          ))}
+        </div>
 
-          <Tab eventKey="validacion" title="✅ Validación de Pagos">
-            <Card className="mt-3">
-              <Card.Body>
-                <ErrorBoundary>
-                  <ValidacionPagos />
-                </ErrorBoundary>
-              </Card.Body>
-            </Card>
-          </Tab>
-        </Tabs>
-      </Container>
-    </ErrorBoundary>
+        {/* ── Tab Content Card ── */}
+        <div className="pagos-tab-content">
+          <div className="pagos-tab-panel">
+            {renderTabContent()}
+          </div>
+        </div>
+
+      </div>
+    </div>
   );
 }
