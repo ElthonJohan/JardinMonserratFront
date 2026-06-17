@@ -1,152 +1,190 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Badge, Spinner, Form, ProgressBar, Table, Modal } from 'react-bootstrap';
+import {
+  Container, Row, Col, Card, Spinner,
+  Table, Modal, Button, ProgressBar
+} from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { AppNavbar } from '../components/shared';
 import { getDashboardStats } from '../api/dashboardAPI';
+import { AppNavbar } from '../components/shared';
 import './DashboardPage.css';
 
+/* ─────────────────────────────────────────
+   Main Page
+───────────────────────────────────────── */
 export default function DashboardPage() {
   const navigate = useNavigate();
-  const [anioFiltro, setAnioFiltro] = useState(new Date().getFullYear());
-  const [showAulasModal, setShowAulasModal] = useState(false);
+  const [anioFiltro, setAnioFiltro]   = useState(new Date().getFullYear());
+  const [showModal, setShowModal]     = useState(false);
+  const [loading, setLoading]         = useState(true);
   const [data, setData] = useState({
     kpis: {
-      total_alumnos_activos: 0,
-      matriculas_anio: 0,
-      pagos_pendientes_cantidad: 0,
-      pagos_pendientes_monto: 0,
-      recaudacion_actual: 0,
-      recaudacion_anterior: 0
+      total_alumnos_activos:    0,
+      matriculas_anio:          0,
+      pagos_pendientes_cantidad:0,
+      pagos_pendientes_monto:   0,
+      recaudacion_actual:       0,
+      recaudacion_anterior:     0,
     },
     distribucion_aulas: [],
-    estado_matriculas: [],
-    top_deudores: []
+    top_deudores: [],
   });
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchEstadisticas = async () => {
+    const fetch = async () => {
       setLoading(true);
       try {
         const stats = await getDashboardStats(anioFiltro);
         setData(stats);
-      } catch (error) {
-        console.error('Error al cargar las estadísticas del dashboard:', error);
+      } catch (e) {
+        console.error(e);
       } finally {
         setLoading(false);
       }
     };
-
-    fetchEstadisticas();
+    fetch();
   }, [anioFiltro]);
 
-  const difRecaudacion = data.kpis.recaudacion_actual - data.kpis.recaudacion_anterior;
-  const indicadorRecaudacion = difRecaudacion >= 0 ? `+ S/ ${difRecaudacion.toFixed(2)}` : `- S/ ${Math.abs(difRecaudacion).toFixed(2)}`;
+  const { kpis } = data;
+  const dif = kpis.recaudacion_actual - kpis.recaudacion_anterior;
+  const deltaLabel = dif >= 0
+    ? `▲ + S/ ${dif.toFixed(2)} vs mes ant.`
+    : `▼ - S/ ${Math.abs(dif).toFixed(2)} vs mes ant.`;
 
   return (
     <div className="dashboard-container">
       <AppNavbar />
 
-      <Container fluid className="py-5 px-4">
-        <Row className="mb-4 align-items-center">
-          <Col md={8}>
-            <h2 className="fw-bold">Centro de Operaciones</h2>
-            <p className="text-muted">Análisis y estado en tiempo real del periodo lectivo</p>
-          </Col>
-          <Col md={4} className="d-flex justify-content-md-end">
-            <Form.Group className="d-flex align-items-center">
-              <Form.Label className="mb-0 me-2 fw-bold text-nowrap">Año Escolar:</Form.Label>
-              <Form.Control 
-                type="number" 
-                value={anioFiltro} 
-                onChange={(e) => setAnioFiltro(e.target.value)} 
-                style={{ width: '100px' }}
-              />
-            </Form.Group>
-          </Col>
-        </Row>
+      <Container fluid className="py-5 px-4 px-lg-5">
 
-        {/* KPIs Ejecutivos */}
+        {/* ── PAGE HEADER ── */}
+        <div className="page-header-card d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
+          <div>
+            <h1>Centro de Operaciones</h1>
+            <p>Análisis y estado en tiempo real del periodo lectivo</p>
+          </div>
+          <div className="d-flex align-items-center gap-2">
+            <span className="year-label">Año Escolar:</span>
+            <select
+              className="year-select"
+              value={anioFiltro}
+              onChange={e => setAnioFiltro(Number(e.target.value))}
+            >
+              {[2026, 2025, 2024].map(y => <option key={y}>{y}</option>)}
+            </select>
+          </div>
+        </div>
+
+        {/* ── KPI CARDS ── */}
         <Row className="g-4 mb-4">
-          <Col md={6} lg={3}>
-            <Card className="dashboard-card card-hover h-100" onClick={() => setShowAulasModal(true)}>
-              <Card.Body className="text-center">
-                <div className="card-icon mb-3">👥</div>
+
+          {/* Alumnos */}
+          <Col md={6} xl={3}>
+            <Card className="kpi-card kpi-blue h-100" onClick={() => setShowModal(true)}>
+              <Card.Body className="text-center py-4">
+                <div className="kpi-icon-wrap blue">👥</div>
                 <h5>Alumnos</h5>
-                {loading ? <Spinner animation="border" variant="primary" size="sm" /> : (
-                  <Badge bg="primary" className="fs-5">{data.kpis.total_alumnos_activos}</Badge>
-                )}
-                <p className="text-muted small mt-2 mb-0">Activos en {anioFiltro}</p>
-                <small className="text-primary mt-1 d-block">Ver desglose por aula &rarr;</small>
+                {loading
+                  ? <Spinner animation="border" size="sm" />
+                  : <div className="kpi-badge blue">{kpis.total_alumnos_activos}</div>
+                }
+                <p className="kpi-sub">Activos en {anioFiltro}</p>
+                <a className="kpi-link blue" onClick={e => { e.preventDefault(); setShowModal(true); }}>
+                  Ver desglose por aula →
+                </a>
               </Card.Body>
             </Card>
           </Col>
 
-          <Col md={6} lg={3}>
-            <Card className="dashboard-card card-hover h-100" onClick={() => navigate('/matriculas')}>
-              <Card.Body className="text-center">
-                <div className="card-icon mb-3">📚</div>
+          {/* Matrículas */}
+          <Col md={6} xl={3}>
+            <Card className="kpi-card kpi-green h-100" onClick={() => navigate('/matriculas')}>
+              <Card.Body className="text-center py-4">
+                <div className="kpi-icon-wrap green">📚</div>
                 <h5>Matrículas</h5>
-                {loading ? <Spinner animation="border" variant="success" size="sm" /> : (
-                  <Badge bg="success" className="fs-5">{data.kpis.matriculas_anio}</Badge>
-                )}
-                <p className="text-muted small mt-2">Nuevas matriculas {anioFiltro}</p>
-                <small className="text-success mt-1 d-block">Ir a gestión &rarr;</small>
+                {loading
+                  ? <Spinner animation="border" size="sm" />
+                  : <div className="kpi-badge green">{kpis.matriculas_anio}</div>
+                }
+                <p className="kpi-sub">Nuevas matrículas {anioFiltro}</p>
+                <a className="kpi-link green" onClick={e => { e.preventDefault(); navigate('/matriculas'); }}>
+                  Ir a gestión →
+                </a>
               </Card.Body>
             </Card>
           </Col>
 
-          <Col md={6} lg={3}>
-            <Card className="dashboard-card card-hover h-100" onClick={() => navigate('/pagos')}>
-              <Card.Body className="text-center">
-                <div className="card-icon mb-3">💰</div>
+          {/* Deudas */}
+          <Col md={6} xl={3}>
+            <Card className="kpi-card kpi-amber h-100" onClick={() => navigate('/pagos')}>
+              <Card.Body className="text-center py-4">
+                <div className="kpi-icon-wrap amber">💰</div>
                 <h5>Deudas Pendientes</h5>
-                {loading ? <Spinner animation="border" variant="danger" size="sm" /> : (
-                  <>
-                    <Badge bg="danger" className="fs-5 me-2">{data.kpis.pagos_pendientes_cantidad} rcbs</Badge>
-                    <Badge bg="warning" text="dark" className="fs-5">S/ {data.kpis.pagos_pendientes_monto.toFixed(2)}</Badge>
-                  </>
-                )}
-                <p className="text-muted small mt-2">Capital por recuperar</p>
-                <small className="text-danger mt-1 d-block">Ir a gestión de pagos &rarr;</small>
+                {loading
+                  ? <Spinner animation="border" size="sm" />
+                  : (
+                    <div className="d-flex justify-content-center gap-2 mb-2">
+                      <span className="kpi-badge danger">{kpis.pagos_pendientes_cantidad} rcbs</span>
+                      <span className="kpi-badge warning">S/ {kpis.pagos_pendientes_monto.toFixed(2)}</span>
+                    </div>
+                  )
+                }
+                <p className="kpi-sub">Capital por recuperar</p>
+                <a className="kpi-link red" onClick={e => { e.preventDefault(); navigate('/pagos'); }}>
+                  Ir a gestión de pagos →
+                </a>
               </Card.Body>
             </Card>
           </Col>
 
-          <Col md={6} lg={3}>
-            <Card className="dashboard-card h-100" style={{ borderTopColor: '#28a745' }}>
-              <Card.Body className="text-center">
-                <div className="card-icon mb-3">📈</div>
+          {/* Recaudado */}
+          <Col md={6} xl={3}>
+            <Card className="kpi-card kpi-teal h-100">
+              <Card.Body className="text-center py-4">
+                <div className="kpi-icon-wrap teal">📈</div>
                 <h5>Recaudado del Mes</h5>
-                {loading ? <Spinner animation="border" variant="success" size="sm" /> : (
-                  <>
-                    <Badge bg="success" className="fs-5">S/ {data.kpis.recaudacion_actual.toFixed(2)}</Badge>
-                    <p className={`small fw-bold mt-2 mb-0 ${difRecaudacion >= 0 ? 'text-success' : 'text-danger'}`}>
-                      {difRecaudacion >= 0 ? '▲' : '▼'} {indicadorRecaudacion} vs mes ant.
-                    </p>
-                  </>
-                )}
+                {loading
+                  ? <Spinner animation="border" size="sm" />
+                  : (
+                    <>
+                      <div className="kpi-badge teal">S/ {kpis.recaudacion_actual.toFixed(2)}</div>
+                      <p className={`kpi-delta ${dif >= 0 ? 'text-success' : 'text-danger'}`}>
+                        {deltaLabel}
+                      </p>
+                    </>
+                  )
+                }
               </Card.Body>
             </Card>
           </Col>
+
         </Row>
 
+        {/* ── BOTTOM ROW ── */}
         <Row className="g-4">
-          {/* Alertas de Tesorería */}
+
+          {/* Deudas críticas */}
           <Col lg={8}>
-            <Card className="h-100 dashboard-card" style={{ borderTopColor: '#dc3545' }}>
-              <Card.Header className="bg-transparent fw-bold text-danger pt-4 pb-2 border-bottom-0 fs-5">
-                🚨 Top 5 Deudas Críticas
+            <Card className="section-card h-100">
+              <Card.Header>
+                <div className="section-header-icon danger">🚨</div>
+                <Card.Title className="section-card text-danger" style={{ color: 'var(--error)' }}>
+                  Top 5 Deudas Críticas
+                </Card.Title>
               </Card.Header>
               <Card.Body className="p-0">
                 {loading ? (
-                  <div className="text-center p-5"><Spinner animation="border" variant="danger" /></div>
+                  <div className="empty-state">
+                    <Spinner animation="border" />
+                  </div>
                 ) : data.top_deudores.length === 0 ? (
-                  <div className="text-center p-5 text-muted">🎉 No hay alumnos con deudas pendientes.</div>
+                  <div className="empty-state">
+                    <div className="empty-icon-wrap">✅</div>
+                    <p>🎉 No hay alumnos con deudas pendientes.</p>
+                  </div>
                 ) : (
                   <div className="table-responsive">
-                    <Table hover className="mb-0 align-middle">
-                      <thead className="table-light text-secondary">
+                    <Table className="deuda-table mb-0">
+                      <thead>
                         <tr>
                           <th className="ps-4">Alumno</th>
                           <th className="text-end">Monto Adeudado</th>
@@ -154,18 +192,16 @@ export default function DashboardPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {data.top_deudores.map((deudor) => (
-                          <tr key={deudor.alumno__id} className="deuda-critica-row">
-                            <td className="ps-4 fw-500">{deudor.nombre_completo}</td>
-                            <td className="text-end text-danger fw-bold">S/ {parseFloat(deudor.deuda_total).toFixed(2)}</td>
+                        {data.top_deudores.map((d) => (
+                          <tr key={d.alumno__id}>
+                            <td className="ps-4 deuda-alumno">{d.nombre_completo}</td>
+                            <td className="text-end deuda-monto">
+                              S/ {parseFloat(d.deuda_total).toFixed(2)}
+                            </td>
                             <td className="text-center pe-4">
-                              <Button 
-                                variant="outline-danger" 
-                                size="sm"
-                                onClick={() => navigate('/pagos')}
-                              >
+                              <button className="btn-cobrar" onClick={() => navigate('/pagos')}>
                                 Cobrar
-                              </Button>
+                              </button>
                             </td>
                           </tr>
                         ))}
@@ -177,67 +213,90 @@ export default function DashboardPage() {
             </Card>
           </Col>
 
-          {/* Quick Actions */}
+          {/* Acceso rápido */}
           <Col lg={4}>
-            <Card className="h-100 dashboard-card p-3" style={{ borderTopColor: '#ffc107' }}>
-              <Card.Header className="bg-transparent fw-bold pt-2 border-bottom-0 fs-5">
-                ⚡ Acceso Rápido
+            <Card className="section-card h-100">
+              <Card.Header>
+                <div className="section-header-icon primary">⚡</div>
+                <Card.Title>Acceso Rápido</Card.Title>
               </Card.Header>
-              <Card.Body className="d-flex flex-column justify-content-center gap-3">
-                  <Button variant="primary" size="lg" className="w-100 shadow-sm text-start ps-4" onClick={() => navigate('/estudiantes')}>
-                    <span className="me-2 fs-4">👥</span> Gestión de Alumnos
-                  </Button>
-                  <Button variant="success" size="lg" className="w-100 shadow-sm text-start ps-4" onClick={() => navigate('/matriculas')}>
-                    <span className="me-2 fs-4">📚</span> Nueva Matrícula
-                  </Button>
-                  <Button variant="warning" size="lg" className="w-100 shadow-sm text-start ps-4 text-dark" onClick={() => navigate('/pagos')}>
-                    <span className="me-2 fs-4">💰</span> Operaciones de Tesorería
-                  </Button>
+              <Card.Body className="d-flex flex-column justify-content-center gap-3 p-4">
+                <button className="quick-btn" onClick={() => navigate('/estudiantes')}>
+                  <span className="quick-btn-icon blue">👥</span>
+                  Gestión de Alumnos
+                  <span className="quick-arrow">→</span>
+                </button>
+                <button className="quick-btn" onClick={() => navigate('/matriculas')}>
+                  <span className="quick-btn-icon green">📚</span>
+                  Nueva Matrícula
+                  <span className="quick-arrow">→</span>
+                </button>
+                <button className="quick-btn" onClick={() => navigate('/pagos')}>
+                  <span className="quick-btn-icon amber">💰</span>
+                  Operaciones de Tesorería
+                  <span className="quick-arrow">→</span>
+                </button>
               </Card.Body>
             </Card>
           </Col>
+
         </Row>
       </Container>
 
-      {/* Modal: Distribución por Aulas */}
-      <Modal show={showAulasModal} onHide={() => setShowAulasModal(false)} centered size="lg">
-        <Modal.Header closeButton className="bg-primary text-white">
-          <Modal.Title>📊 Distribución Académica - Año {anioFiltro}</Modal.Title>
+      {/* ── MODAL: Distribución por aulas ── */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">
+        <Modal.Header closeButton className="bg-primary-custom">
+          <Modal.Title className="modal-title-custom">
+            📊 Distribución Académica — Año {anioFiltro}
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body className="p-4">
-          <h6 className="text-muted mb-4">Carga actual de aulas y disponibilidad</h6>
+          <p className="text-muted mb-4" style={{ fontSize: 14 }}>
+            Carga actual de aulas y disponibilidad
+          </p>
           {data.distribucion_aulas.length === 0 ? (
-            <p className="text-muted text-center py-4">No hay alumnos registrados en aulas para el año {anioFiltro}.</p>
+            <p className="text-center text-muted py-4">
+              No hay alumnos registrados en aulas para el año {anioFiltro}.
+            </p>
           ) : (
             data.distribucion_aulas.map((aula, i) => {
-              const porcentaje = (aula.total / aula.capacidad) * 100;
-              const variant = porcentaje > 90 ? "danger" : porcentaje > 75 ? "warning" : "success";
+              const pct     = (aula.total / aula.capacidad) * 100;
+              const variant = pct > 90 ? 'danger' : pct > 75 ? 'warning' : 'success';
               return (
                 <div key={i} className="mb-4">
-                  <div className="progress-label mb-1">
-                    <span className="fw-bold">Aula {aula.nombre_aula}</span>
+                  <div className="aula-label">
+                    <span className="aula-name">Aula {aula.nombre_aula}</span>
                     <span className={`badge bg-${variant}`}>
                       {aula.total} / {aula.capacidad} alumnos
                     </span>
                   </div>
-                  <ProgressBar 
-                    now={porcentaje} 
+                  <ProgressBar
+                    now={pct}
                     variant={variant}
-                    label={`${Math.round(porcentaje)}%`} 
-                    style={{ height: '1.2rem' }}
+                    label={`${Math.round(pct)}%`}
+                    style={{ height: '1.1rem', borderRadius: 999 }}
                   />
                 </div>
               );
             })
           )}
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowAulasModal(false)}>
+        <Modal.Footer style={{ borderTop: '1px solid var(--outline-variant)' }}>
+          <Button
+            style={{
+              background: 'var(--surface-container)',
+              color: 'var(--on-surface)',
+              border: 'none',
+              borderRadius: 999,
+              fontWeight: 600,
+              padding: '8px 24px',
+            }}
+            onClick={() => setShowModal(false)}
+          >
             Cerrar
           </Button>
         </Modal.Footer>
       </Modal>
-
     </div>
   );
 }

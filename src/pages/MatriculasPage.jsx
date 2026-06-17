@@ -208,15 +208,15 @@ export default function MatriculasPage() {
       fetchAll();
     } catch (e) {
       const data = e?.response?.data;
-      
+
       // Lógica para extraer el mensaje de error de forma dinámica
-      const msg = 
-        data?.periodo_academico?.[0] || 
-        data?.alumno?.[0] || 
-        data?.non_field_errors?.[0] || 
-        data?.detail || 
+      const msg =
+        data?.periodo_academico?.[0] ||
+        data?.alumno?.[0] ||
+        data?.non_field_errors?.[0] ||
+        data?.detail ||
         'Error al registrar matrícula';
-        
+
       toast.error(msg);
       console.error(e);
     } finally {
@@ -246,113 +246,135 @@ export default function MatriculasPage() {
     }
   };
 
-  if (loading && matriculas.length === 0) {
-    return <Loading message="Cargando matrículas..." />;
-  }
+
 
   return (
     <>
       <AppNavbar />
-      <Container fluid className="py-4">
-        <Row className="mb-3 align-items-center">
-          <Col>
-            <h1>📝 Gestión de Matrículas</h1>
-            <p className="text-muted mb-0">Registrar matrícula y comprobante</p>
-          </Col>
-          <Col className="text-end">
-            <Button variant="success" onClick={handleOpenNewMatricula}>
-              ➕ Nueva Matrícula
-            </Button>
-          </Col>
-        </Row>
+      <div className="matriculas-container">
+        <div className="container-matriculas">
+          {/* ─── HEADER ─── */}
+          <div className="matriculas-header">
+            <div className="matriculas-header-top">
+              <h1>📝 Gestión de Matrículas</h1>
+            </div>
+            <p>Registra y administra las matrículas de los alumnos para el año lectivo actual de manera centralizada y eficiente.</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div />
+              <Button
+                className="btn-nueva-matricula"
+                onClick={handleOpenNewMatricula}
+              >
+                ➕ Nueva Matrícula
+              </Button>
+            </div>
+          </div>
 
-        <Card className="mb-4">
-          <Card.Body>
-            <Row className="g-3">
-              <Col md={6}>
-                <Form.Group>
-                  <Form.Label>Buscar</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Alumno, aula o año..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </Form.Group>
-              </Col>
-              <Col md={6} className="text-end">
-                <Form.Label className="invisible">.</Form.Label>
-                <div className="text-muted">
-                  Total: <strong>{filteredMatriculas.length}</strong>
-                </div>
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-
-        <MatriculaTable
-          data={filteredMatriculas}
-          loading={loading}
-          onView={handleViewMatricula}
-          onEdit={handleEditMatricula}
-          onDelete={handleDeleteMatricula}
-          aulas={aulas}
-        />
-
-        <Modal
-          show={showMatriculaModal}
-          title={editingMatriculaId ? 'Editar Matrícula' : 'Nueva Matrícula'}
-          onClose={() => setShowMatriculaModal(false)}
-          onSave={handleSaveMatricula}
-          loading={loading}
-          size="lg"
-          saveText={editingMatriculaId ? 'Actualizar' : 'Guardar'}
-          saveVariant={editingMatriculaId ? 'warning' : 'primary'}
-        >
-          <MatriculaForm
-            formData={matriculaForm}
-            onChange={handleMatriculaInputChange}
-            alumnos={alumnos}
-            aulas={aulas}
-            periodos={periodos} // Aquí podrías cargar los períodos académicos si tienes esa API
-          />
-        </Modal>
-
-        <Modal
-          show={showDetalleModal}
-          title="Detalle de matrícula"
-          onClose={() => setShowDetalleModal(false)}
-          onSave={null}
-          loading={loading}
-          size="lg"
-        >
-          {selectedMatricula ? (
-            <div>
-              <p className="mb-1">
-                <strong>Alumno:</strong>{' '}
-                {selectedMatricula.alumno_detail
-                  ? `${selectedMatricula.alumno_detail.nombres} ${selectedMatricula.alumno_detail.apellidos}`
-                  : selectedMatricula.alumno}
-              </p>
-              <p className="mb-1">
-                <strong>ID Estudiante:</strong> {selectedMatricula.alumno_detail?.id || selectedMatricula.alumno || '-'}
-              </p>
-              <p className="mb-1">
-                <strong>Aula:</strong> {selectedMatricula.aula_detail?.nombre || '-'}
-              </p>
-              <p className="mb-3">
-                <strong>Año:</strong> {selectedMatricula.anio} &nbsp; <strong>Estado:</strong> {selectedMatricula.estado}
-              </p>
-
-              <div className="d-flex gap-2 flex-wrap">
-                <Button variant="primary" onClick={() => handleComprobante(selectedMatricula)}>
-                  🧾 Comprobante
-                </Button>
+          {/* ─── SEARCH & STATS SECTION ─── */}
+          <div className="matriculas-search-section">
+            {/* Search Card */}
+            <div className="search-card">
+              <label>Buscar Alumno</label>
+              <div className="search-input-wrapper">
+                <Form.Control
+                  type="text"
+                  placeholder="Alumno, aula o año..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{ paddingLeft: '40px' }}
+                />
               </div>
             </div>
-          ) : null}
-        </Modal>
-      </Container>
+
+            {/* Stats Card */}
+            <div className="stats-card">
+              <div className="stats-card-content">
+                <div className="stats-card-text">
+                  <span className="stats-label">Total Matrículas</span>
+                  <div className="stats-number">{filteredMatriculas.length}</div>
+                </div>
+                <div className="stats-icon">📚</div>
+              </div>
+              <div className="stats-badges">
+                <span className="stats-badge active">
+                  {filteredMatriculas.filter(m => m.estado === 'Activa').length} Activos
+                </span>
+                <span className="stats-badge pending">
+                  {filteredMatriculas.filter(m => m.estado === 'Pendiente').length} Pendientes
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* ─── TABLE ─── */}
+          <div className="table-container">
+            <div className="table-wrapper">
+              <MatriculaTable
+                data={filteredMatriculas}
+                loading={loading}
+                onView={handleViewMatricula}
+                onEdit={handleEditMatricula}
+                onDelete={handleDeleteMatricula}
+                aulas={aulas}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Modal
+        show={showMatriculaModal}
+        title={editingMatriculaId ? 'Editar Matrícula' : 'Nueva Matrícula'}
+        onClose={() => setShowMatriculaModal(false)}
+        onSave={handleSaveMatricula}
+        loading={loading}
+        size="lg"
+        saveText={editingMatriculaId ? 'Actualizar' : 'Guardar'}
+        saveVariant={editingMatriculaId ? 'warning' : 'primary'}
+      >
+        <MatriculaForm
+          formData={matriculaForm}
+          onChange={handleMatriculaInputChange}
+          alumnos={alumnos}
+          aulas={aulas}
+          periodos={periodos} // Aquí podrías cargar los períodos académicos si tienes esa API
+        />
+      </Modal>
+
+      <Modal
+        show={showDetalleModal}
+        title="Detalle de matrícula"
+        onClose={() => setShowDetalleModal(false)}
+        onSave={null}
+        loading={loading}
+        size="lg"
+      >
+        {selectedMatricula ? (
+          <div>
+            <p className="mb-1">
+              <strong>Alumno:</strong>{' '}
+              {selectedMatricula.alumno_detail
+                ? `${selectedMatricula.alumno_detail.nombres} ${selectedMatricula.alumno_detail.apellidos}`
+                : selectedMatricula.alumno}
+            </p>
+            <p className="mb-1">
+              <strong>ID Estudiante:</strong> {selectedMatricula.alumno_detail?.id || selectedMatricula.alumno || '-'}
+            </p>
+            <p className="mb-1">
+              <strong>Aula:</strong> {selectedMatricula.aula_detail?.nombre || '-'}
+            </p>
+            <p className="mb-3">
+              <strong>Año:</strong> {selectedMatricula.anio} &nbsp; <strong>Estado:</strong> {selectedMatricula.estado}
+            </p>
+
+            <div className="d-flex gap-2 flex-wrap">
+              <Button variant="primary" onClick={() => handleComprobante(selectedMatricula)}>
+                🧾 Comprobante
+              </Button>
+            </div>
+          </div>
+        ) : null}
+      </Modal>
     </>
   );
 }
