@@ -1,51 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
 
-/* ===== DESIGN TOKENS: SERENE GROWTH ===== */
-:root {
-  --surface: #f9f9ff;
-  --surface-dim: #d3daea;
-  --surface-container-low: #f0f3ff;
-  --surface-container: #e7eefe;
-  --surface-container-high: #e2e8f8;
-  --surface-container-highest: #dce2f3;
-  --on-surface: #151c27;
-  --on-surface-variant: #494552;
-  --outline: #7a7584;
-  --outline-variant: #b8c9d9;
-
-  --primary: #0a1929;
-  --primary-container: #0d3b66;
-  --on-primary-container: #9e81f9;
-  --primary-fixed: #e8ddff;
-  --primary-fixed-dim: #cebdff;
-  --inverse-primary: #cebdff;
-
-  --secondary: #1565c0;
-  --secondary-container: #42a5f5;
-  --on-secondary-container: #062952;
-  --secondary-fixed: #dce8f5;
-  --secondary-fixed-dim: #d3bbff;
-  --on-secondary-fixed-variant: #5826a8;
-
-  --tertiary: #240050;
-  --tertiary-container: #3e0082;
-  --tertiary-fixed: #dce8f5;
-
-  --error: #ba1a1a;
-  --background: #f9f9ff;
-
-  --radius-sm: 0.5rem;
-  --radius-md: 1rem;
-  --radius-lg: 2rem;
-  --radius-xl: 3rem;
-  --radius-full: 9999px;
-
-  --shadow-soft: 0 16px 32px 0 rgba(13, 59, 102, 0.08);
-  --shadow-hover: 0 24px 48px 0 rgba(13, 59, 102, 0.14);
-  --shadow-hero: 0 32px 64px 0 rgba(13, 59, 102, 0.12);
-}
-
 /* ===== RESET & BASE ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 

@@ -1,45 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap');
 
-/* ===== TOKENS ===== */
-:root {
-  --primary:           #0a1929;
-  --primary-container: #0d3b66;
-  --primary-50:        #f0f4fa;
-  --primary-100:       #dce8f5;
-  --primary-200:       #b4cfe6;
-  --primary-600:       #0b3259;
-  --primary-700:       #092a4d;
-  --primary-900:       #051b33;
-
-  --secondary:         #1565c0;
-  --secondary-container: #42a5f5;
-  --on-secondary-container: #062952;
-
-  --surface:           #f9f9ff;
-  --surface-low:       #f0f3ff;
-  --surface-container: #e7eefe;
-  --surface-container-high: #e2e8f8;
-  --surface-lowest:    #ffffff;
-  --surface-dim:       #d3daea;
-
-  --on-surface:        #151c27;
-  --on-surface-variant:#494552;
-  --outline:           #7a7584;
-  --outline-variant:   #b8c9d9;
-
-  --error:             #ba1a1a;
-  --error-container:   #ffdad6;
-
-  --shadow-soft: 0 4px 6px -1px rgba(13,59,102,0.10), 0 2px 4px -1px rgba(13,59,102,0.06);
-  --shadow-card: 0 10px 24px -4px rgba(13,59,102,0.09), 0 4px 8px -2px rgba(13,59,102,0.05);
-  --shadow-hover:0 20px 40px -6px rgba(13,59,102,0.16);
-
-  --radius-md: 1rem;
-  --radius-lg: 1.5rem;
-  --radius-xl: 2rem;
-  --radius-full: 9999px;
-}
-
 /* ===== BASE ===== */
 .dashboard-container {
   min-height: 100vh;

@@ -1,6 +1,6 @@
 
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Container,
@@ -22,7 +22,13 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -72,7 +78,7 @@ export default function LoginPage() {
                 )}
 
                 <Form onSubmit={handleSubmit}>
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-3" controlId="username">
                     <Form.Label className="fw-bold">Usuario</Form.Label>
                     <Form.Control
                       type="text"
@@ -85,7 +91,7 @@ export default function LoginPage() {
                     />
                   </Form.Group>
 
-                  <Form.Group className="mb-4">
+                  <Form.Group className="mb-4" controlId="password">
                     <Form.Label className="fw-bold">Contraseña</Form.Label>
                     <Form.Control
                       type="password"
