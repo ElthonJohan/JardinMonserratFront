@@ -8,11 +8,17 @@ import AuditoriaAlumno from '../components/pagos/AuditoriaAlumno';
 import ValidacionPagos from '../components/pagos/ValidacionPagos';
 import { AppNavbar, ErrorBoundary } from '../components/shared';
 import { getEstudiantes } from '../api/estudiantesAPI';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export default function PagosPage() {
   const [alumnos, setAlumnos] = useState([]);
   const [cajaAbierta, setCajaAbierta] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
+
+const activeTab =
+  searchParams.get("tab") || "registro";
 
   const cargarAlumnos = async () => {
     setLoading(true);
@@ -53,7 +59,14 @@ export default function PagosPage() {
           </Col>
         </Row>
 
-        <Tabs defaultActiveKey="registro" className="mb-4" id="pagos-tabs">
+        <Tabs
+  activeKey={activeTab}
+  onSelect={(tab) => {
+    navigate(`/pagos?tab=${tab}`);
+  }}
+  className="mb-4"
+  id="pagos-tabs"
+>
           <Tab eventKey="registro" title="📝 Registro de Pago">
             <Card className="mt-3">
               <Card.Body>

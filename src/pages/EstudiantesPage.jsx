@@ -17,7 +17,7 @@ import {
   getApoderadosEstudiante,
   cambiarPrincipal,
   eliminarRelacion,
-} from "../api/apoderadosAPI";
+} from "../api/apoderadosApi";
 import axiosInstance from "../api/axiosConfig";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/estudiantes.css";
@@ -76,8 +76,8 @@ export default function EstudiantesPage() {
         if (res && res.generated_credentials) {
           setNewCredentials({
             ...res.generated_credentials,
-            apoderado: `${res.apoderado?.nombres} ${res.apoderado?.apellidos}`,
-            estudiante: `${res.nombres} ${res.apellidos}`,
+            apoderado: `${data.apoderado?.nombres} ${data.apoderado?.apellidos}`,
+            estudiante: `${data.estudiante?.nombres} ${data.estudiante?.apellidos}`,
           });
           // Abrimos el modal de credenciales después de que se cree el estudiante
           const credModal = new Modal(
