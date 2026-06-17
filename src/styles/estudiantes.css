@@ -1,43 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap');
 
-/* ===== TOKENS ===== */
-:root {
-  --primary:            #0d3b66;
-  --primary-container:  #dce8f5;
-  --on-primary:         #ffffff;
-  --on-primary-container: #230064;
-
-  --secondary:          #5f5e71;
-  --secondary-container:#e5e1f8;
-
-  --surface:            #f9f9ff;
-  --surface-low:        #f0f3ff;
-  --surface-container:  #e8edf9;
-  --surface-high:       #e1e7f3;
-  --surface-highest:    #dbe1ed;
-  --surface-lowest:     #ffffff;
-
-  --on-surface:         #191b23;
-  --on-surface-variant: #464654;
-  --outline:            #777685;
-  --outline-variant:    #c7c5d6;
-
-  --error:              #ba1a1a;
-  --error-container:    #ffdad6;
-  --success:            #146c2e;
-  --warning:            #c07c00;
-  --info:               #0095d9;
-
-  --shadow-soft: 0 2px 8px rgba(13,59,102,0.08);
-  --shadow-card: 0 4px 16px rgba(13,59,102,0.10);
-  --shadow-hover:0 8px 28px rgba(13,59,102,0.15);
-
-  --radius-full: 9999px;
-  --radius-xl:   2rem;
-  --radius-lg:   1.5rem;
-  --radius-md:   1rem;
-}
-
 /* ===== BASE ===== */
 body {
   background-color: var(--surface) !important;
