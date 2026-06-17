@@ -241,15 +241,13 @@ export default function RegistroPago({
         const isSelected = selectedDeudas.includes(row.id);
         return (
           <div className="text-center">
-            <Button
-              variant={isSelected ? "success" : "outline-primary"}
-              size="sm"
+            <button
+              type="button"
+              className={`btn-seleccionar${isSelected ? ' selected' : ''}`}
               onClick={() => handleCheckboxChange(row.id)}
-              className="fw-bold"
-              style={{ minWidth: '110px' }}
             >
               {isSelected ? "✓ Seleccionado" : "Seleccionar"}
-            </Button>
+            </button>
           </div>
         );
       }
@@ -291,20 +289,35 @@ export default function RegistroPago({
       key: 'estado',
       label: 'Estado',
       render: (val) => (
-        <span className={`badge bg-${val === 'Pendiente' ? 'danger' : val === 'Parcial' ? 'warning' : 'success'}`}>
+        <span className={`pagos-badge ${val === 'Pendiente' ? 'danger' : val === 'Parcial' ? 'warning' : 'success'}`}>
           {val}
         </span>
       )
     }
   ];
 
+  const handleReset = () => {
+    setFormData({
+      alumno: '',
+      banco: '',
+      metodo_pago: 'Efectivo',
+      numero_operacion: ''
+    });
+    setDeudas([]);
+    setSelectedDeudas([]);
+    setAlumnoSeleccionado(null);
+    setSelectedAlumnoOption(null);
+  };
+
   return (
-    <div className="registro-pago-container">
+    <div className="pagos-form-section">
       <Form onSubmit={handleSubmit}>
         <Row>
           <Col md={8}>
             <Form.Group className="mb-3">
-              <Form.Label>Alumno <span style={{ color: 'red' }}>*</span></Form.Label>
+              <label className="pagos-form-label">
+                Alumno <span className="required">*</span>
+              </label>
               <AsyncSelect
                 cacheOptions
                 defaultOptions={alumnoOptions}
@@ -315,15 +328,18 @@ export default function RegistroPago({
                 isClearable
                 noOptionsMessage={() => "No se encontraron alumnos"}
                 loadingMessage={() => "Buscando..."}
+                classNamePrefix="pagos-select"
               />
             </Form.Group>
           </Col>
           <Col md={4}>
             <Form.Group className="mb-3">
-              <Form.Label>Monto a Pagar</Form.Label>
-              <div className="p-2 bg-light border border-success rounded d-flex align-items-center justify-content-center">
-                <span className="fw-bold text-success" style={{ fontSize: '1.25rem' }}>
-                  S/ {montoTotalSeleccionado.toFixed(2)}
+              <label className="pagos-form-label">Monto a Pagar</label>
+              <div className="pagos-monto-card" style={{ minHeight: '56px', padding: '12px 16px' }}>
+                <span className="pagos-monto-prefix">S/</span>
+                <span className={`pagos-monto-value${montoTotalSeleccionado > 0 ? ' has-value' : ''}`}
+                  style={{ fontSize: '1.5rem' }}>
+                  {montoTotalSeleccionado.toFixed(2)}
                 </span>
               </div>
             </Form.Group>
@@ -333,7 +349,9 @@ export default function RegistroPago({
         <Row>
           <Col md={4}>
             <Form.Group className="mb-3">
-              <Form.Label>Método de Pago <span style={{ color: 'red' }}>*</span></Form.Label>
+              <label className="pagos-form-label">
+                Método de Pago <span className="required">*</span>
+              </label>
               <Form.Select
                 name="metodo_pago"
                 value={formData.metodo_pago}
@@ -349,7 +367,9 @@ export default function RegistroPago({
           </Col>
           <Col md={4}>
             <Form.Group className="mb-3">
-              <Form.Label>Banco Destino <span style={{ color: 'red' }}>{['Transferencia', 'Depósito'].includes(formData.metodo_pago) && '*'}</span></Form.Label>
+              <label className="pagos-form-label">
+                Banco Destino <span className="required">{['Transferencia', 'Depósito'].includes(formData.metodo_pago) && '*'}</span>
+              </label>
               <Form.Select
                 name="banco"
                 value={formData.banco}
@@ -365,9 +385,9 @@ export default function RegistroPago({
           </Col>
           <Col md={4}>
             <Form.Group className="mb-3">
-              <Form.Label>
-                Número de Operación <span style={{ color: 'red' }}>{formData.metodo_pago !== 'Efectivo' && '*'}</span>
-              </Form.Label>
+              <label className="pagos-form-label">
+                Número de Operación <span className="required">{formData.metodo_pago !== 'Efectivo' && '*'}</span>
+              </label>
               <Form.Control
                 type="text"
                 name="numero_operacion"
@@ -380,55 +400,52 @@ export default function RegistroPago({
           </Col>
         </Row>
 
-        <div className="mb-3 d-flex gap-2">
-          <Button
-            variant="primary"
+        <div className="pagos-actions">
+          <button
             type="submit"
+            className="btn-registrar-pago"
             disabled={loadingPago || selectedDeudas.length === 0}
           >
             {loadingPago ? (
               <>
-                <Spinner animation="border" size="sm" className="me-2" />
+                <Spinner animation="border" size="sm" />
                 Registrando...
               </>
             ) : (
-              'Registrar Pago'
+              <>💳 Registrar Pago</>
             )}
-          </Button>
-          <Button
-            variant="secondary"
-            type="reset"
-            onClick={() => {
-              setFormData({
-                alumno: '',
-                banco: '',
-                metodo_pago: 'Efectivo',
-                numero_operacion: ''
-              });
-              setDeudas([]);
-              setSelectedDeudas([]);
-              setAlumnoSeleccionado(null);
-              setSelectedAlumnoOption(null);
-            }}
+          </button>
+          <button
+            type="button"
+            className="btn-limpiar"
+            onClick={handleReset}
           >
             Limpiar
-          </Button>
+          </button>
         </div>
       </Form>
 
       {alumnoSeleccionado && (
-        <div className="mt-4">
-          <h5>Deudas Pendientes de {getAlumnoLabel(alumnoSeleccionado)}</h5>
-          <DataTable
-            columns={deudasColumns}
-            data={deudas}
-            loading={loadingDeudas}
-            striped
-            bordered
-            hover
-          />
+        <div className="pagos-deudas-section">
+          <div className="pagos-table-container">
+            <div className="pagos-deudas-header">
+              <div className="pagos-deudas-header-icon">📋</div>
+              <div>
+                <h5 className="pagos-deudas-title">Deudas Pendientes</h5>
+                <p className="pagos-deudas-subtitle">{getAlumnoLabel(alumnoSeleccionado)}</p>
+              </div>
+            </div>
+            <DataTable
+              columns={deudasColumns}
+              data={deudas}
+              loading={loadingDeudas}
+              striped
+              bordered
+              hover
+            />
+          </div>
           {!loadingDeudas && deudas.length > 0 && (
-            <div className="alert alert-info mt-3">
+            <div className="pagos-instructions">
               💡 <strong>Instrucciones:</strong> Marca las deudas que deseas pagar. El monto total se calculará automáticamente y el pago entrará en revisión.
             </div>
           )}

@@ -29,7 +29,7 @@
 
 .payments-header span{
   font-weight:600;
-  color:#2563eb;
+  color:#1565c0;
 }
 
 /* ===== LOADING ===== */
@@ -49,7 +49,7 @@
   width:60px;
   height:60px;
   border:5px solid #e2e8f0;
-  border-top:5px solid #2563eb;
+  border-top:5px solid #1565c0;
   border-radius:50%;
   animation:spin 1s linear infinite;
   margin:auto;
@@ -80,7 +80,7 @@
 /* ===== MAIN CARD ===== */
 
 .balance-card{
-  background:linear-gradient(135deg,#2563eb,#0e3e95,#4f46e5);
+  background:linear-gradient(135deg,#1565c0,#0e3e95,#0d3b66);
   color:white;
   border-radius:30px;
   padding:45px;
@@ -319,7 +319,7 @@
 }
 
 .student-btn.active{
-  background:#2563eb;
+  background:#1565c0;
   color:white;
 }
 

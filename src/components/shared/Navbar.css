@@ -1,3 +1,4 @@
+
 .navbar-custom {
   background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%) !important;
   box-shadow: 0 4px 20px rgba(13, 110, 253, 0.3);
@@ -106,3 +107,15 @@
   font-weight: 600;
   background-color: rgba(255, 255, 255, 0.15);
 }
+
+/* Navbar styles are handled via inline styles in AppNavbar.jsx
+   to avoid Bootstrap specificity conflicts.
+   Este archivo puede quedarse vacío o usarse para estilos del dropdown menu
+   de Bootstrap si lo necesitas en otro componente. */
+
+/* Scrollbar personalizado — Serene Growth */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #f0f3ff; }
+::-webkit-scrollbar-thumb { background: #b8c9d9; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #1565c0; }
+

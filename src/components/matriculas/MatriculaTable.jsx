@@ -23,7 +23,21 @@ export default function MatriculaTable({
         label: 'Alumno',
         render: (_v, row) => {
           const a = row.alumno_detail;
-          return a ? `${a.nombres} ${a.apellidos}` : row.alumno;
+          const initials = a 
+            ? (a.nombres?.[0] + a.apellidos?.[0]).toUpperCase() 
+            : 'AL';
+          const avatarClasses = ['primary', 'secondary', 'tertiary'];
+          const avatarClass = avatarClasses[row.id % 3];
+          return (
+            <div className="student-cell">
+              <div className={`student-avatar ${avatarClass}`}>
+                {initials}
+              </div>
+              <span className="student-name">
+                {a ? `${a.nombres} ${a.apellidos}` : row.alumno}
+              </span>
+            </div>
+          );
         }
       },
       {
@@ -34,7 +48,11 @@ export default function MatriculaTable({
       {
         key: 'aula',
         label: 'Aula',
-        render: (_v, row) => row.aula_detail?.nombre || aulaById.get(String(row.aula)) || '-'
+        render: (_v, row) => (
+          <span className="classroom-badge">
+            {row.aula_detail?.nombre || aulaById.get(String(row.aula)) || '-'}
+          </span>
+        )
       },
       {
         key:'periodo_academico',
@@ -49,11 +67,18 @@ export default function MatriculaTable({
       {
         key: 'estado',
         label: 'Estado',
-        render: (value) => (
-          <span className={`badge bg-${value === 'Activa' ? 'success' : value === 'Retirado' ? 'danger' : 'secondary'}`}>
-            {value}
-          </span>
-        )
+        render: (value) => {
+          const statusClass = value === 'Activa' 
+            ? 'activo' 
+            : value === 'Retirado' 
+            ? 'retirado' 
+            : 'pendiente';
+          return (
+            <span className={`status-badge ${statusClass}`}>
+              {value}
+            </span>
+          );
+        }
       }
     ],
     [aulaById]

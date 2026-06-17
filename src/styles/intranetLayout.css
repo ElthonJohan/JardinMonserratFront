@@ -30,7 +30,7 @@ body{
 /* ===== LOGO ===== */
 .sidebar-header{
   padding:30px;
-  background:linear-gradient(135deg,#2563eb,#4f46e5);
+  background:linear-gradient(135deg,#1565c0,#0d3b66);
   color:white;
 }
 
@@ -92,9 +92,9 @@ body{
 }
 
 .nav-link.active{
-  background:linear-gradient(135deg,#2563eb,#4f46e5);
+  background:linear-gradient(135deg,#1565c0,#0d3b66);
   color:white;
-  box-shadow:0 8px 20px rgba(37,99,235,0.25);
+  box-shadow:0 8px 20px rgba(13,59,102,0.25);
 }
 
 /* ===== LOGOUT ===== */
