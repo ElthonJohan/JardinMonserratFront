@@ -161,6 +161,60 @@ const ConfiguracionPage = () => {
             </Col>
           )}
 
+          {/* Card: Configuración Académica */}
+          {(user?.role === 'admin' || user?.role === 'director' || user?.permissions?.includes('view_periodoacademico')) && (
+            <Col md={4} className="mt-md-0 mt-4">
+              <Card 
+                className="configuracion-card h-100 p-3"
+                onClick={() => handleNavigation('/academico')}
+              >
+                <Card.Body className="d-flex flex-column text-center">
+                  <div className="config-card-icon-wrapper">
+                    <span>📚</span>
+                  </div>
+                  <Card.Title className="configuracion-card-title">
+                    Configuración Académica
+                  </Card.Title>
+                  <Card.Text className="configuracion-card-desc flex-grow-1">
+                    Gestionar áreas curriculares, competencias del alumno y periodos de evaluación académica.
+                  </Card.Text>
+                  <div className="d-flex flex-column gap-2 mt-3">
+                    <Button 
+                      variant="primary" 
+                      className="config-btn-action w-100 py-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleNavigation('/academico?tab=areas');
+                      }}
+                    >
+                      🗂️ Áreas Académicas
+                    </Button>
+                    <Button 
+                      variant="success" 
+                      className="config-btn-action w-100 py-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleNavigation('/academico?tab=competencias');
+                      }}
+                    >
+                      🎯 Competencias
+                    </Button>
+                    <Button 
+                      variant="warning" 
+                      className="config-btn-action text-white w-100 py-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleNavigation('/academico?tab=periodos');
+                      }}
+                    >
+                      📅 Periodos de Evaluación
+                    </Button>
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+          )}
+
           {/* Card 4: Gestión de Usuarios */}
           {user?.permissions?.includes('view_usuario') && (
             <Col md={4} className="mt-4">

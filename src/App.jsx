@@ -5,7 +5,9 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import PanelDocentePage from "./pages/docente/PanelDocentePage";
+import MatrizNotasPage from "./pages/docente/MatrizNotasPage";
 import { ErrorBoundary, ProtectedRoute } from "./components/shared";
 import { LoginPage } from "./components/login";
 import { Toaster } from "react-hot-toast";
@@ -24,6 +26,7 @@ import UsuariosPage from "./pages/UsuariosPage";
 import RolesPage from "./pages/RolesPage";
 import PeriodosPage from "./pages/PeriodosPage";
 import BancosPage from "./pages/BancosPage";
+import AcademicoPage from "./pages/AcademicoPage";
 import ValidacionPagos from "./components/pagos/ValidacionPagos";
 import Payments from "./pages/intranet/Payments";
 import LoginParent from "./pages/intranet/LoginParent";
@@ -31,6 +34,30 @@ import IntranetLayout from "./pages/intranet/IntranetLayout";
 import ChangePassword from "./pages/intranet/ChangePassword";
 import Profile from "./pages/intranet/Profile";
 import "./App.css";
+
+const TeacherRoute = ({ children }) => {
+  const { user, isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100" style={{ background: '#f8f9fa' }}>
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Cargando...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated || !user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!user.isTeacher) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+};
 
 function App() {
   return (
@@ -59,6 +86,24 @@ function App() {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="profile" element={<Profile />} />
             </Route>
+
+            {/* ==================== INTRANET PARA DOCENTES ==================== */}
+            <Route
+              path="/docente/mis-cursos"
+              element={
+                <TeacherRoute>
+                  <PanelDocentePage />
+                </TeacherRoute>
+              }
+            />
+            <Route
+              path="/docente/evaluar/:asignacionId"
+              element={
+                <TeacherRoute>
+                  <MatrizNotasPage />
+                </TeacherRoute>
+              }
+            />
 
 
             
@@ -175,6 +220,14 @@ function App() {
               element={
                 <ProtectedRoute allowedPermissions={["view_banco"]}>
                   <BancosPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/academico"
+              element={
+                <ProtectedRoute allowedPermissions={["view_asignaciondocente", "view_periodoacademico"]}>
+                  <AcademicoPage />
                 </ProtectedRoute>
               }
             />

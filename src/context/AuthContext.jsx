@@ -11,25 +11,64 @@ export const AuthProvider = ({ children }) => {
 
 // Inicializar autenticación al cargar la página
   useEffect(() => {
-    const initAuth = () => {
+    const initAuth = async () => {
       const token = localStorage.getItem("access_token") || localStorage.getItem("token");
-      
-      if (token) {
-        const savedUser = JSON.parse(localStorage.getItem("userData") || "null");
-        const userType = localStorage.getItem("userType");
-        const permissions = JSON.parse(localStorage.getItem("permissions") || "[]");
+      const userType = localStorage.getItem("userType");
 
-        if (savedUser) {
-          setUser({ ...savedUser, user_type: userType, permissions });
+      if (token) {
+        if (userType === "parent") {
+          const savedUser = JSON.parse(localStorage.getItem("userData") || "null");
+          const permissions = JSON.parse(localStorage.getItem("permissions") || "[]");
+          if (savedUser) {
+            setUser({ ...savedUser, user_type: "parent", permissions });
+          } else {
+            setUser({ user_type: "parent", permissions });
+          }
+          setIsAuthenticated(true);
+          setLoading(false);
         } else {
-          // Fallback para administrativos
-          const username = localStorage.getItem("username");
-          const role = localStorage.getItem("role");
-          setUser({ username, role, permissions });
+          try {
+            const response = await axiosInstance.get("/auth/usuarios/me/");
+            const userData = response.data;
+            const groups = userData.groups || [];
+            const isTeacher = groups.includes("PROFESOR");
+
+            const fullUser = {
+              ...userData,
+              isTeacher,
+              user_type: isTeacher ? "teacher" : "staff",
+            };
+
+            localStorage.setItem("userData", JSON.stringify(fullUser));
+            localStorage.setItem("groups", JSON.stringify(groups));
+            localStorage.setItem("permissions", JSON.stringify(userData.permissions || []));
+            localStorage.setItem("role", isTeacher ? "PROFESOR" : (userData.is_superuser ? "superuser" : "staff"));
+
+            setUser(fullUser);
+            setIsAuthenticated(true);
+          } catch (error) {
+            console.error("Error fetching user profile during initAuth:", error);
+            const savedUser = JSON.parse(localStorage.getItem("userData") || "null");
+            const permissions = JSON.parse(localStorage.getItem("permissions") || "[]");
+            const groups = JSON.parse(localStorage.getItem("groups") || "[]");
+            const role = localStorage.getItem("role");
+
+            if (savedUser) {
+              const isTeacher = (groups || []).includes("PROFESOR") || role === "PROFESOR";
+              setUser({ ...savedUser, permissions, groups, isTeacher });
+              setIsAuthenticated(true);
+            } else {
+              localStorage.clear();
+              setUser(null);
+              setIsAuthenticated(false);
+            }
+          } finally {
+            setLoading(false);
+          }
         }
-        setIsAuthenticated(true);
+      } else {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     initAuth();
@@ -37,47 +76,61 @@ export const AuthProvider = ({ children }) => {
 
   // Función de login
   const login = async (username, password) => {
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const response = await axiosInstance.post("/auth/login/", {
-      username,
-      password,
-    });
+      const response = await axiosInstance.post("/auth/login/", {
+        username,
+        password,
+      });
 
-    console.log("LOGIN RESPONSE:", response.data); // 👈 DEBUG
+      console.log("LOGIN RESPONSE:", response.data); // 👈 DEBUG
 
-    const { access, refresh, role, apoderado_id, permissions } = response.data;
+      const { access, refresh, role, apoderado_id, permissions, groups } = response.data;
 
-    localStorage.setItem("access_token", access);
-    localStorage.setItem("refresh_token", refresh);
-    localStorage.setItem("username", username);
-    localStorage.setItem("role", role);
-    localStorage.setItem("permissions", JSON.stringify(permissions || []));
-    if (apoderado_id) {
-        localStorage.setItem("apoderado_id", apoderado_id);
+      localStorage.setItem("access_token", access);
+      localStorage.setItem("refresh_token", refresh);
+      localStorage.setItem("username", username);
+      localStorage.setItem("role", role);
+      localStorage.setItem("permissions", JSON.stringify(permissions || []));
+      localStorage.setItem("groups", JSON.stringify(groups || []));
+      if (apoderado_id) {
+          localStorage.setItem("apoderado_id", apoderado_id);
+      }
+
+      const isTeacher = (groups || []).includes("PROFESOR");
+      const fullUser = {
+        username,
+        role,
+        apoderado_id,
+        permissions: permissions || [],
+        groups: groups || [],
+        isTeacher,
+        user_type: isTeacher ? "teacher" : "staff",
+      };
+
+      localStorage.setItem("userData", JSON.stringify(fullUser));
+
+      setIsAuthenticated(true);
+      setUser(fullUser);
+
+      toast.success("¡Bienvenido!");
+      return { success: true, isTeacher };
+
+    } catch (error) {
+      console.log("ERROR LOGIN:", error.response); // 👈 IMPORTANTE
+
+      const errorMessage =
+        error.response?.data?.detail ||
+        "Error en el servidor o conexión";
+
+      toast.error(errorMessage);
+      return { success: false };
+
+    } finally {
+      setLoading(false);
     }
-
-    setIsAuthenticated(true);
-    setUser({ username, role, apoderado_id, permissions: permissions || [] });
-
-    toast.success("¡Bienvenido!");
-    return true;
-
-  } catch (error) {
-    console.log("ERROR LOGIN:", error.response); // 👈 IMPORTANTE
-
-    const errorMessage =
-      error.response?.data?.detail ||
-      "Error en el servidor o conexión";
-
-    toast.error(errorMessage);
-    return false;
-
-  } finally {
-    setLoading(false);
-  }
-};
+  };
  
 
 // Login para Apoderados
@@ -119,10 +172,13 @@ const logout = () => {
     toast.success("Sesión cerrada");
   };
 
+  const isTeacher = user ? !!user.isTeacher : false;
+
   const value = {
     user,
     loading,
     isAuthenticated,
+    isTeacher,
     login,
     loginParent,     // ← Importante
     logout,

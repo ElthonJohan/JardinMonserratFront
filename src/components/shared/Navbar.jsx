@@ -173,6 +173,17 @@ const AppNavbar = ({ title = 'Jardín Monserrat' }) => {
   const [togHov, togHovProps]                 = useHover();
 
   const canValidate = user?.permissions?.includes('view_pago');
+  const canViewAcademico = user?.role === 'admin' || user?.role === 'director' || user?.permissions?.includes('view_asignaciondocente') || user?.permissions?.includes('view_periodoacademico');
+
+  let linksToRender = [];
+  if (user?.isTeacher) {
+    linksToRender = [{ label: 'Mis Cursos', path: '/docente/mis-cursos' }];
+  } else {
+    linksToRender = [...NAV_LINKS];
+    if (canViewAcademico) {
+      linksToRender.push({ label: 'Académico', path: '/academico' });
+    }
+  }
 
   useEffect(() => {
     if (canValidate) {
@@ -193,14 +204,14 @@ const AppNavbar = ({ title = 'Jardín Monserrat' }) => {
       <Container fluid style={{ padding: '0 32px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
 
         {/* Brand */}
-        <a href="/dashboard" style={S.brand} onClick={e => { e.preventDefault(); navigate('/dashboard'); }}>
+        <a href={user?.isTeacher ? "/docente/mis-cursos" : "/dashboard"} style={S.brand} onClick={e => { e.preventDefault(); navigate(user?.isTeacher ? '/docente/mis-cursos' : '/dashboard'); }}>
           <div style={S.brandIcon}>🏫</div>
           {title}
         </a>
 
         {/* Nav links */}
         <nav style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          {NAV_LINKS.map(({ label, path }) => (
+          {linksToRender.map(({ label, path }) => (
             <NavLinkItem
               key={path}
               label={label}
@@ -240,9 +251,11 @@ const AppNavbar = ({ title = 'Jardín Monserrat' }) => {
                     <DropdownItemCustom onClick={() => { navigate('/perfil');        setDropOpen(false); }}>
                       👤 Perfil
                     </DropdownItemCustom>
-                    <DropdownItemCustom onClick={() => { navigate('/configuracion'); setDropOpen(false); }}>
-                      ⚙️ Configuración
-                    </DropdownItemCustom>
+                    {!user?.isTeacher && (
+                      <DropdownItemCustom onClick={() => { navigate('/configuracion'); setDropOpen(false); }}>
+                        ⚙️ Configuración
+                      </DropdownItemCustom>
+                    )}
                     <div style={S.divider} />
                     <DropdownItemCustom danger onClick={() => { handleLogout(); setDropOpen(false); }}>
                       🚪 Cerrar Sesión

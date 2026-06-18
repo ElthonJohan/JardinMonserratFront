@@ -22,13 +22,17 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, user } = useAuth();
 
   useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/dashboard");
+    if (isAuthenticated && user) {
+      if (user.isTeacher) {
+        navigate("/docente/mis-cursos");
+      } else {
+        navigate("/dashboard");
+      }
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,9 +40,16 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const success = await login(username, password);
-      if (success) {
-        navigate("/dashboard");
+      const result = await login(username, password);
+      const isSuccess = typeof result === 'boolean' ? result : (result && result.success);
+      const isTeacherUser = typeof result === 'object' && result ? result.isTeacher : false;
+
+      if (isSuccess) {
+        if (isTeacherUser) {
+          navigate("/docente/mis-cursos");
+        } else {
+          navigate("/dashboard");
+        }
       } else {
         setError("Usuario o contraseña incorrectos");
       }
