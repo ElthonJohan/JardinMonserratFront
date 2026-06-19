@@ -31,6 +31,12 @@ export default function ModalAsignacionDocente({
   const [selectedAreas, setSelectedAreas] = useState([]); // Array of IDs
   const [batchActivo, setBatchActivo] = useState(true);
 
+  // Search states for teacher autocomplete
+  const [searchSingleDocente, setSearchSingleDocente] = useState('');
+  const [searchBatchDocente, setSearchBatchDocente] = useState('');
+  const [showSingleDocenteDropdown, setShowSingleDocenteDropdown] = useState(false);
+  const [showBatchDocenteDropdown, setShowBatchDocenteDropdown] = useState(false);
+
   // Synchronize state when modal opens or editingItem changes
   useEffect(() => {
     if (show) {
@@ -42,6 +48,8 @@ export default function ModalAsignacionDocente({
           periodo_matricula: editingItem.periodo_matricula || '',
           activo: editingItem.activo !== undefined ? editingItem.activo : true
         });
+        setSearchSingleDocente('');
+        setShowSingleDocenteDropdown(false);
       } else {
         // Reset batch states
         setSelectedDocente('');
@@ -49,6 +57,8 @@ export default function ModalAsignacionDocente({
         setSelectedAulas([]);
         setSelectedAreas([]);
         setBatchActivo(true);
+        setSearchBatchDocente('');
+        setShowBatchDocenteDropdown(false);
       }
     }
   }, [show, editingItem]);
@@ -90,6 +100,36 @@ export default function ModalAsignacionDocente({
         return prev.filter(id => id !== areaId);
       }
     });
+  };
+
+  // Helper function to get docente name
+  const getDocenteName = (docenteId) => {
+    const docente = docentes.find(d => d.id === parseInt(docenteId));
+    if (!docente) return '';
+    return docente.first_name || docente.last_name ? `${docente.first_name} ${docente.last_name}`.trim() : docente.username;
+  };
+
+  // Filter docentes based on search term
+  const filteredDocentes = docentes.filter(d => {
+    const name = d.first_name || d.last_name ? `${d.first_name} ${d.last_name}`.trim() : d.username;
+    return name.toLowerCase().includes(searchSingleDocente.toLowerCase());
+  });
+
+  const filteredDocentesBatch = docentes.filter(d => {
+    const name = d.first_name || d.last_name ? `${d.first_name} ${d.last_name}`.trim() : d.username;
+    return name.toLowerCase().includes(searchBatchDocente.toLowerCase());
+  });
+
+  const handleSelectSingleDocente = (docenteId) => {
+    setSingleForm(prev => ({ ...prev, docente: docenteId }));
+    setSearchSingleDocente(getDocenteName(docenteId));
+    setShowSingleDocenteDropdown(false);
+  };
+
+  const handleSelectBatchDocente = (docenteId) => {
+    setSelectedDocente(docenteId);
+    setSearchBatchDocente(getDocenteName(docenteId));
+    setShowBatchDocenteDropdown(false);
   };
 
   const handleSubmit = async (e) => {
@@ -174,19 +214,58 @@ export default function ModalAsignacionDocente({
             <>
               <Form.Group className="mb-3">
                 <Form.Label className="fw-semibold">Docente *</Form.Label>
-                <Form.Select
-                  name="docente"
-                  value={singleForm.docente}
-                  onChange={handleSingleInputChange}
-                  required
-                >
-                  <option value="">Seleccione Docente...</option>
-                  {docentes.map(d => (
-                    <option key={d.id} value={d.id}>
-                      {d.first_name || d.last_name ? `${d.first_name} ${d.last_name}`.trim() : d.username}
-                    </option>
-                  ))}
-                </Form.Select>
+                <div className="position-relative">
+                  <Form.Control
+                    type="text"
+                    placeholder="Escribe para buscar docente..."
+                    value={searchSingleDocente}
+                    onChange={e => {
+                      setSearchSingleDocente(e.target.value);
+                      setShowSingleDocenteDropdown(true);
+                    }}
+                    onFocus={() => setShowSingleDocenteDropdown(true)}
+                    onBlur={() => setTimeout(() => setShowSingleDocenteDropdown(false), 200)}
+                    required={!singleForm.docente}
+                  />
+                  {showSingleDocenteDropdown && (
+                    <div
+                      className="position-absolute w-100 bg-white border border-secondary rounded mt-1"
+                      style={{
+                        maxHeight: '200px',
+                        overflowY: 'auto',
+                        zIndex: 1000,
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                      }}
+                    >
+                      {filteredDocentes.length > 0 ? (
+                        filteredDocentes.map(d => {
+                          const docenteName = d.first_name || d.last_name ? `${d.first_name} ${d.last_name}`.trim() : d.username;
+                          return (
+                            <div
+                              key={d.id}
+                              className="p-2 cursor-pointer"
+                              style={{
+                                cursor: 'pointer',
+                                backgroundColor: singleForm.docente === d.id ? '#e9ecef' : 'white',
+                                borderBottom: '1px solid #e9ecef'
+                              }}
+                              onClick={() => handleSelectSingleDocente(d.id)}
+                              onMouseOver={e => e.currentTarget.style.backgroundColor = '#f8f9fa'}
+                              onMouseOut={e => e.currentTarget.style.backgroundColor = singleForm.docente === d.id ? '#e9ecef' : 'white'}
+                            >
+                              {docenteName}
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <div className="p-2 text-muted small">No se encontraron docentes</div>
+                      )}
+                    </div>
+                  )}
+                </div>
+                {singleForm.docente && (
+                  <small className="text-success d-block mt-1">✓ Seleccionado: {getDocenteName(singleForm.docente)}</small>
+                )}
               </Form.Group>
 
               <Form.Group className="mb-3">
@@ -258,18 +337,58 @@ export default function ModalAsignacionDocente({
                 <Col md={6}>
                   <Form.Group>
                     <Form.Label className="fw-semibold">Docente *</Form.Label>
-                    <Form.Select
-                      value={selectedDocente}
-                      onChange={e => setSelectedDocente(e.target.value)}
-                      required
-                    >
-                      <option value="">Seleccione Docente...</option>
-                      {docentes.map(d => (
-                        <option key={d.id} value={d.id}>
-                          {d.first_name || d.last_name ? `${d.first_name} ${d.last_name}`.trim() : d.username}
-                        </option>
-                      ))}
-                    </Form.Select>
+                    <div className="position-relative">
+                      <Form.Control
+                        type="text"
+                        placeholder="Escribe para buscar docente..."
+                        value={searchBatchDocente}
+                        onChange={e => {
+                          setSearchBatchDocente(e.target.value);
+                          setShowBatchDocenteDropdown(true);
+                        }}
+                        onFocus={() => setShowBatchDocenteDropdown(true)}
+                        onBlur={() => setTimeout(() => setShowBatchDocenteDropdown(false), 200)}
+                        required={!selectedDocente}
+                      />
+                      {showBatchDocenteDropdown && (
+                        <div
+                          className="position-absolute w-100 bg-white border border-secondary rounded mt-1"
+                          style={{
+                            maxHeight: '200px',
+                            overflowY: 'auto',
+                            zIndex: 1000,
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                          }}
+                        >
+                          {filteredDocentesBatch.length > 0 ? (
+                            filteredDocentesBatch.map(d => {
+                              const docenteName = d.first_name || d.last_name ? `${d.first_name} ${d.last_name}`.trim() : d.username;
+                              return (
+                                <div
+                                  key={d.id}
+                                  className="p-2 cursor-pointer"
+                                  style={{
+                                    cursor: 'pointer',
+                                    backgroundColor: selectedDocente === d.id ? '#e9ecef' : 'white',
+                                    borderBottom: '1px solid #e9ecef'
+                                  }}
+                                  onClick={() => handleSelectBatchDocente(d.id)}
+                                  onMouseOver={e => e.currentTarget.style.backgroundColor = '#f8f9fa'}
+                                  onMouseOut={e => e.currentTarget.style.backgroundColor = selectedDocente === d.id ? '#e9ecef' : 'white'}
+                                >
+                                  {docenteName}
+                                </div>
+                              );
+                            })
+                          ) : (
+                            <div className="p-2 text-muted small">No se encontraron docentes</div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    {selectedDocente && (
+                      <small className="text-success d-block mt-1">✓ Seleccionado: {getDocenteName(selectedDocente)}</small>
+                    )}
                   </Form.Group>
                 </Col>
                 <Col md={6}>
