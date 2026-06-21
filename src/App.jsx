@@ -32,8 +32,9 @@ import Payments from "./pages/intranet/Payments";
 import LoginParent from "./pages/intranet/LoginParent";
 import IntranetLayout from "./pages/intranet/IntranetLayout";
 import ChangePassword from "./pages/intranet/ChangePassword";
-import Profile from "./pages/intranet/Profile";
+import Profile from "./pages/intranet/Profile"; 
 import "./App.css";
+import ConfiguracionPagosPage from "./pages/ConfiguracionPagosPage";
 
 const TeacherRoute = ({ children }) => {
   const { user, isAuthenticated, loading } = useAuth();
@@ -191,6 +192,10 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+    path="/configuracion-pagos"
+    element={<ConfiguracionPagosPage />}
+/>
             <Route
               path="/periodos"
               element={

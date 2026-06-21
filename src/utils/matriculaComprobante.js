@@ -11,8 +11,10 @@ export const escapeHtml = (value) => {
 export const buildComprobanteMatriculaHtml = (matricula) => {
   const alumno = matricula?.alumno_detail;
   const aula = matricula?.aula_detail;
+  const periodo_academico=matricula?.periodo_academico_detail;
 
   const alumnoNombre = alumno ? `${alumno.nombres || ''} ${alumno.apellidos || ''}`.trim() : '';
+  const periodoNombre = periodo_academico ? `${periodo_academico.nombre || ''} - ${periodo_academico.anio || ''}`.trim() : '';
 
   return `<!doctype html>
 <html lang="es">
@@ -225,7 +227,7 @@ export const buildComprobanteMatriculaHtml = (matricula) => {
           </div>
           <div class="item">
             <label>Año Lectivo:</label>
-            <div>${escapeHtml(matricula?.anio || '-')}</div>
+            <div>${escapeHtml(periodoNombre || '-')}</div>
           </div>
         </div>
       </div>

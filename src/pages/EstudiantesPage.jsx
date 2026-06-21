@@ -25,16 +25,20 @@ import "../styles/estudiantes.css";
 import toast from "react-hot-toast";
 import { Modal } from "bootstrap";
 import { AppNavbar, Loading } from "../components/shared";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import { useRef } from "react";
 
 export default function EstudiantesPage() {
   const navigate = useNavigate();
-  const [estudiantes, setEstudiantes]       = useState([]);
+  const [estudiantes, setEstudiantes] = useState([]);
   const [selectedEstudiante, setSelectedEstudiante] = useState(null);
-  const [serverErrors, setServerErrors]     = useState({});
-  const [isEditMode, setIsEditMode]         = useState(false);
+  const [serverErrors, setServerErrors] = useState({});
+  const [isEditMode, setIsEditMode] = useState(false);
   const [newCredentials, setNewCredentials] = useState(null);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [studentParents, setStudentParents] = useState([]);
+  const credRef = useRef(null);
 
   /* ── load ── */
   const loadData = async () => {
@@ -47,11 +51,14 @@ export default function EstudiantesPage() {
     }
   };
 
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => {
+    loadData();
+  }, []);
 
   /* ── helpers ── */
-  const openModal   = (id) => new Modal(document.getElementById(id)).show();
-  const hideModal   = (id) => Modal.getInstance(document.getElementById(id))?.hide();
+  const openModal = (id) => new Modal(document.getElementById(id)).show();
+  const hideModal = (id) =>
+    Modal.getInstance(document.getElementById(id))?.hide();
 
   /* ── CRUD ── */
   const openCreateModal = () => {
@@ -71,7 +78,7 @@ export default function EstudiantesPage() {
         if (res?.generated_credentials) {
           setNewCredentials({
             ...res.generated_credentials,
-            apoderado:  `${data.apoderado?.nombres} ${data.apoderado?.apellidos}`,
+            apoderado: `${data.apoderado?.nombres} ${data.apoderado?.apellidos}`,
             estudiante: `${data.estudiante?.nombres} ${data.estudiante?.apellidos}`,
           });
           openModal("credentialsModal");
@@ -92,19 +99,31 @@ export default function EstudiantesPage() {
   };
 
   const handleEdit = (estudiante) => {
-    const listaApoderados = estudiante.apoderados || estudiante.apoderados_detail || [];
-    const relPrincipal    = listaApoderados.find(r => r.es_principal) || listaApoderados[0];
+    const listaApoderados =
+      estudiante.apoderados || estudiante.apoderados_detail || [];
+    const relPrincipal =
+      listaApoderados.find((r) => r.es_principal) || listaApoderados[0];
     setSelectedEstudiante({
       id: estudiante.id,
       estudiante: {
-        nombres: estudiante.nombres, apellidos: estudiante.apellidos,
-        dni: estudiante.dni, fecha_nacimiento: estudiante.fecha_nacimiento,
+        nombres: estudiante.nombres,
+        apellidos: estudiante.apellidos,
+        dni: estudiante.dni,
+        fecha_nacimiento: estudiante.fecha_nacimiento,
         codigo_estudiante: estudiante.codigo_estudiante,
       },
-      apoderado: relPrincipal ? { ...relPrincipal.apoderado }
-        : { nombres: "", apellidos: "", dni: "", telefono: "", email: "", direccion: "" },
+      apoderado: relPrincipal
+        ? { ...relPrincipal.apoderado }
+        : {
+            nombres: "",
+            apellidos: "",
+            dni: "",
+            telefono: "",
+            email: "",
+            direccion: "",
+          },
       tipo_relacion: relPrincipal?.tipo_relacion ?? "MADRE",
-      es_principal:  relPrincipal?.es_principal  ?? true,
+      es_principal: relPrincipal?.es_principal ?? true,
     });
     setIsEditMode(true);
     setServerErrors({});
@@ -112,7 +131,9 @@ export default function EstudiantesPage() {
   };
 
   const handleMatricula = (estudiante) => {
-    navigate("/matriculas", { state: { autoOpen: true, alumnoId: estudiante.id } });
+    navigate("/matriculas", {
+      state: { autoOpen: true, alumnoId: estudiante.id },
+    });
   };
 
   const handleDelete = async (id) => {
@@ -129,7 +150,9 @@ export default function EstudiantesPage() {
   const handleSearch = async (e) => {
     const term = e.target.value;
     try {
-      const response = await axiosInstance.get(`/estudiantes/${term ? `?search=${term}` : ""}`);
+      const response = await axiosInstance.get(
+        `/estudiantes/${term ? `?search=${term}` : ""}`,
+      );
       const data = response.data.results || response.data;
       setEstudiantes(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -181,13 +204,102 @@ export default function EstudiantesPage() {
 
   const openAddParentModal = () => openModal("agregarApoderadoModal");
 
+ 
+  const descargarPDF = async () => {
+
+  const canvas = await html2canvas(
+    credRef.current,
+    {
+      scale: 2,
+      useCORS: true
+    }
+  );
+
+  const imgData = canvas.toDataURL(
+    "image/png"
+  );
+
+  const pdf = new jsPDF(
+    "p",
+    "mm",
+    "a4"
+  );
+
+  const pdfWidth =
+    pdf.internal.pageSize.getWidth();
+
+  const imgProps =
+    pdf.getImageProperties(imgData);
+
+  const pdfHeight =
+    (imgProps.height * pdfWidth) /
+    imgProps.width;
+
+  pdf.addImage(
+    imgData,
+    "PNG",
+    0,
+    10,
+    pdfWidth,
+    pdfHeight
+  );
+
+  pdf.save(
+    `credenciales-${newCredentials?.username}.pdf`
+  );
+};
+
+
+
+  const descargarImagen = async () => {
+    if (!credRef.current) return;
+
+    const canvas = await html2canvas(credRef.current, {
+      scale: 2,
+      useCORS: true,
+    });
+
+    const image = canvas.toDataURL("image/png");
+
+    const link = document.createElement("a");
+
+    link.href = image;
+
+    link.download = `credenciales-${newCredentials?.username}.png`;
+
+    link.click();
+  };
+
+  const copiarCredenciales = async () => {
+    const texto = `
+🎓 JARDÍN NUESTRA SEÑORA DE MONTSERRAT
+
+Apoderado:
+${newCredentials?.apoderado}
+
+Estudiante:
+${newCredentials?.estudiante}
+
+Usuario:
+${newCredentials?.username}
+
+Contraseña:
+${newCredentials?.password}
+
+Por seguridad cambie su contraseña después del primer ingreso.
+`;
+
+    await navigator.clipboard.writeText(texto);
+
+    toast.success("Credenciales copiadas al portapapeles");
+  };
+
   /* ────────────────── RENDER ────────────────── */
   return (
     <>
       <AppNavbar />
 
       <div className="container-fluid container-custom">
-
         {/* ── Page header ── */}
         <div className="d-flex flex-column gap-2 mb-4">
           <h1 className="page-title">Gestión de Estudiantes</h1>
@@ -216,7 +328,7 @@ export default function EstudiantesPage() {
             <h3>Lista de Estudiantes</h3>
           </div>
 
-          <div className="overflow-x-auto" style={{ overflowX: 'auto' }}>
+          <div className="overflow-x-auto" style={{ overflowX: "auto" }}>
             {/* EstudianteTable ya existente — le pasamos la clase via wrapper.
                 Si quieres, puedes refactorizar EstudianteTable para usar est-table
                 directamente. Por ahora el wrapper aplica los estilos. */}
@@ -233,17 +345,22 @@ export default function EstudiantesPage() {
           {/* Pagination info */}
           <div className="table-pagination">
             <span>
-              Mostrando {estudiantes.length} estudiante{estudiantes.length !== 1 ? 's' : ''}
+              Mostrando {estudiantes.length} estudiante
+              {estudiantes.length !== 1 ? "s" : ""}
             </span>
             <div className="pagination-pages">
-              <button className="page-btn" disabled>‹</button>
+              <button className="page-btn" disabled>
+                ‹
+              </button>
               <button className="page-btn active">1</button>
-              <button className="page-btn" disabled>›</button>
+              <button className="page-btn" disabled>
+                ›
+              </button>
             </div>
           </div>
         </div>
-
-      </div>{/* /container-custom */}
+      </div>
+      {/* /container-custom */}
 
       {/* ══════════════════════════════════════
           MODAL: Crear / Editar Estudiante
@@ -273,63 +390,152 @@ export default function EstudiantesPage() {
       {/* ══════════════════════════════════════
           MODAL: Credenciales generadas
       ══════════════════════════════════════ */}
-      <div className="modal fade" id="credentialsModal" tabIndex="-1" data-bs-backdrop="static">
+      <div
+        className="modal fade"
+        id="credentialsModal"
+        tabIndex="-1"
+        data-bs-backdrop="static"
+      >
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
-
-            <div className="modal-header" style={{ background: '#146c2e' }}>
+            <div className="modal-header" style={{ background: "#146c2e" }}>
               <h5 className="modal-title">✅ Usuario de Apoderado Creado</h5>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" />
+              <button
+                type="button"
+                className="btn-close"
+                data-bs-dismiss="modal"
+              />
             </div>
 
             <div className="modal-body">
-              <p style={{
-                fontSize: 14, color: 'var(--on-surface-variant)',
-                marginBottom: 16, textAlign: 'center',
-              }}>
-                Se ha generado automáticamente una cuenta de acceso para el apoderado.
-                <strong style={{ display: 'block', color: 'var(--error)', marginTop: 8 }}>
-                  Por favor, comparta estos datos ahora. La contraseña no se volverá a mostrar.
+              <p
+                style={{
+                  fontSize: 14,
+                  color: "var(--on-surface-variant)",
+                  marginBottom: 16,
+                  textAlign: "center",
+                }}
+              >
+                Se ha generado automáticamente una cuenta de acceso para el
+                apoderado.
+                <strong
+                  style={{
+                    display: "block",
+                    color: "var(--error)",
+                    marginTop: 8,
+                  }}
+                >
+                  Por favor, comparta estos datos ahora. La contraseña no se
+                  volverá a mostrar.
                 </strong>
               </p>
 
-              <div className="cred-box">
-                <div className="cred-row">
-                  <span className="cred-label">Apoderado</span>
-                  <span style={{ fontSize: 14, fontWeight: 600 }}>{newCredentials?.apoderado}</span>
-                </div>
-                <div className="cred-row">
-                  <span className="cred-label">Estudiante</span>
-                  <span style={{ fontSize: 14, fontWeight: 600 }}>{newCredentials?.estudiante}</span>
-                </div>
-                <div className="cred-row" style={{ marginTop: 8 }}>
-                  <span className="cred-label">Usuario</span>
-                  <span className="cred-value">{newCredentials?.username}</span>
-                </div>
-                <div className="cred-row">
-                  <span className="cred-label">Contraseña</span>
-                  <span className="cred-value">{newCredentials?.password}</span>
-                </div>
-              </div>
+              <div ref={credRef} className="credential-card">
 
-              <div style={{
-                background: 'rgba(0,149,217,0.08)',
-                border: '1px solid rgba(0,149,217,0.2)',
-                borderRadius: 'var(--radius-md)',
-                padding: '10px 14px',
-                fontSize: 13,
-                color: 'var(--info)',
-              }}>
-                💡 El apoderado podrá ingresar con su código de estudiante y esta contraseña temporal.
+  <div className="credential-header">
+    <div className="school-logo">
+      🎓
+    </div>
+
+    <div>
+      <h4>Jardín Nuestra Señora de Montserrat</h4>
+      <span>Credenciales de Acceso</span>
+    </div>
+  </div>
+
+  <div className="credential-body">
+
+    <div className="credential-item">
+      <label>Apoderado</label>
+      <span>{newCredentials?.apoderado}</span>
+    </div>
+
+    <div className="credential-item">
+      <label>Estudiante</label>
+      <span>{newCredentials?.estudiante}</span>
+    </div>
+
+    <div className="credential-item">
+      <label>Usuario (DNI)</label>
+      <span className="credential-highlight">
+        {newCredentials?.username}
+      </span>
+    </div>
+
+    <div className="credential-item">
+      <label>Contraseña Temporal</label>
+      <span className="credential-password">
+        {newCredentials?.password}
+      </span>
+    </div>
+
+  </div>
+
+  <div className="credential-footer">
+    <p>
+      ⚠️ Por seguridad cambie su contraseña al primer inicio de sesión.
+    </p>
+
+    <small>
+      Emitido:
+      {" "}
+      {new Date().toLocaleDateString("es-PE")}
+    </small>
+  </div>
+
+</div>
+              <div
+                style={{
+                  background: "rgba(0,149,217,0.08)",
+                  border: "1px solid rgba(0,149,217,0.2)",
+                  borderRadius: "var(--radius-md)",
+                  padding: "10px 14px",
+                  fontSize: 13,
+                  color: "var(--info)",
+                }}
+              >
+                💡 El apoderado podrá ingresar con su DNI y esta contraseña
+                temporal.
               </div>
             </div>
 
+            <div
+  className="d-flex justify-content-center gap-2 mb-3"
+>
+  <button
+    type="button"
+    className="btn btn-success"
+    onClick={descargarImagen}
+  >
+    🖼️ Descargar Imagen
+  </button>
+
+  <button
+    type="button"
+    className="btn btn-danger"
+    onClick={descargarPDF}
+  >
+    📄 Descargar PDF
+  </button>
+
+  <button
+    type="button"
+    className="btn btn-primary"
+    onClick={copiarCredenciales}
+  >
+    📋 Copiar
+  </button>
+</div>
+
             <div className="modal-footer">
-              <button type="button" className="btn-modal-primary" data-bs-dismiss="modal">
+              <button
+                type="button"
+                className="btn-modal-primary"
+                data-bs-dismiss="modal"
+              >
                 Confirmar y Cerrar
               </button>
             </div>
-
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { Modal } from "react-bootstrap";
 import toast from "react-hot-toast";
 
 import { registrarPagoParent, getBancos } from "../../api/pagosAPI";
+import { getConfiguracionPagosPublica } from "../../api/PagosAPI";
 
 export default function PagoModal({ show, onHide, deudas, onSuccess }) {
   console.log("DEUDAS RECIBIDAS:", deudas);
@@ -10,6 +11,8 @@ export default function PagoModal({ show, onHide, deudas, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [selectedDeudas, setSelectedDeudas] = useState([]);
   const [bancos, setBancos] = useState([]);
+  const [configPago, setConfigPago] = useState(null);
+
 
   const [formData, setFormData] = useState({
     metodo_pago: "Yape",
@@ -30,6 +33,16 @@ export default function PagoModal({ show, onHide, deudas, onSuccess }) {
       }
     };
     fetchBancos();
+
+    const fetchConfiguracion = async () => {
+  try {
+    const data = await getConfiguracionPagosPublica();
+    setConfigPago(data);
+  } catch (err) {
+    console.error(err);
+  }
+};
+fetchConfiguracion();
   }, []);
 
   // Resetear estados cuando se abre/cierra el modal
@@ -125,6 +138,8 @@ export default function PagoModal({ show, onHide, deudas, onSuccess }) {
       setLoading(false);
     }
   };
+
+  console.log(configPago);
 
   return (
     <Modal show={show} onHide={onHide} centered>
@@ -269,6 +284,125 @@ export default function PagoModal({ show, onHide, deudas, onSuccess }) {
             <option>Depósito</option>
           </select>
         </div>
+
+        {
+  formData.metodo_pago === "Yape" &&
+  configPago && (
+
+    <div className="payment-card yape-card mt-3">
+
+      <div className="payment-header">
+        📱 Pagar con Yape
+      </div>
+
+      {
+        configPago.qr_yape && (
+          <div className="payment-qr-container">
+    <img
+      src={configPago.qr_yape}
+      alt="QR Yape"
+      className="payment-qr"
+    />
+  </div>
+
+
+        )
+      }
+
+      <div className="payment-info">
+    <div className="payment-number">
+      {configPago.numero_yape}
+    </div>
+
+    <div className="payment-owner">
+      {configPago.titular_yape}
+    </div>
+
+    <div className="payment-amount">
+      S/ {montoTotalSeleccionado.toFixed(2)}
+    </div>
+  </div>
+
+      <button
+  type="button"
+  className="btn btn-outline-primary btn-sm mt-2"
+  onClick={() => {
+    navigator.clipboard.writeText(
+      configPago.numero_yape
+    );
+
+    toast.success(
+      "Número copiado"
+    );
+  }}
+>
+  Copiar número
+</button>
+
+    </div>
+  )
+}
+
+{
+  formData.metodo_pago === "Plin" &&
+  configPago && (
+
+    <div className="payment-card plin-card mt-3">
+
+      <div className="payment-header">
+        💳 Pagar con Plin
+      </div>
+
+      {
+        configPago.qr_plin && (
+          <div className="payment-qr-container">
+    <img
+      src={configPago.qr_plin}
+      alt="QR Plin"
+      className="payment-qr"
+    />
+  </div>
+        )
+      }
+<div className="payment-info">
+    <div className="payment-number">
+      {configPago.numero_plin }
+    </div>
+
+    <div className="payment-owner">
+      {configPago.titular_plin}
+    </div>
+
+    <div className="payment-amount">
+      S/ {montoTotalSeleccionado.toFixed(2)}
+    </div>
+  </div>
+     
+      
+
+      
+
+      <button
+  type="button"
+  className="btn btn-outline-primary btn-sm mt-2"
+  onClick={() => {
+    navigator.clipboard.writeText(
+      configPago.numero_plin
+    );
+
+    toast.success(
+      "Número copiado"
+    );
+  }}
+>
+  Copiar número
+</button>
+
+    </div>
+  )
+}
+
+
 
         {["Transferencia", "Depósito"].includes(formData.metodo_pago) && (
           <div className="mb-3">

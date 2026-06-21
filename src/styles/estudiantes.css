@@ -352,40 +352,112 @@ body {
 }
 
 /* Credentials modal */
-.cred-box {
-  background: var(--surface-low);
-  border: 1px solid var(--outline-variant);
-  border-radius: var(--radius-lg);
-  padding: 20px;
-  text-align: left;
-  margin-bottom: 16px;
+.credential-card {
+  background: #fff;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid #dbe5f1;
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+  width: 100%;
+  max-width: 520px;
+  margin: auto;
 }
 
-.cred-box .cred-row {
+.credential-header {
+  background: linear-gradient(
+    135deg,
+    #0b3d91,
+    #146c94
+  );
+  color: white;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.school-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+
+.credential-header h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.credential-header span {
+  font-size: 13px;
+  opacity: .9;
+}
+
+.credential-body {
+  padding: 22px;
+}
+
+.credential-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--surface-container);
+  padding: 12px 0;
+  border-bottom: 1px dashed #e5e7eb;
 }
 
-.cred-box .cred-row:last-child { border-bottom: none; }
+.credential-item:last-child {
+  border-bottom: none;
+}
 
-.cred-label {
+.credential-item label {
+  font-weight: 600;
+  color: #475569;
+}
+
+.credential-item span {
+  color: #111827;
+  font-weight: 500;
+}
+
+.credential-highlight {
+  background: #e0f2fe;
+  color: #0369a1;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+.credential-password {
+  background: #dcfce7;
+  color: #15803d;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-family: monospace;
+  letter-spacing: 1px;
+}
+
+.credential-footer {
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  padding: 15px;
+  text-align: center;
+}
+
+.credential-footer p {
+  margin: 0 0 8px;
+  color: #b91c1c;
   font-size: 13px;
-  color: var(--on-surface-variant);
   font-weight: 600;
 }
 
-.cred-value {
-  font-family: 'Courier New', monospace;
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--on-surface);
-  background: #fff;
-  padding: 2px 10px;
-  border-radius: 6px;
-  border: 1px solid var(--outline-variant);
+.credential-footer small {
+  color: #64748b;
 }
 
 /* Modal primary button */

@@ -99,6 +99,38 @@ const ConfiguracionPage = () => {
             </Card>
           </Col>
 
+          {/* Card: Periodos Académicos */}
+          {user?.permissions?.includes('change_configuracionpago') && (
+            <Col md={4} className="mt-md-0 mt-4">
+              <Card 
+                className="configuracion-card h-100 p-3" 
+                onClick={() => handleNavigation('/configuracion-pagos')}
+              >
+                <Card.Body className="d-flex flex-column text-center">
+                  <div className="config-card-icon-wrapper">
+                    <span>📅</span>
+                  </div>
+                  <Card.Title className="configuracion-card-title">
+                    Configuración de pagos
+                  </Card.Title>
+                  <Card.Text className="configuracion-card-desc flex-grow-1">
+                    Configurar los años lectivos, fechas de inicio, fin y estados de apertura para los procesos de matrícula.
+                  </Card.Text>
+                  <Button 
+                    variant="info" 
+                    className="config-btn-action text-white mt-3 w-100 py-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation('/configuracion-pagos');
+                    }}
+                  >
+                    Entrar a Configuración de pagos
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          )}
+
           {/* Card 3: Conceptos de Pago */}
           <Col md={4}>
             <Card 
