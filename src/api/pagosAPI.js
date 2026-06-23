@@ -1,9 +1,84 @@
+import { data } from 'react-router-dom';
 import axiosInstance from './axiosConfig';
 
 const CONCEPTOS_URL = '/pagos/conceptos';
 const PAGOS_URL = '/pagos/pagos';
 const DEUDAS_URL = '/pagos/deudas';
 const CAJA_URL = '/pagos/cajas';
+const CONFI_PAGO ='/pagos/configuracion-pagos'
+
+/**
+ * Obtener configuración actual
+ */
+export const getConfiguracionPagos = async () => {
+  const response = await axiosInstance.get(
+    `${CONFI_PAGO}/`
+  );
+
+  // Si usas ViewSet y solo existe un registro
+  if (Array.isArray(response.data)) {
+    return response.data[0] || null;
+  }
+
+  if (response.data.results) {
+    return response.data.results[0] || null;
+  }
+
+  
+
+  return response.data;
+};
+
+
+/**
+ * Crear configuración
+ */
+export const createConfiguracionPagos=
+async (formData)=>{
+  const response= await axiosInstance.post(`${CONFI_PAGO}/`,formData,{
+    headers:{
+      "content-Type":"multipart/form-data"
+    }
+  });
+
+  return response.data;
+}
+
+/**
+ * Actualizar configuración
+ */
+export const updateConfiguracionPagos =
+async (id, data) => {
+
+  const response =
+    await axiosInstance.put(
+      `${CONFI_PAGO}/${id}/`,
+      data,
+      {
+        headers: {
+          "Content-Type":
+            "multipart/form-data"
+        }
+      }
+    );
+
+  return response.data;
+};
+
+/**
+ * Obtener configuración pública
+ * (para intranet apoderado)
+ */
+export const getConfiguracionPagosPublica =
+  async () => {
+
+    const response =
+      await axiosInstance.get(
+        '/pagos/configuracion-pagos/publica/'
+      );
+
+    return response.data;
+  };
 
 const fetchAllPages = async (url, params = {}) => {
   let allResults = [];

@@ -55,6 +55,65 @@
   margin:auto;
 }
 
+.payment-card {
+  background: #faf5ff;
+  border: 1px solid #e9d5ff;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+}
+
+.payment-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.payment-header h6 {
+  margin: 0;
+  font-weight: 700;
+}
+
+.payment-qr-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.payment-qr {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+
+  background: white;
+  padding: 10px;
+
+  border-radius: 12px;
+  border: 1px solid #ddd;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+}
+
+.payment-number {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #4c1d95;
+}
+
+.payment-owner {
+  color: #6b7280;
+  margin-top: 5px;
+}
+
+.payment-amount {
+  margin-top: 10px;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #16a34a;
+}
+
 @keyframes spin{
   to{
     transform:rotate(360deg);
@@ -313,6 +372,60 @@
     opacity: 1;
     max-height: 2000px;
   }
+}
+
+
+
+/* yape*/
+.payment-card {
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.yape-card {
+  background: #f8f0ff;
+  border: 1px solid #d9b8ff;
+}
+
+.plin-card {
+  background: #eefcff;
+  border: 1px solid #b7ebff;
+}
+
+.payment-header {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.payment-qr {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  margin-bottom: 12px;
+}
+
+.payment-number {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.payment-owner {
+  color: #6c757d;
+  margin-top: 5px;
+}
+
+.payment-amount {
+  margin-top: 15px;
+  font-size: 1rem;
+}
+
+.payment-amount strong {
+  display: block;
+  font-size: 1.4rem;
+  color: #198754;
 }
 
 

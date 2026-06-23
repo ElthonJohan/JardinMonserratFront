@@ -99,6 +99,38 @@ const ConfiguracionPage = () => {
             </Card>
           </Col>
 
+          {/* Card: Periodos Académicos */}
+          {user?.permissions?.includes('change_configuracionpago') && (
+            <Col md={4} className="mt-md-0 mt-4">
+              <Card 
+                className="configuracion-card h-100 p-3" 
+                onClick={() => handleNavigation('/configuracion-pagos')}
+              >
+                <Card.Body className="d-flex flex-column text-center">
+                  <div className="config-card-icon-wrapper">
+                    <span>📅</span>
+                  </div>
+                  <Card.Title className="configuracion-card-title">
+                    Configuración de pagos
+                  </Card.Title>
+                  <Card.Text className="configuracion-card-desc flex-grow-1">
+                    Configurar los años lectivos, fechas de inicio, fin y estados de apertura para los procesos de matrícula.
+                  </Card.Text>
+                  <Button 
+                    variant="info" 
+                    className="config-btn-action text-white mt-3 w-100 py-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNavigation('/configuracion-pagos');
+                    }}
+                  >
+                    Entrar a Configuración de pagos
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          )}
+
           {/* Card 3: Conceptos de Pago */}
           <Col md={4}>
             <Card 
@@ -156,6 +188,60 @@ const ConfiguracionPage = () => {
                   >
                     Entrar a Periodos
                   </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          )}
+
+          {/* Card: Configuración Académica */}
+          {(user?.role === 'admin' || user?.role === 'director' || user?.permissions?.includes('view_periodoacademico')) && (
+            <Col md={4} className="mt-md-0 mt-4">
+              <Card 
+                className="configuracion-card h-100 p-3"
+                onClick={() => handleNavigation('/academico')}
+              >
+                <Card.Body className="d-flex flex-column text-center">
+                  <div className="config-card-icon-wrapper">
+                    <span>📚</span>
+                  </div>
+                  <Card.Title className="configuracion-card-title">
+                    Configuración Académica
+                  </Card.Title>
+                  <Card.Text className="configuracion-card-desc flex-grow-1">
+                    Gestionar áreas curriculares, competencias del alumno y periodos de evaluación académica.
+                  </Card.Text>
+                  <div className="d-flex flex-column gap-2 mt-3">
+                    <Button 
+                      variant="primary" 
+                      className="config-btn-action w-100 py-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleNavigation('/academico?tab=areas');
+                      }}
+                    >
+                      🗂️ Áreas Académicas
+                    </Button>
+                    <Button 
+                      variant="success" 
+                      className="config-btn-action w-100 py-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleNavigation('/academico?tab=competencias');
+                      }}
+                    >
+                      🎯 Competencias
+                    </Button>
+                    <Button 
+                      variant="warning" 
+                      className="config-btn-action text-white w-100 py-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleNavigation('/academico?tab=periodos');
+                      }}
+                    >
+                      📅 Periodos de Evaluación
+                    </Button>
+                  </div>
                 </Card.Body>
               </Card>
             </Col>
