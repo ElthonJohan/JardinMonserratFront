@@ -102,20 +102,30 @@ export default function ModalAsignacionDocente({
     });
   };
 
+  const isProfesor = (docente) => {
+    const groups = docente?.groups || [];
+    const groupNames = groups.map(group => String(group?.name || group || '')).filter(Boolean);
+    const roleName = docente?.role || docente?.rol || '';
+
+    return groupNames.some(name => name.toUpperCase() === 'PROFESOR') || roleName.toUpperCase() === 'PROFESOR';
+  };
+
+  const docentesProfesores = docentes.filter(isProfesor);
+
   // Helper function to get docente name
   const getDocenteName = (docenteId) => {
-    const docente = docentes.find(d => d.id === parseInt(docenteId));
+    const docente = docentesProfesores.find(d => d.id === parseInt(docenteId)) || docentes.find(d => d.id === parseInt(docenteId));
     if (!docente) return '';
     return docente.first_name || docente.last_name ? `${docente.first_name} ${docente.last_name}`.trim() : docente.username;
   };
 
   // Filter docentes based on search term
-  const filteredDocentes = docentes.filter(d => {
+  const filteredDocentes = docentesProfesores.filter(d => {
     const name = d.first_name || d.last_name ? `${d.first_name} ${d.last_name}`.trim() : d.username;
     return name.toLowerCase().includes(searchSingleDocente.toLowerCase());
   });
 
-  const filteredDocentesBatch = docentes.filter(d => {
+  const filteredDocentesBatch = docentesProfesores.filter(d => {
     const name = d.first_name || d.last_name ? `${d.first_name} ${d.last_name}`.trim() : d.username;
     return name.toLowerCase().includes(searchBatchDocente.toLowerCase());
   });

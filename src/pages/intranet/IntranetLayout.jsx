@@ -49,6 +49,16 @@ const IntranetLayout = () => {
           </Link>
 
           <Link
+            to="/intranet/academic-tracking"
+            className={`nav-link ${
+              location.pathname === "/intranet/academic-tracking" ? "active" : ""
+            }`}
+          >
+            <span>📈</span>
+            <span>Seguimiento Académico</span>
+          </Link>
+
+          <Link
             to="/intranet/profile"
             className={`nav-link ${
               location.pathname === "/intranet/profile" ? "active" : ""
