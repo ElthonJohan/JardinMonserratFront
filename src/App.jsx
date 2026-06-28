@@ -33,6 +33,7 @@ import LoginParent from "./pages/intranet/LoginParent";
 import IntranetLayout from "./pages/intranet/IntranetLayout";
 import ChangePassword from "./pages/intranet/ChangePassword";
 import Profile from "./pages/intranet/Profile"; 
+import AcademicTracking from "./pages/intranet/AcademicTracking";
 import "./App.css";
 import ConfiguracionPagosPage from "./pages/ConfiguracionPagosPage";
 
@@ -86,6 +87,7 @@ function App() {
               <Route path="pagos" element={<Payments />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="profile" element={<Profile />} />
+              <Route path="academic-tracking" element={<AcademicTracking />} />
             </Route>
 
             {/* ==================== INTRANET PARA DOCENTES ==================== */}

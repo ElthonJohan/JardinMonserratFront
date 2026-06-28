@@ -51,16 +51,24 @@ export default function AcademicoPage() {
         getPeriodos(),
         getAulas(),
         getPeriodosAcademicos(),
-        axiosInstance.get('/auth/usuarios/')
+        axiosInstance.get('/auth/usuarios/docentes/')
       ]);
 
-      setAsignaciones(Array.isArray(resAsignaciones) ? resAsignaciones : resAsignaciones.results || []);
-      setAreas(Array.isArray(resAreas) ? resAreas : resAreas.results || []);
-      setCompetencias(Array.isArray(resCompetencias) ? resCompetencias : resCompetencias.results || []);
-      setPeriodos(Array.isArray(resPeriodos) ? resPeriodos : resPeriodos.results || []);
-      setAulas(Array.isArray(resAulas) ? resAulas : resAulas.results || []);
-      setPeriodosAcademicos(Array.isArray(resPeriodosAcademico) ? resPeriodosAcademico : resPeriodosAcademico.results || []);
-      setDocentes(Array.isArray(resDocentes.data) ? resDocentes.data : resDocentes.data.results || []);
+      const normalizeList = (response) => {
+        if (Array.isArray(response)) return response;
+        if (response?.data && Array.isArray(response.data)) return response.data;
+        if (response?.results) return response.results;
+        if (response?.data?.results) return response.data.results;
+        return [];
+      };
+
+      setAsignaciones(normalizeList(resAsignaciones));
+      setAreas(normalizeList(resAreas));
+      setCompetencias(normalizeList(resCompetencias));
+      setPeriodos(normalizeList(resPeriodos));
+      setAulas(normalizeList(resAulas));
+      setPeriodosAcademicos(normalizeList(resPeriodosAcademico));
+      setDocentes(normalizeList(resDocentes));
     } catch (error) {
       console.error(error);
       toast.error('Error al cargar datos académicos');

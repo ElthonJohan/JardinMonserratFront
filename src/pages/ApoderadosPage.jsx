@@ -4,6 +4,7 @@ import {
   createApoderado,
   updateApoderado,
   deleteApoderado,
+  resetPassword,
 } from "../api/apoderadosApi.js";
 
 import ApoderadoForm from "../components/apoderados/ApoderadoForm.jsx";
@@ -18,6 +19,8 @@ export default function ApoderadosPage() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showResetModal, setShowResetModal] = useState(false);
+  const [resetResult, setResetResult] = useState(null);
 
   const loadData = async () => {
     setLoading(true);
@@ -78,6 +81,37 @@ export default function ApoderadosPage() {
     }
   };
 
+  const handleResetPassword = async (apoderado) => {
+
+    if (
+      !window.confirm(
+        `¿Desea restablecer la contraseña de ${apoderado.nombres} ${apoderado.apellidos}?`
+      )
+    ) {
+      return;
+    }
+
+    try {
+
+      const data = await resetPassword(apoderado.id);
+
+      setResetResult(data);
+
+      setShowResetModal(true);
+
+      toast.success("Contraseña restablecida correctamente");
+
+    } catch (error) {
+
+      toast.error(
+        error.response?.data?.detail ||
+        "No se pudo restablecer la contraseña."
+      );
+
+    }
+
+  };
+
   const filteredApoderados = useMemo(() => {
     return apoderados.filter((apo) => {
       const search = searchTerm.toLowerCase();
@@ -132,6 +166,7 @@ export default function ApoderadosPage() {
             data={filteredApoderados}
             onEdit={openModal}
             onDelete={handleDelete}
+            onResetPassword={handleResetPassword}
           />
         )}
 

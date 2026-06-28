@@ -239,3 +239,13 @@ export const updateApreciacion = async (id, data) => {
     throw error;
   }
 };
+
+// Libreta Virtual
+export const getLibretaVirtual = async (params) => {
+  try {
+    const response = await axiosInstance.get('/academico/libreta-virtual/', { params });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

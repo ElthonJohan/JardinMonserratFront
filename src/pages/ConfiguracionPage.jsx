@@ -37,12 +37,12 @@ const ConfiguracionPage = () => {
         {/* Short-cut Cards for static data management */}
         <Row className="justify-content-center g-4 mt-2">
 
-          
+
 
           {/* Card 1: Gestión de Aulas */}
           <Col md={4}>
-            <Card 
-              className="configuracion-card h-100 p-3" 
+            <Card
+              className="configuracion-card h-100 p-3"
               onClick={() => handleNavigation('/aulas')}
             >
               <Card.Body className="d-flex flex-column text-center">
@@ -55,8 +55,8 @@ const ConfiguracionPage = () => {
                 <Card.Text className="configuracion-card-desc flex-grow-1">
                   Administrar grados, secciones, capacidades y la asignación física de las aulas para el alumnado.
                 </Card.Text>
-                <Button 
-                  variant="primary" 
+                <Button
+                  variant="primary"
                   className="config-btn-action mt-3 w-100 py-2"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -71,8 +71,8 @@ const ConfiguracionPage = () => {
 
           {/* Card 2: Gestión de Apoderados */}
           <Col md={4}>
-            <Card 
-              className="configuracion-card h-100 p-3" 
+            <Card
+              className="configuracion-card h-100 p-3"
               onClick={() => handleNavigation('/apoderados')}
             >
               <Card.Body className="d-flex flex-column text-center">
@@ -85,8 +85,8 @@ const ConfiguracionPage = () => {
                 <Card.Text className="configuracion-card-desc flex-grow-1">
                   Administrar información personal, documentos DNI, contactos y correos de los padres o tutores de los estudiantes.
                 </Card.Text>
-                <Button 
-                  variant="success" 
+                <Button
+                  variant="success"
                   className="config-btn-action mt-3 w-100 py-2"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -101,9 +101,9 @@ const ConfiguracionPage = () => {
 
           {/* Card: Periodos Académicos */}
           {user?.permissions?.includes('change_configuracionpago') && (
-            <Col md={4} className="mt-md-0 mt-4">
-              <Card 
-                className="configuracion-card h-100 p-3" 
+            <Col md={4} >
+              <Card
+                className="configuracion-card h-100 p-3"
                 onClick={() => handleNavigation('/configuracion-pagos')}
               >
                 <Card.Body className="d-flex flex-column text-center">
@@ -116,8 +116,8 @@ const ConfiguracionPage = () => {
                   <Card.Text className="configuracion-card-desc flex-grow-1">
                     Configurar los años lectivos, fechas de inicio, fin y estados de apertura para los procesos de matrícula.
                   </Card.Text>
-                  <Button 
-                    variant="info" 
+                  <Button
+                    variant="info"
                     className="config-btn-action text-white mt-3 w-100 py-2"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -133,8 +133,8 @@ const ConfiguracionPage = () => {
 
           {/* Card 3: Conceptos de Pago */}
           <Col md={4}>
-            <Card 
-              className="configuracion-card h-100 p-3" 
+            <Card
+              className="configuracion-card h-100 p-3"
               onClick={() => handleNavigation('/conceptos')}
             >
               <Card.Body className="d-flex flex-column text-center">
@@ -147,8 +147,8 @@ const ConfiguracionPage = () => {
                 <Card.Text className="configuracion-card-desc flex-grow-1">
                   Administrar los conceptos de cobros, montos base, matrículas, pensiones mensuales y cargos extraordinarios.
                 </Card.Text>
-                <Button 
-                  variant="warning" 
+                <Button
+                  variant="warning"
                   className="config-btn-action text-white mt-3 w-100 py-2"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -163,9 +163,9 @@ const ConfiguracionPage = () => {
 
           {/* Card: Periodos Académicos */}
           {user?.permissions?.includes('view_periodoacademico') && (
-            <Col md={4} className="mt-md-0 mt-4">
-              <Card 
-                className="configuracion-card h-100 p-3" 
+            <Col md={4}>
+              <Card
+                className="configuracion-card h-100 p-3"
                 onClick={() => handleNavigation('/periodos')}
               >
                 <Card.Body className="d-flex flex-column text-center">
@@ -178,8 +178,8 @@ const ConfiguracionPage = () => {
                   <Card.Text className="configuracion-card-desc flex-grow-1">
                     Configurar los años lectivos, fechas de inicio, fin y estados de apertura para los procesos de matrícula.
                   </Card.Text>
-                  <Button 
-                    variant="info" 
+                  <Button
+                    variant="info"
                     className="config-btn-action text-white mt-3 w-100 py-2"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -195,8 +195,8 @@ const ConfiguracionPage = () => {
 
           {/* Card: Configuración Académica */}
           {(user?.role === 'admin' || user?.role === 'director' || user?.permissions?.includes('view_periodoacademico')) && (
-            <Col md={4} className="mt-md-0 mt-4">
-              <Card 
+            <Col md={4}>
+              <Card
                 className="configuracion-card h-100 p-3"
                 onClick={() => handleNavigation('/academico')}
               >
@@ -211,8 +211,8 @@ const ConfiguracionPage = () => {
                     Gestionar áreas curriculares, competencias del alumno y periodos de evaluación académica.
                   </Card.Text>
                   <div className="d-flex flex-column gap-2 mt-3">
-                    <Button 
-                      variant="primary" 
+                    <Button
+                      variant="primary"
                       className="config-btn-action w-100 py-1"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -221,8 +221,8 @@ const ConfiguracionPage = () => {
                     >
                       🗂️ Áreas Académicas
                     </Button>
-                    <Button 
-                      variant="success" 
+                    <Button
+                      variant="success"
                       className="config-btn-action w-100 py-1"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -231,8 +231,8 @@ const ConfiguracionPage = () => {
                     >
                       🎯 Competencias
                     </Button>
-                    <Button 
-                      variant="warning" 
+                    <Button
+                      variant="warning"
                       className="config-btn-action text-white w-100 py-1"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -250,8 +250,8 @@ const ConfiguracionPage = () => {
           {/* Card 4: Gestión de Usuarios */}
           {user?.permissions?.includes('view_usuario') && (
             <Col md={4} className="mt-4">
-              <Card 
-                className="configuracion-card h-100 p-3" 
+              <Card
+                className="configuracion-card h-100 p-3"
                 onClick={() => handleNavigation('/usuarios')}
               >
                 <Card.Body className="d-flex flex-column text-center">
@@ -264,8 +264,8 @@ const ConfiguracionPage = () => {
                   <Card.Text className="configuracion-card-desc flex-grow-1">
                     Administrar accesos y cuentas del personal y apoderados del sistema.
                   </Card.Text>
-                  <Button 
-                    variant="danger" 
+                  <Button
+                    variant="danger"
                     className="config-btn-action text-white mt-3 w-100 py-2"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -282,8 +282,8 @@ const ConfiguracionPage = () => {
           {/* Card 5: Gestión de Roles */}
           {user?.permissions?.includes('view_group') && (
             <Col md={4} className="mt-4">
-              <Card 
-                className="configuracion-card h-100 p-3" 
+              <Card
+                className="configuracion-card h-100 p-3"
                 onClick={() => handleNavigation('/roles')}
               >
                 <Card.Body className="d-flex flex-column text-center">
@@ -296,8 +296,8 @@ const ConfiguracionPage = () => {
                   <Card.Text className="configuracion-card-desc flex-grow-1">
                     Configurar grupos de acceso y asignar permisos a los módulos.
                   </Card.Text>
-                  <Button 
-                    variant="danger" 
+                  <Button
+                    variant="danger"
                     className="config-btn-action text-white mt-3 w-100 py-2"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -310,15 +310,15 @@ const ConfiguracionPage = () => {
               </Card>
             </Col>
 
-            
+
           )}
 
 
           {/* Card 6: Gestión de Bancos */}
           {user?.permissions?.includes('view_banco') && (
             <Col md={4} className="mt-4">
-              <Card 
-                className="configuracion-card h-100 p-3" 
+              <Card
+                className="configuracion-card h-100 p-3"
                 onClick={() => handleNavigation('/bancos')}
               >
                 <Card.Body className="d-flex flex-column text-center">
@@ -331,8 +331,8 @@ const ConfiguracionPage = () => {
                   <Card.Text className="configuracion-card-desc flex-grow-1">
                     Administrar entidades financieras, cuentas y CCIs para pagos automáticos.
                   </Card.Text>
-                  <Button 
-                    variant="dark" 
+                  <Button
+                    variant="dark"
                     className="config-btn-action text-white mt-3 w-100 py-2"
                     onClick={(e) => {
                       e.stopPropagation();
