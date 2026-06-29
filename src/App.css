@@ -1,5 +1,32 @@
   /* Variables de color - Paleta Morada */
   :root {
+    /* ── Tipografía ── */
+    --font-primary: 'Plus Jakarta Sans', sans-serif;
+    --font-secondary: 'Quicksand', sans-serif;
+    --font-tertiary: 'Inter', sans-serif;
+    --font-mono: 'Courier New', monospace;
+
+    /* ── Paleta Base (Slate) ── */
+    --color-white: #ffffff;
+    --color-slate-50: #f8fafc;
+    --color-slate-100: #f1f5f9;
+    --color-slate-200: #e2e8f0;
+    --color-slate-400: #94a3b8;
+    --color-slate-500: #64748b;
+    --color-slate-600: #475569;
+    --color-slate-800: #1e293b;
+    --color-slate-900: #0f172a;
+
+    /* ── Colores de Acción (Blues & Reds) ── */
+    --color-blue-500: #3b82f6;
+    --color-blue-600: #2563eb;
+    --color-red-100: #fee2e2;
+    --color-red-600: #dc2626;
+
+    /* ── Efectos (Sombras) ── */
+    --shadow-sm-color: rgba(0,0,0,0.05);
+
+    /* Variables de color - Paleta Morada */
     --primary-purple: #0a1929;
     --secondary-purple: #0d3b66;
     --accent-purple: #0b3259;

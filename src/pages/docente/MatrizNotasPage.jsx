@@ -20,14 +20,14 @@ export default function MatrizNotasPage() {
 
   // Todos los cursos/asignaciones del profesor
   const [allAsignaciones, setAllAsignaciones] = useState([]);
-  
+
   // Asignación seleccionada actualmente
   const [currentAsignacion, setCurrentAsignacion] = useState(null);
-  
+
   // Selectores de Aula y Área
   const [selectedAulaId, setSelectedAulaId] = useState('');
   const [selectedAreaId, setSelectedAreaId] = useState('');
-  
+
   // Listas de datos para el aula/área actual
   const [competencias, setCompetencias] = useState([]);
   const [periodosEvaluacion, setPeriodosEvaluacion] = useState([]);
@@ -49,7 +49,7 @@ export default function MatrizNotasPage() {
 
   // Determinar si hay cambios sin guardar
   const hasChanges = JSON.stringify(grades) !== JSON.stringify(originalGrades) ||
-                    JSON.stringify(comments) !== JSON.stringify(originalComments);
+    JSON.stringify(comments) !== JSON.stringify(originalComments);
 
   // Alerta nativa de navegador antes de recargar/cerrar pestaña
   useEffect(() => {
@@ -157,7 +157,7 @@ export default function MatrizNotasPage() {
         // Cargar calificaciones guardadas
         const resCalificaciones = await getCalificaciones({ periodo_evaluacion: selectedPeriodo });
         const listCalificaciones = Array.isArray(resCalificaciones) ? resCalificaciones : resCalificaciones.results || [];
-        
+
         const loadedGrades = {};
         listCalificaciones.forEach(c => {
           if (!loadedGrades[c.alumno]) loadedGrades[c.alumno] = {};
@@ -281,7 +281,7 @@ export default function MatrizNotasPage() {
 
       // Sincronizar estado original con los datos guardados
       setOriginalGrades(JSON.parse(JSON.stringify(grades)));
-      
+
       // Recargar comentarios para obtener sus IDs asignados en BD
       const resApreciaciones = await getApreciaciones({ periodo_evaluacion: selectedPeriodo });
       const listApreciaciones = Array.isArray(resApreciaciones) ? resApreciaciones : resApreciaciones.results || [];
@@ -439,25 +439,25 @@ export default function MatrizNotasPage() {
                 <Table bordered hover className="align-middle mb-0" style={{ minWidth: '900px' }}>
                   <thead style={{ background: '#1e293b' }}>
                     <tr className="border-0">
-                      <th className="py-3 ps-4 text-white uppercase fw-bold border-0" style={{ width: '25%' }}>
+                      <th className="py-3 ps-4 text-gray-800 uppercase fw-bold border-0" style={{ width: '25%' }}>
                         Estudiante
                       </th>
                       {competencias.map((comp, idx) => (
                         <th
-                           key={comp.id}
-                           className="py-3 text-center text-white uppercase fw-bold border-0"
-                           title={comp.descripcion}
-                           style={{ cursor: 'help', width: `${45 / (competencias.length || 1)}%` }}
+                          key={comp.id}
+                          className="py-3 text-center text-gray-800 uppercase fw-bold border-0"
+                          title={comp.descripcion}
+                          style={{ cursor: 'help', width: `${45 / (competencias.length || 1)}%` }}
                         >
                           <div className="d-flex flex-column align-items-center">
                             <span>Comp. {idx + 1}</span>
-                            <span className="text-white-50 small fw-normal text-truncate" style={{ maxWidth: '140px' }}>
+                            <span className="text-gray-800-50 small fw-normal text-truncate" style={{ maxWidth: '140px' }}>
                               {comp.descripcion}
                             </span>
                           </div>
                         </th>
                       ))}
-                      <th className="py-3 ps-3 text-white uppercase fw-bold border-0" style={{ width: '30%' }}>
+                      <th className="py-3 ps-3 text-gray-800 uppercase fw-bold border-0" style={{ width: '30%' }}>
                         Apreciación del Docente
                       </th>
                     </tr>
@@ -499,16 +499,16 @@ export default function MatrizNotasPage() {
                                     className="mx-auto rounded-3 text-center font-bold border-secondary-subtle"
                                     style={{
                                       maxWidth: '90px',
-                                      backgroundColor: 
+                                      backgroundColor:
                                         currentVal === 'AD' ? '#d4edda' :
-                                        currentVal === 'A' ? '#cce5ff' :
-                                        currentVal === 'B' ? '#fff3cd' :
-                                        currentVal === 'C' ? '#f8d7da' : '#fff',
+                                          currentVal === 'A' ? '#cce5ff' :
+                                            currentVal === 'B' ? '#fff3cd' :
+                                              currentVal === 'C' ? '#f8d7da' : '#fff',
                                       color:
                                         currentVal === 'AD' ? '#155724' :
-                                        currentVal === 'A' ? '#004085' :
-                                        currentVal === 'B' ? '#856404' :
-                                        currentVal === 'C' ? '#721c24' : '#495057',
+                                          currentVal === 'A' ? '#004085' :
+                                            currentVal === 'B' ? '#856404' :
+                                              currentVal === 'C' ? '#721c24' : '#495057',
                                     }}
                                   >
                                     <option value="-">-</option>

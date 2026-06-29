@@ -7,7 +7,7 @@
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font-primary);
   background-color: var(--background);
   color: var(--on-surface);
   -webkit-font-smoothing: antialiased;
@@ -16,9 +16,9 @@ body {
 html, body, #root { height: 100%; width: 100%; }
 
 /* ===== TYPOGRAPHY ===== */
-.font-quicksand { font-family: 'Quicksand', sans-serif; }
+.font-quicksand { font-family: var(--font-secondary); }
 
-h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', sans-serif; }
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-secondary); }
 
 /* ===== NAVBAR ===== */
 .landing-navbar {
@@ -35,7 +35,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', sans-serif; }
 }
 
 .landing-navbar .navbar-brand {
-  font-family: 'Quicksand', sans-serif;
+  font-family: var(--font-secondary);
   font-weight: 700;
   font-size: 1.25rem;
   color: var(--primary) !important;
@@ -45,7 +45,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', sans-serif; }
 }
 
 .landing-navbar .nav-link {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font-primary);
   font-size: 14px;
   font-weight: 600;
   color: var(--on-surface-variant) !important;
@@ -61,11 +61,11 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', sans-serif; }
 
 .btn-login {
   background: var(--primary-container);
-  color: #fff !important;
+  color: var(--color-white) !important;
   border: none;
   border-radius: var(--radius-full);
   padding: 8px 22px;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font-primary);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -120,7 +120,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', sans-serif; }
 }
 
 .hero-content h1 {
-  font-family: 'Quicksand', sans-serif;
+  font-family: var(--font-secondary);
   font-size: clamp(2rem, 5vw, 3.2rem);
   font-weight: 700;
   color: var(--primary);
@@ -145,11 +145,11 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', sans-serif; }
 
 .btn-primary-purple {
   background: var(--primary-container);
-  color: #fff;
+  color: var(--color-white);
   border: none;
   border-radius: var(--radius-full);
   padding: 14px 32px;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font-primary);
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -160,7 +160,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', sans-serif; }
 .btn-primary-purple:hover {
   transform: translateY(-2px) scale(1.02);
   box-shadow: 0 12px 32px rgba(13, 59, 102, 0.38);
-  color: #fff;
+  color: var(--color-white);
 }
 
 .btn-secondary-purple {
@@ -169,7 +169,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', sans-serif; }
   border: none;
   border-radius: var(--radius-full);
   padding: 14px 32px;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font-primary);
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -232,7 +232,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', sans-serif; }
 
 /* ===== SECTION SHARED ===== */
 .section-title {
-  font-family: 'Quicksand', sans-serif;
+  font-family: var(--font-secondary);
   font-size: clamp(1.6rem, 3vw, 2rem);
   font-weight: 700;
   color: var(--primary);
@@ -249,7 +249,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', sans-serif; }
 
 /* ===== SOFT CARD ===== */
 .soft-card {
-  background: #fff;
+  background: var(--color-white);
   border-radius: var(--radius-lg) !important;
   border: none !important;
   box-shadow: var(--shadow-soft);
@@ -286,7 +286,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', sans-serif; }
 }
 
 .soft-card h5 {
-  font-family: 'Quicksand', sans-serif;
+  font-family: var(--font-secondary);
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--primary);
@@ -336,7 +336,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', sans-serif; }
 .acerca-img-short { height: 200px; }
 
 .acerca-text h2 {
-  font-family: 'Quicksand', sans-serif;
+  font-family: var(--font-secondary);
   font-size: clamp(1.6rem, 3vw, 2rem);
   font-weight: 700;
   color: var(--primary);
@@ -427,8 +427,8 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', sans-serif; }
 }
 
 .gallery-overlay span {
-  color: #fff;
-  font-family: 'Quicksand', sans-serif;
+  color: var(--color-white);
+  font-family: var(--font-secondary);
   font-weight: 700;
   font-size: 15px;
 }
@@ -440,7 +440,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', sans-serif; }
 }
 
 .testimonial-card {
-  background: #fff;
+  background: var(--color-white);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
   padding: 32px;
@@ -485,7 +485,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', sans-serif; }
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font-primary);
   font-weight: 700;
   font-size: 14px;
   color: var(--secondary);
@@ -493,7 +493,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', sans-serif; }
 }
 
 .testimonial-author {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font-primary);
   font-weight: 600;
   font-size: 14px;
   color: var(--on-surface);
@@ -509,7 +509,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', sans-serif; }
 /* ===== CTA SECTION ===== */
 .cta-section {
   background: var(--primary);
-  color: #fff;
+  color: var(--color-white);
   padding: 80px 0;
   text-align: center;
   position: relative;
@@ -525,10 +525,10 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', sans-serif; }
 }
 
 .cta-section h2 {
-  font-family: 'Quicksand', sans-serif;
+  font-family: var(--font-secondary);
   font-size: clamp(1.75rem, 3.5vw, 2.2rem);
   font-weight: 700;
-  color: #fff;
+  color: var(--color-white);
   margin-bottom: 16px;
   position: relative;
   z-index: 1;
@@ -545,12 +545,12 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', sans-serif; }
 }
 
 .btn-cta {
-  background: #fff;
+  background: var(--color-white);
   color: var(--primary-container);
   border: none;
   border-radius: var(--radius-full);
   padding: 16px 40px;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font-primary);
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
@@ -575,7 +575,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', sans-serif; }
 }
 
 .footer-section h5 {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font-primary);
   font-size: 12px;
   font-weight: 700;
   color: var(--primary-container);
@@ -649,7 +649,7 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Quicksand', sans-serif; }
 
 .social-btn:hover {
   background: var(--primary-container);
-  color: #fff;
+  color: var(--color-white);
   border-color: var(--primary-container);
 }
 

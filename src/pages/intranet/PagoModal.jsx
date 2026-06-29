@@ -3,7 +3,7 @@ import { Modal } from "react-bootstrap";
 import toast from "react-hot-toast";
 
 import { registrarPagoParent, getBancos } from "../../api/pagosAPI";
-import { getConfiguracionPagosPublica } from "../../api/PagosAPI";
+import { getConfiguracionPagosPublica } from "../../api/pagosAPI";
 
 export default function PagoModal({ show, onHide, deudas, onSuccess }) {
   console.log("DEUDAS RECIBIDAS:", deudas);

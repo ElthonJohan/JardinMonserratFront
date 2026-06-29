@@ -4,7 +4,7 @@
 body {
   background-color: var(--surface) !important;
   color: var(--on-surface);
-  font-family: 'Quicksand', sans-serif;
+  font-family: var(--font-secondary);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -16,7 +16,7 @@ body {
 
 /* ===== PAGE HEADER ===== */
 .page-title {
-  font-family: 'Quicksand', sans-serif;
+  font-family: var(--font-secondary);
   font-size: clamp(1.6rem, 3vw, 2.2rem);
   font-weight: 700;
   color: var(--on-surface);
@@ -40,11 +40,11 @@ body {
   align-items: center;
   gap: 8px;
   background: var(--info);
-  color: #fff;
+  color: var(--color-white);
   border: none;
   border-radius: var(--radius-full);
   padding: 10px 22px;
-  font-family: 'Quicksand', sans-serif;
+  font-family: var(--font-secondary);
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
@@ -57,7 +57,7 @@ body {
   background: #007db8;
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(0,149,217,0.35);
-  color: #fff;
+  color: var(--color-white);
 }
 
 /* Search input wrapper */
@@ -83,7 +83,7 @@ body {
   border-radius: var(--radius-full);
   border: 1px solid var(--outline-variant);
   background: var(--surface-lowest);
-  font-family: 'Quicksand', sans-serif;
+  font-family: var(--font-secondary);
   font-size: 14px;
   color: var(--on-surface);
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -112,7 +112,7 @@ body {
 }
 
 .table-section-header h3 {
-  font-family: 'Quicksand', sans-serif;
+  font-family: var(--font-secondary);
   font-size: 1rem;
   font-weight: 600;
   color: var(--on-surface);
@@ -134,7 +134,7 @@ body {
 
 .est-table thead th {
   padding: 14px 20px;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font-primary);
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
@@ -219,9 +219,9 @@ body {
 .btn-act-edit   { background: rgba(192,124,0,0.1);  color: #c07c00; }
 .btn-act-delete { background: rgba(186,26,26,0.1);  color: #ba1a1a; }
 
-.btn-act-view:hover   { background: #146c2e; color: #fff; }
-.btn-act-edit:hover   { background: #c07c00; color: #fff; }
-.btn-act-delete:hover { background: #ba1a1a; color: #fff; }
+.btn-act-view:hover   { background: #146c2e; color: var(--color-white); }
+.btn-act-edit:hover   { background: #c07c00; color: var(--color-white); }
+.btn-act-delete:hover { background: #ba1a1a; color: var(--color-white); }
 
 .btn-apo {
   padding: 4px 12px;
@@ -229,7 +229,7 @@ body {
   border: none;
   background: rgba(0,149,217,0.1);
   color: var(--info);
-  font-family: 'Quicksand', sans-serif;
+  font-family: var(--font-secondary);
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
@@ -237,7 +237,7 @@ body {
   white-space: nowrap;
 }
 
-.btn-apo:hover { background: var(--info); color: #fff; }
+.btn-apo:hover { background: var(--info); color: var(--color-white); }
 
 /* ===== PAGINATION ===== */
 .table-pagination {
@@ -278,7 +278,7 @@ body {
 
 .page-btn.active {
   background: var(--primary);
-  color: #fff;
+  color: var(--color-white);
   border-color: var(--primary);
 }
 
@@ -297,13 +297,13 @@ body {
 
 .modal-header {
   background: var(--primary) !important;
-  color: #fff !important;
+  color: var(--color-white) !important;
   border-bottom: none !important;
   padding: 20px 24px !important;
 }
 
 .modal-header .modal-title {
-  font-family: 'Quicksand', sans-serif !important;
+  font-family: var(--font-secondary) !important;
   font-weight: 700 !important;
   font-size: 1.05rem !important;
 }
@@ -328,7 +328,7 @@ body {
 .modal-body .form-select {
   border-radius: var(--radius-full) !important;
   border: 1px solid var(--outline-variant) !important;
-  font-family: 'Quicksand', sans-serif !important;
+  font-family: var(--font-secondary) !important;
   font-size: 14px !important;
   padding: 10px 16px !important;
   background: var(--surface-lowest) !important;
@@ -344,7 +344,7 @@ body {
 }
 
 .modal-body .form-label {
-  font-family: 'Quicksand', sans-serif !important;
+  font-family: var(--font-secondary) !important;
   font-size: 13px !important;
   font-weight: 600 !important;
   color: var(--on-surface-variant) !important;
@@ -353,7 +353,7 @@ body {
 
 /* Credentials modal */
 .credential-card {
-  background: #fff;
+  background: var(--color-white);
   border-radius: 18px;
   overflow: hidden;
   border: 1px solid #dbe5f1;
@@ -416,7 +416,7 @@ body {
 
 .credential-item label {
   font-weight: 600;
-  color: #475569;
+  color: var(--color-slate-600);
 }
 
 .credential-item span {
@@ -443,8 +443,8 @@ body {
 }
 
 .credential-footer {
-  background: #f8fafc;
-  border-top: 1px solid #e2e8f0;
+  background: var(--color-slate-50);
+  border-top: 1px solid var(--color-slate-200);
   padding: 15px;
   text-align: center;
 }
@@ -457,17 +457,17 @@ body {
 }
 
 .credential-footer small {
-  color: #64748b;
+  color: var(--color-slate-500);
 }
 
 /* Modal primary button */
 .btn-modal-primary {
   background: var(--primary);
-  color: #fff;
+  color: var(--color-white);
   border: none;
   border-radius: var(--radius-full);
   padding: 10px 28px;
-  font-family: 'Quicksand', sans-serif;
+  font-family: var(--font-secondary);
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
@@ -478,7 +478,7 @@ body {
 .btn-modal-primary:hover {
   background: var(--on-primary-container, #0a1929);
   transform: translateY(-1px);
-  color: #fff;
+  color: var(--color-white);
 }
 
 .btn-modal-secondary {
@@ -487,7 +487,7 @@ body {
   border: none;
   border-radius: var(--radius-full);
   padding: 10px 24px;
-  font-family: 'Quicksand', sans-serif;
+  font-family: var(--font-secondary);
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;

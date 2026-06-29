@@ -4,7 +4,7 @@ import {
   getConfiguracionPagos,
   createConfiguracionPagos,
   updateConfiguracionPagos
-} from "../api/PagosAPI";
+} from "../api/pagosAPI";
 
 import toast from "react-hot-toast";
 

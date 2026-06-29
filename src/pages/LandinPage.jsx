@@ -6,7 +6,7 @@ import educacionCalidad from '../images/educacionCalidad.png';
 import actividadesRecreativas from '../images/actividadesRecreativas.jpg';
 import desarrolloInfantil from '../images/desarrolloInfantil.jpg';
 import logoJardin from '../images/logoJardin.png';
-import './LandinPage.css';
+import "../styles/LandinPage.css"
 
 export default function LandinPage() {
   const navigate = useNavigate();

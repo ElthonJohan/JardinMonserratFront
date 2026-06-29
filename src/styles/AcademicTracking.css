@@ -1,0 +1,389 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+.academic-page {
+  font-family: 'Plus Jakarta Sans', var(--font-tertiary);
+  background: var(--color-slate-50);
+  min-height: 100vh;
+  padding: 10px 10px 40px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Header Banner ── */
+.academic-header-banner {
+  background: linear-gradient(135deg, var(--color-slate-800) 0%, var(--color-blue-500) 100%);
+  border-radius: 20px;
+  padding: 30px 40px;
+  color: white;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.academic-header-banner::after {
+  content: '';
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+  right: -50px;
+  bottom: -100px;
+}
+
+.academic-header-banner h1 {
+  font-weight: 800;
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.academic-header-banner p {
+  font-weight: 400;
+  opacity: 0.9;
+  margin-bottom: 0;
+  font-size: 0.95rem;
+}
+
+/* ── Section Title ── */
+.section-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--color-slate-800);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Child Selector Cards ── */
+.hijos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.hijo-card {
+  background: white;
+  border: 1.5px solid var(--color-slate-200);
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px var(--shadow-sm-color);
+}
+
+.hijo-card:hover {
+  transform: translateY(-3px);
+  border-color: #93c5fd;
+  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.08);
+}
+
+.hijo-card.active {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border-color: var(--color-blue-500);
+  box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.15);
+}
+
+.hijo-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--color-slate-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-slate-600);
+  transition: all 0.25s;
+}
+
+.hijo-card.active .hijo-avatar {
+  background: var(--color-blue-500);
+  color: white;
+}
+
+.hijo-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.hijo-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--color-slate-800);
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hijo-meta {
+  font-size: 0.78rem;
+  color: var(--color-slate-500);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.hijo-meta strong {
+  color: var(--color-slate-600);
+}
+
+/* ── Evaluation Periods Bar ── */
+.periodos-tabs-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+  background: var(--color-slate-100);
+  padding: 6px;
+  border-radius: 12px;
+  width: fit-content;
+}
+
+.periodo-tab-btn {
+  border: none;
+  background: transparent;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-slate-600);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.periodo-tab-btn:hover {
+  color: var(--color-slate-800);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.periodo-tab-btn.active {
+  background: white;
+  color: var(--color-blue-600);
+  box-shadow: 0 4px 6px -1px var(--shadow-sm-color), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+/* ── Legend Container ── */
+.legend-box {
+  background: var(--color-white);
+  border: 1px solid var(--color-slate-200);
+  border-radius: 12px;
+  padding: 12px 18px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.82rem;
+  color: var(--color-slate-500);
+}
+
+.legend-title {
+  font-weight: 700;
+  color: var(--color-slate-600);
+  margin-right: 6px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── Report Card (Areas & Competencias) ── */
+.report-card-container {
+  background: white;
+  border: 1px solid var(--color-slate-200);
+  border-radius: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
+  overflow: hidden;
+  margin-bottom: 24px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.area-header {
+  background: var(--color-slate-50);
+  border-bottom: 1.5px solid var(--color-slate-200);
+  padding: 16px 24px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--color-slate-800);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.area-icon {
+  font-size: 1.2rem;
+}
+
+.competencia-table {
+  margin-bottom: 0;
+}
+
+.competencia-table th {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-slate-500);
+  background: var(--color-white);
+  padding: 12px 24px;
+  border-bottom-width: 1px;
+}
+
+.competencia-table td {
+  padding: 16px 24px;
+  vertical-align: middle;
+  font-size: 0.9rem;
+  color: #334155;
+  border-bottom: 1px solid var(--color-slate-100);
+}
+
+.competencia-desc {
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* ── Grade Badges ── */
+.grade-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-shadow: 0 1px 1px var(--shadow-sm-color);
+  box-shadow: 0 4px 6px -1px var(--shadow-sm-color);
+}
+
+.grade-badge.grade-ad {
+  background: linear-gradient(135deg, #818cf8 0%, #4f46e5 100%);
+  color: white;
+}
+
+.grade-badge.grade-a {
+  background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+  color: white;
+}
+
+.grade-badge.grade-b {
+  background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+  color: white;
+}
+
+.grade-badge.grade-c {
+  background: linear-gradient(135deg, #f87171 0%, var(--color-red-600) 100%);
+  color: white;
+}
+
+.grade-badge.grade-none {
+  background: #cbd5e1;
+  color: var(--color-slate-500);
+  box-shadow: none;
+}
+
+/* ── Teacher Appreciation Card ── */
+.appreciation-card {
+  background: linear-gradient(135deg, var(--color-slate-50) 0%, var(--color-slate-100) 100%);
+  border: 1.5px dashed #cbd5e1;
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  margin-top: 30px;
+}
+
+.appreciation-card::before {
+  content: '“';
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  font-size: 4rem;
+  font-family: Georgia, serif;
+  color: #5f5f5f;
+  line-height: 1;
+}
+
+.appreciation-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--color-slate-600);
+  margin-bottom: 8px;
+  padding-left: 24px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.appreciation-content {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--color-slate-800);
+  font-style: italic;
+  padding-left: 24px;
+}
+
+.appreciation-empty {
+  color: var(--color-slate-500);
+  font-size: 0.88rem;
+  font-style: normal;
+}
+
+/* ── Empty State ── */
+.empty-state {
+  background: white;
+  border: 1.5px solid var(--color-slate-200);
+  border-radius: 20px;
+  padding: 40px 30px;
+  text-align: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.empty-state-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  display: inline-block;
+}
+
+.empty-state h3 {
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--color-slate-800);
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  color: var(--color-slate-500);
+  font-size: 0.88rem;
+  margin-bottom: 0;
+}
+
+/* ── Loading Wrapper ── */
+.loading-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: var(--color-slate-500);
+}

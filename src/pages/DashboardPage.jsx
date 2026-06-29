@@ -6,24 +6,24 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { getDashboardStats } from '../api/dashboardAPI';
 import { AppNavbar } from '../components/shared';
-import './DashboardPage.css';
+import "../styles/DashboardPage.css";
 
 /* ─────────────────────────────────────────
    Main Page
 ───────────────────────────────────────── */
 export default function DashboardPage() {
   const navigate = useNavigate();
-  const [anioFiltro, setAnioFiltro]   = useState(new Date().getFullYear());
-  const [showModal, setShowModal]     = useState(false);
-  const [loading, setLoading]         = useState(true);
+  const [anioFiltro, setAnioFiltro] = useState(new Date().getFullYear());
+  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [data, setData] = useState({
     kpis: {
-      total_alumnos_activos:    0,
-      matriculas_anio:          0,
-      pagos_pendientes_cantidad:0,
-      pagos_pendientes_monto:   0,
-      recaudacion_actual:       0,
-      recaudacion_anterior:     0,
+      total_alumnos_activos: 0,
+      matriculas_anio: 0,
+      pagos_pendientes_cantidad: 0,
+      pagos_pendientes_monto: 0,
+      recaudacion_actual: 0,
+      recaudacion_anterior: 0,
     },
     distribucion_aulas: [],
     top_deudores: [],
@@ -260,7 +260,7 @@ export default function DashboardPage() {
             </p>
           ) : (
             data.distribucion_aulas.map((aula, i) => {
-              const pct     = (aula.total / aula.capacidad) * 100;
+              const pct = (aula.total / aula.capacidad) * 100;
               const variant = pct > 90 ? 'danger' : pct > 75 ? 'warning' : 'success';
               return (
                 <div key={i} className="mb-4">

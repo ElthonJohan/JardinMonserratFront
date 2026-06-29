@@ -3,14 +3,14 @@
 .intranet-container {
   display: flex;
   min-height: 100vh;
-  background-color: #f8fafc;
+  background-color: var(--color-slate-50);
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 /* ==================== SIDEBAR ==================== */
 .sidebar {
   width: 280px;
-  background: linear-gradient(180deg, #1e2937 0%, #0f172a 100%);
+  background: linear-gradient(180deg, #1e2937 0%, var(--color-slate-900) 100%);
   color: white;
   display: flex;
   flex-direction: column;
@@ -70,7 +70,7 @@
   align-items: center;
   gap: 12px;
   padding: 0.85rem 1.5rem;
-  color: #cbd5e1;
+  color: #616161;
   text-decoration: none;
   border-radius: 8px;
   margin: 4px 8px;
@@ -80,7 +80,7 @@
 
 .nav-link:hover {
   background: rgba(255, 255, 255, 0.1);
-  color: white;
+  color: var(--color-slate-900) !important;
   transform: translateX(4px);
 }
 
@@ -88,7 +88,7 @@
   background: rgba(59, 130, 246, 0.25);
   color: white;
   font-weight: 600;
-  border-left: 4px solid #3b82f6;
+  border-left: 4px solid var(--color-blue-500);
 }
 
 /* Footer del sidebar */
@@ -110,7 +110,7 @@
 }
 
 .logout-btn:hover {
-  background: #dc2626;
+  background: var(--color-red-600);
   transform: translateY(-1px);
 }
 
@@ -141,7 +141,7 @@
 
 .topbar p {
   margin: 0.2rem 0 0;
-  color: #64748b;
+  color: var(--color-slate-500);
 }
 
 .topbar-user {
@@ -162,7 +162,7 @@
 
 .user-info span {
   font-size: 0.85rem;
-  color: #64748b;
+  color: var(--color-slate-500);
 }
 
 /* Contenido principal */
@@ -170,7 +170,7 @@
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
-  background: #f8fafc;
+  background: var(--color-slate-50);
 }
 
 /* ==================== RESPONSIVE ==================== */
