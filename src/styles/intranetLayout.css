@@ -2,7 +2,8 @@
 
 .intranet-container {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   background-color: var(--color-slate-50);
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
@@ -10,6 +11,7 @@
 /* ==================== SIDEBAR ==================== */
 .sidebar {
   width: 280px;
+  height: 100vh;
   background: linear-gradient(180deg, #1e2937 0%, var(--color-slate-900) 100%);
   color: white;
   display: flex;
