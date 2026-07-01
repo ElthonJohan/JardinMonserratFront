@@ -14,7 +14,7 @@ export default function ModalAsignacionDocente({
   onSuccess
 }) {
   const [loading, setLoading] = useState(false);
-  
+
   // Single edit mode form state
   const [singleForm, setSingleForm] = useState({
     docente: '',
@@ -481,7 +481,7 @@ export default function ModalAsignacionDocente({
                   onChange={e => setBatchActivo(e.target.checked)}
                 />
               </Form.Group>
-              
+
               <div className="text-muted small">
                 * Se creará la asignación del docente vinculando las áreas seleccionadas a cada aula seleccionada.
               </div>
@@ -489,10 +489,10 @@ export default function ModalAsignacionDocente({
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={onHide} disabled={loading}>
+          <Button variant="danger" onClick={onHide} disabled={loading}>
             Cancelar
           </Button>
-          <Button variant="danger" type="submit" disabled={loading}>
+          <Button variant="success" type="submit" disabled={loading}>
             {editingItem ? 'Actualizar' : 'Guardar Lote'}
           </Button>
         </Modal.Footer>

@@ -42,7 +42,7 @@ export default function AsignacionesTab({
               <h4 className="fw-bold m-0 text-dark">Lista de Asignaciones</h4>
               <p className="text-muted small m-0">Asignar docentes a aulas y áreas específicas por periodo</p>
             </div>
-            <Button variant="danger" className="rounded-3 px-4 py-2" onClick={() => handleOpenModal(null)}>
+            <Button variant="success" className="rounded-3 px-4 py-2" onClick={() => handleOpenModal(null)}>
               + Nueva Asignación
             </Button>
           </div>

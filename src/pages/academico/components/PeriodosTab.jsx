@@ -7,7 +7,7 @@ export default function PeriodosTab({ periodos, periodosAcademicos, onRefresh })
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [loadingForm, setLoadingForm] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     nombre: '',
     periodo_matricula: '',
@@ -97,7 +97,7 @@ export default function PeriodosTab({ periodos, periodosAcademicos, onRefresh })
               <h4 className="fw-bold m-0 text-dark">Periodos de Evaluación</h4>
               <p className="text-muted small m-0">Administrar bimestres o trimestres lectivos</p>
             </div>
-            <Button variant="danger" className="rounded-3 px-4 py-2" onClick={() => handleOpenModal()}>
+            <Button variant="success" className="rounded-3 px-4 py-2" onClick={() => handleOpenModal()}>
               + Nuevo Periodo
             </Button>
           </div>
