@@ -135,33 +135,41 @@ const Dashboard = () => {
         {/* CARD 1 */}
         <div className="stat-card card-blue">
           <div className="stat-icon blue-icon">👨‍🎓</div>
-          <p className="stat-title">Hijos Registrados</p>
-          <h2 className="stat-value">{data.cantidad_hijos}</h2>
-          <p className="stat-description">Estudiantes bajo tu tutela</p>
+          <div className="stat-content">
+            <p className="stat-title">Hijos Registrados</p>
+            <h2 className="stat-value">{data.cantidad_hijos}</h2>
+            <p className="stat-description">Estudiantes bajo tu tutela</p>
+          </div>
         </div>
 
         {/* CARD 2 */}
         <div className="stat-card card-green">
           <div className="stat-icon green-icon">💰</div>
-          <p className="stat-title">Pagos Reportados</p>
-          <h2 className="stat-value">{totalPagosReportados}</h2>
-          <p className="stat-description">Transacciones registradas</p>
+          <div className="stat-content">
+            <p className="stat-title">Pagos Reportados</p>
+            <h2 className="stat-value">{totalPagosReportados}</h2>
+            <p className="stat-description">Transacciones registradas</p>
+          </div>
         </div>
 
         {/* CARD 3 */}
         <div className="stat-card card-orange">
           <div className="stat-icon orange-icon">📄</div>
-          <p className="stat-title">Deuda Pendiente</p>
-          <h2 className="stat-value">S/ {data.total_pendiente.toFixed(2)}</h2>
-          <p className="stat-description">{totalDeudasPendientes} concepto(s) por regularizar</p>
+          <div className="stat-content">
+            <p className="stat-title">Deuda Pendiente</p>
+            <h2 className="stat-value">S/ {data.total_pendiente.toFixed(2)}</h2>
+            <p className="stat-description">{totalDeudasPendientes} concepto(s) por regularizar</p>
+          </div>
         </div>
 
         {/* CARD 4 */}
         <div className="stat-card card-purple">
           <div className="stat-icon purple-icon">🏫</div>
-          <p className="stat-title">Año Escolar</p>
-          <h2 className="stat-value">{currentYear}</h2>
-          <p className="stat-description">Gestión académica activa</p>
+          <div className="stat-content">
+            <p className="stat-title">Año Escolar</p>
+            <h2 className="stat-value">{currentYear}</h2>
+            <p className="stat-description">Gestión académica activa</p>
+          </div>
         </div>
       </div>
 
