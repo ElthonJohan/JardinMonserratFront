@@ -19,12 +19,17 @@ export default function MatriculaTable({
   const columns = useMemo(
     () => [
       {
+        key: 'alumno_id',
+        label: 'ID',
+        render: (_v, row) => row.alumno_detail?.id || row.alumno || '-'
+      },
+      {
         key: 'alumno',
         label: 'Alumno',
         render: (_v, row) => {
           const a = row.alumno_detail;
-          const initials = a 
-            ? (a.nombres?.[0] + a.apellidos?.[0]).toUpperCase() 
+          const initials = a
+            ? (a.nombres?.[0] + a.apellidos?.[0]).toUpperCase()
             : 'AL';
           const avatarClasses = ['primary', 'secondary', 'tertiary'];
           const avatarClass = avatarClasses[row.id % 3];
@@ -41,11 +46,6 @@ export default function MatriculaTable({
         }
       },
       {
-        key: 'alumno_id',
-        label: 'ID',
-        render: (_v, row) => row.alumno_detail?.id || row.alumno || '-'
-      },
-      {
         key: 'aula',
         label: 'Aula',
         render: (_v, row) => (
@@ -55,7 +55,7 @@ export default function MatriculaTable({
         )
       },
       {
-        key:'periodo_academico',
+        key: 'periodo_academico',
         label: 'Año lectivo',
         render: (_v, row) => `${row.periodo_academico_detail?.nombre} - ${row.periodo_academico_detail?.anio}` || row.periodo_academico || '-'
       },
@@ -68,11 +68,11 @@ export default function MatriculaTable({
         key: 'estado',
         label: 'Estado',
         render: (value) => {
-          const statusClass = value === 'Activa' 
-            ? 'activo' 
-            : value === 'Retirado' 
-            ? 'retirado' 
-            : 'pendiente';
+          const statusClass = value === 'Activa'
+            ? 'activo'
+            : value === 'Retirado'
+              ? 'retirado'
+              : 'pendiente';
           return (
             <span className={`status-badge ${statusClass}`}>
               {value}

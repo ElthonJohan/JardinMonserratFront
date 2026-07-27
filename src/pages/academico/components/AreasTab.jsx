@@ -7,7 +7,7 @@ export default function AreasTab({ areas, onRefresh }) {
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [loadingForm, setLoadingForm] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     nombre: '',
     orden: 1,
@@ -89,8 +89,8 @@ export default function AreasTab({ areas, onRefresh }) {
               <h4 className="fw-bold m-0 text-dark">Áreas Académicas</h4>
               <p className="text-muted small m-0">Gestionar las áreas de estudio de la institución</p>
             </div>
-            <Button variant="danger" className="rounded-3 px-4 py-2" onClick={() => handleOpenModal()}>
-              + Nueva Área
+            <Button className="btn-nueva-matricula" onClick={() => handleOpenModal()}>
+              ➕ Nueva Área
             </Button>
           </div>
           <Table responsive hover className="align-middle">

@@ -22,12 +22,15 @@ import {
 import axiosInstance from "../api/axiosConfig";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/estudiantes.css";
+import "../styles/MatriculasPage.css"; // Reuse matriculas styles for layout
+import { Button, Form } from 'react-bootstrap';
 import toast from "react-hot-toast";
 import { Modal } from "bootstrap";
 import { AppNavbar, Loading } from "../components/shared";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { useRef } from "react";
+import { exportStudentsToExcel, exportStudentsToPdf } from "../components/estudiantes/studentExportTemplates";
 
 export default function EstudiantesPage() {
   const navigate = useNavigate();
@@ -299,63 +302,76 @@ Por seguridad cambie su contraseña después del primer ingreso.
     <>
       <AppNavbar />
 
-      <div className="container-fluid container-custom">
-        {/* ── Page header ── */}
-        <div className="d-flex flex-column gap-2 mb-4">
-          <h1 className="page-title">Gestión de Estudiantes</h1>
-        </div>
-
-        {/* ── Toolbar ── */}
-        <div className="toolbar">
-          <button className="btn-nuevo" onClick={openCreateModal}>
-            <span style={{ fontSize: 15 }}>＋</span> Nuevo Estudiante
-          </button>
-
-          <div className="search-wrap">
-            <span className="search-icon">🔍</span>
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Buscar por nombre o DNI apoderado..."
-              onChange={handleSearch}
-            />
-          </div>
-        </div>
-
-        {/* ── Table card ── */}
-        <div className="table-section">
-          <div className="table-section-header">
-            <h3>Lista de Estudiantes</h3>
+      <div className="matriculas-container">
+        <div className="container-matriculas">
+          {/* ─── HEADER ─── */}
+          <div className="matriculas-header">
+            <div className="matriculas-header-top">
+              <h1>👨‍🎓 Gestión de Estudiantes</h1>
+            </div>
+            <p>Registra y administra los estudiantes de la institución de manera centralizada.</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+              <div />
+              <div className="d-flex gap-2 flex-wrap">
+                <Button className="btn-nueva-matricula" onClick={openCreateModal}>
+                  ➕ Nuevo Estudiante
+                </Button>
+                <Button variant="success" className="d-flex align-items-center gap-2" style={{ borderRadius: '8px', fontWeight: 500 }} onClick={() => exportStudentsToExcel(estudiantes)}>
+                  📊 Exportar Excel
+                </Button>
+                <Button variant="danger" className="d-flex align-items-center gap-2" style={{ borderRadius: '8px', fontWeight: 500 }} onClick={() => exportStudentsToPdf(estudiantes)}>
+                  📄 Exportar PDF
+                </Button>
+              </div>
+            </div>
           </div>
 
-          <div className="overflow-x-auto" style={{ overflowX: "auto" }}>
-            {/* EstudianteTable ya existente — le pasamos la clase via wrapper.
-                Si quieres, puedes refactorizar EstudianteTable para usar est-table
-                directamente. Por ahora el wrapper aplica los estilos. */}
-            <EstudianteTable
-              data={estudiantes}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onMatricula={handleMatricula}
-              onApoderados={handleApoderados}
-              tableClassName="est-table"
-            />
+          {/* ─── SEARCH & STATS SECTION ─── */}
+          <div className="matriculas-search-section">
+            {/* Search Card */}
+            <div className="search-card">
+              <label>Buscar Estudiante</label>
+              <div className="search-input-wrapper">
+                <Form.Control
+                  type="text"
+                  placeholder="Buscar por nombre o DNI apoderado..."
+                  onChange={handleSearch}
+                  style={{ paddingLeft: '40px' }}
+                />
+              </div>
+            </div>
+
+            {/* Stats Card */}
+            <div className="stats-card">
+              <div className="stats-card-content">
+                <div className="stats-card-text">
+                  <span className="stats-label">Total Estudiantes</span>
+                  <div className="stats-number">{estudiantes.length}</div>
+                </div>
+                <div className="stats-icon">👨‍🎓</div>
+              </div>
+              <div className="stats-badges">
+                <span className="stats-badge active">
+                  {estudiantes.filter(e => e.estado !== false).length} Activos
+                </span>
+                <span className="stats-badge pending">
+                  {estudiantes.filter(e => e.estado === false).length} Inactivos
+                </span>
+              </div>
+            </div>
           </div>
 
-          {/* Pagination info */}
-          <div className="table-pagination">
-            <span>
-              Mostrando {estudiantes.length} estudiante
-              {estudiantes.length !== 1 ? "s" : ""}
-            </span>
-            <div className="pagination-pages">
-              <button className="page-btn" disabled>
-                ‹
-              </button>
-              <button className="page-btn active">1</button>
-              <button className="page-btn" disabled>
-                ›
-              </button>
+          {/* ─── TABLE ─── */}
+          <div className="table-container">
+            <div className="table-wrapper">
+              <EstudianteTable
+                data={estudiantes}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onMatricula={handleMatricula}
+                onApoderados={handleApoderados}
+                tableClassName="matriculas-table"
+              />
             </div>
           </div>
         </div>

@@ -3,6 +3,7 @@ import { Card, Table, Button, Badge } from 'react-bootstrap';
 import toast from 'react-hot-toast';
 import { deleteAsignacion } from '../../../api/academicoAPI';
 import ModalAsignacionDocente from './ModalAsignacionDocente';
+import { exportAsignacionesToExcel, exportAsignacionesToPdf } from './asignacionExportTemplates';
 
 export default function AsignacionesTab({
   asignaciones,
@@ -37,14 +38,22 @@ export default function AsignacionesTab({
     <>
       <Card className="border-0 shadow-sm rounded-4 mt-3">
         <Card.Body className="p-4">
-          <div className="d-flex justify-content-between align-items-center mb-4">
+          <div className="d-flex justify-content-between align-items-center mb-4" style={{ flexWrap: 'wrap', gap: '1rem' }}>
             <div>
               <h4 className="fw-bold m-0 text-dark">Lista de Asignaciones</h4>
               <p className="text-muted small m-0">Asignar docentes a aulas y áreas específicas por periodo</p>
             </div>
-            <Button variant="success" className="rounded-3 px-4 py-2" onClick={() => handleOpenModal(null)}>
-              + Nueva Asignación
-            </Button>
+            <div className="d-flex gap-2 flex-wrap">
+              <Button className="btn-nueva-matricula" onClick={() => handleOpenModal(null)}>
+                ➕ Nueva Asignación
+              </Button>
+              <Button variant="success" className="d-flex align-items-center gap-2" style={{ borderRadius: '8px', fontWeight: 500 }} onClick={() => exportAsignacionesToExcel(asignaciones)}>
+                📊 Exportar Excel
+              </Button>
+              <Button variant="danger" className="d-flex align-items-center gap-2" style={{ borderRadius: '8px', fontWeight: 500 }} onClick={() => exportAsignacionesToPdf(asignaciones)}>
+                📄 Exportar PDF
+              </Button>
+            </div>
           </div>
           <Table responsive hover className="align-middle">
             <thead className="bg-light">

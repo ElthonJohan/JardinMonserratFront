@@ -7,7 +7,7 @@ export default function CompetenciasTab({ competencias, areas, onRefresh }) {
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [loadingForm, setLoadingForm] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     descripcion: '',
     area: '',
@@ -93,8 +93,8 @@ export default function CompetenciasTab({ competencias, areas, onRefresh }) {
               <h4 className="fw-bold m-0 text-dark">Competencias</h4>
               <p className="text-muted small m-0">Configurar las competencias asociadas a cada área</p>
             </div>
-            <Button variant="danger" className="rounded-3 px-4 py-2" onClick={() => handleOpenModal()}>
-              + Nueva Competencia
+            <Button className="btn-nueva-matricula" onClick={() => handleOpenModal()}>
+              ➕ Nueva Competencia
             </Button>
           </div>
           <Table responsive hover className="align-middle">
