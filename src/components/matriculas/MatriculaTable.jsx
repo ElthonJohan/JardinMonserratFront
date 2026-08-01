@@ -84,5 +84,15 @@ export default function MatriculaTable({
     [aulaById]
   );
 
-  return <DataTable columns={columns} data={data} loading={loading} onView={onView} onEdit={onEdit} onDelete={onDelete} />;
+  return (
+    <DataTable
+      columns={columns}
+      data={data}
+      loading={loading}
+      onView={onView}
+      onEdit={onEdit}
+      onDelete={onDelete}
+      paginated={true}
+    />
+  );
 }

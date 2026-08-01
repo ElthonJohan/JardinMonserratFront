@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, Button, Spinner, Form } from 'react-bootstrap';
 import './DataTable.css';
 
@@ -13,11 +13,16 @@ const DataTable = ({
   striped = true,
   bordered = true,
   hover = true,
-  paginated = false,
+  paginated = true,
   defaultPageSize = 10
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(defaultPageSize);
+
+  // Reset page when data length changes (e.g. search or filter is applied)
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [data.length]);
 
   if (loading) {
     return (
@@ -54,12 +59,12 @@ const DataTable = ({
   return (
     <div className={`table-container ${className}`}>
       {paginated && (
-        <div className="d-flex justify-content-between align-items-center mb-3">
+        <div className="table-pagination-top d-flex justify-content-between align-items-center mb-3">
           <div className="d-flex align-items-center gap-2">
             <span>Mostrar</span>
             <Form.Select
               size="sm"
-              style={{ width: '80px' }}
+              className="data-table-select"
               value={pageSize}
               onChange={(e) => {
                 setPageSize(Number(e.target.value));
@@ -138,9 +143,9 @@ const DataTable = ({
       </div>
 
       {paginated && (
-        <div className="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
+        <div className="table-pagination-bottom d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
           <div className="text-muted small">
-            Mostrando {startIndex + 1} a {endIndex} de {totalItems} registros
+            Mostrando {totalItems === 0 ? 0 : startIndex + 1} a {endIndex} de {totalItems} registros
           </div>
           <div className="d-flex gap-1">
             <Button
@@ -165,7 +170,7 @@ const DataTable = ({
                 const isGap = idx > 0 && p - arr[idx - 1] > 1;
                 return (
                   <React.Fragment key={p}>
-                    {isGap && <span className="px-2 align-self-end">...</span>}
+                    {isGap && <span className="px-2 text-muted align-self-center">...</span>}
                     <Button
                       variant={currentPage === p ? 'primary' : 'outline-secondary'}
                       size="sm"
