@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Badge, Spinner, Table, Modal, Form } from 'react-bootstrap';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Container, Row, Col, Card, Button, Badge, Spinner, Modal, Form } from 'react-bootstrap';
 import toast from 'react-hot-toast';
 import axiosInstance from '../api/axiosConfig';
-import { AppNavbar } from '../components/shared';
+import { AppNavbar, DataTable } from '../components/shared';
 
 export default function PeriodosPage() {
   const [periodos, setPeriodos] = useState([]);
@@ -19,6 +19,26 @@ export default function PeriodosPage() {
     fecha_fin: '',
     activo: true,
   });
+
+  const columns = useMemo(
+    () => [
+      { key: 'nombre', label: 'Periodo' },
+      { key: 'anio', label: 'Año', render: (val) => <span className="fw-bold fs-5">{val}</span> },
+      { key: 'fecha_inicio', label: 'Fecha Inicio' },
+      { key: 'fecha_fin', label: 'Fecha Cierre' },
+      { key: 'activo', label: 'Estado', render: (val) => <Badge bg={val ? 'success' : 'danger'}>{val ? 'Abierto' : 'Cerrado'}</Badge> },
+      {
+        key: 'acciones',
+        label: 'Acciones',
+        render: (_v, row) => (
+          <div className="text-end">
+            <Button variant="outline-primary" size="sm" onClick={() => handleOpenModal(row)}>Editar</Button>
+          </div>
+        )
+      }
+    ],
+    []
+  );
 
   const cargarPeriodos = async () => {
     setLoading(true);
@@ -112,34 +132,12 @@ export default function PeriodosPage() {
         </Row>
         <Card className="shadow-sm border-0">
           <Card.Body>
-            {loading ? <div className="text-center py-5"><Spinner animation="border" /></div> : (
-              <Table hover responsive className="align-middle">
-                <thead className="table-light">
-                  <tr>
-                    <th className="fw-bold fs-5">Periodo</th>
-                    <th>Año</th>
-                    <th>Fecha Inicio</th>
-                    <th>Fecha Cierre</th>
-                    <th>Estado</th>
-                    <th className="text-end">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {periodos.map(p => (
-                    <tr key={p.id}>
-                        <td>{p.nombre}</td>
-                      <td className="fw-bold fs-5">{p.anio}</td>
-                      <td>{p.fecha_inicio}</td>
-                      <td>{p.fecha_fin}</td>
-                      <td><Badge bg={p.activo ? 'success' : 'danger'}>{p.activo ? 'Abierto' : 'Cerrado'}</Badge></td>
-                      <td className="text-end">
-                        <Button variant="outline-primary" size="sm" onClick={() => handleOpenModal(p)}>Editar</Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            )}
+            <DataTable
+              columns={columns}
+              data={periodos}
+              loading={loading}
+              paginated={true}
+            />
           </Card.Body>
         </Card>
       </Container>
