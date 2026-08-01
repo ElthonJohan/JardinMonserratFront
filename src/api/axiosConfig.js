@@ -10,13 +10,22 @@ const axiosInstance = axios.create({
   },
 });
 
-// Interceptor para agregar token JWT a cada solicitud
+// Interceptor para agregar token JWT y manejar FormData
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('access_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // 🚀 AQUÍ ESTÁ LA SOLUCIÓN:
+    // Si los datos a enviar son un FormData (archivos), eliminamos el 
+    // 'Content-Type' fijo de JSON para que el navegador cree el 'multipart/form-data' 
+    // correcto con su respectivo boundary.
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    }
+
     return config;
   },
   (error) => {
