@@ -442,6 +442,7 @@ export default function RegistroPago({
               striped
               bordered
               hover
+              paginated={false}
             />
           </div>
           {!loadingDeudas && deudas.length > 0 && (
