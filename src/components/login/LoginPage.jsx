@@ -126,7 +126,7 @@ export default function LoginPage() {
                   </Button>
                   <Button
                     variant="outline-secondary"
-                    size="lg"
+                    size="xs"
                     className="w-100 fw-bold mt-2"
                     onClick={() => navigate("/")}
                   >
