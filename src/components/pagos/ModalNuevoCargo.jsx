@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Spinner } from 'react-bootstrap';
+import Select from 'react-select';
 import toast from 'react-hot-toast';
 import { getConceptosPago, createDeuda } from '../../api/pagosAPI';
 
@@ -50,8 +51,8 @@ export default function ModalNuevoCargo({ show, handleClose, alumnoId, onSuccess
     }
   };
 
-  const handleConceptoChange = (e) => {
-    const conceptId = e.target.value;
+  const handleConceptoChange = (selected) => {
+    const conceptId = selected ? selected.value : '';
     const concept = conceptos.find(c => String(c.id) === String(conceptId));
     setConceptoSeleccionado(concept);
     
@@ -120,17 +121,14 @@ export default function ModalNuevoCargo({ show, handleClose, alumnoId, onSuccess
             <>
               <Form.Group className="mb-3">
                 <Form.Label>Concepto</Form.Label>
-                <Form.Select
-                  name="concepto"
-                  value={formData.concepto}
+                <Select
+                  options={conceptos.map(c => ({ value: c.id, label: `${c.nombre} (Base: S/ ${c.monto_base})` }))}
+                  value={conceptos.map(c => ({ value: c.id, label: `${c.nombre} (Base: S/ ${c.monto_base})` })).find(o => String(o.value) === String(formData.concepto)) || null}
                   onChange={handleConceptoChange}
-                  required
-                >
-                  <option value="">-- Seleccione un concepto --</option>
-                  {conceptos.map(c => (
-                    <option key={c.id} value={c.id}>{c.nombre} (Base: S/ {c.monto_base})</option>
-                  ))}
-                </Form.Select>
+                  placeholder="-- Seleccione un concepto --"
+                  isClearable
+                  noOptionsMessage={() => "No se encontraron conceptos"}
+                />
               </Form.Group>
 
               <Form.Group className="mb-3">

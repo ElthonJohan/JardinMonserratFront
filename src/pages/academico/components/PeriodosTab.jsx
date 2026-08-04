@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Card, Button, Modal, Form, Spinner, Badge } from 'react-bootstrap';
+import Select from 'react-select';
 import toast from 'react-hot-toast';
 import { createPeriodo, updatePeriodo, deletePeriodo } from '../../../api/academicoAPI';
 import { DataTable } from '../../../components/shared';
@@ -175,17 +176,14 @@ export default function PeriodosTab({ periodos, periodosAcademicos, onRefresh })
 
                 <Form.Group className="mb-3">
                   <Form.Label>Periodo Lectivo (Matrícula) *</Form.Label>
-                  <Form.Select
-                    name="periodo_matricula"
-                    value={formData.periodo_matricula}
-                    onChange={handleInputChange}
-                    required
-                  >
-                    <option value="">Seleccione Periodo Lectivo...</option>
-                    {periodosAcademicos.map(p => (
-                      <option key={p.id} value={p.id}>{p.nombre}</option>
-                    ))}
-                  </Form.Select>
+                  <Select
+                    options={periodosAcademicos.map(p => ({ value: p.id, label: p.nombre }))}
+                    value={periodosAcademicos.map(p => ({ value: p.id, label: p.nombre })).find(o => String(o.value) === String(formData.periodo_matricula)) || null}
+                    onChange={(selected) => handleInputChange({ target: { name: 'periodo_matricula', value: selected ? selected.value : '' } })}
+                    placeholder="Seleccione Periodo Lectivo..."
+                    isClearable
+                    noOptionsMessage={() => "No se encontraron periodos"}
+                  />
                 </Form.Group>
 
                 <Form.Group className="mb-3">

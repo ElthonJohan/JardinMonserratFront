@@ -1,8 +1,17 @@
 import { useEffect, useState } from "react";
+import Select from "react-select";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import { buscarApoderadoPorDni } from "../../api/estudiantesAPI";
 import toast from "react-hot-toast";
+
+const relacionOptions = [
+  { value: "MADRE", label: "Madre" },
+  { value: "PADRE", label: "Padre" },
+  { value: "TUTOR", label: "Tutor" },
+  { value: "ABUELO", label: "Abuelo" },
+  { value: "OTRO", label: "Otro" }
+];
 
 export default function EstudianteForm({
   onSubmit,
@@ -374,18 +383,13 @@ const handleSubmit = (e) => {
         <div className="col-md-6 mb-3">
           <label className="form-label">Relación</label>
 
-          <select
-            className="form-select"
-            name="tipo_relacion"
-            value={form.tipo_relacion}
-            onChange={handleChange}
-          >
-            <option value="MADRE">Madre</option>
-            <option value="PADRE">Padre</option>
-            <option value="TUTOR">Tutor</option>
-            <option value="ABUELO">Abuelo</option>
-            <option value="OTRO">Otro</option>
-          </select>
+          <Select
+            options={relacionOptions}
+            value={relacionOptions.find(o => o.value === form.tipo_relacion) || null}
+            onChange={(selected) => handleChange({ target: { name: 'tipo_relacion', value: selected ? selected.value : '' } })}
+            placeholder="Seleccionar relación..."
+            isSearchable={false}
+          />
         </div>
 
         {/* BOTÓN */}

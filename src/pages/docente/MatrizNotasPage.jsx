@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Table, Button, Spinner, Alert, Form, Badge, Tabs, Tab } from 'react-bootstrap';
+import Select from 'react-select';
 import { toast } from 'react-hot-toast';
 import { AppNavbar } from '../../components/shared';
 import {
@@ -337,30 +338,26 @@ export default function MatrizNotasPage() {
                 <Col md={4}>
                   <Form.Group controlId="selectAula">
                     <Form.Label className="fw-bold text-secondary">Aula (Salón)</Form.Label>
-                    <Form.Select
-                      value={selectedAulaId}
-                      onChange={e => handleAulaChange(e.target.value)}
-                      className="rounded-3 py-2 border-secondary-subtle font-semibold"
-                    >
-                      {uniqueAulas.map(a => (
-                        <option key={a.id} value={a.id}>{a.nombre}</option>
-                      ))}
-                    </Form.Select>
+                    <Select
+                      options={uniqueAulas.map(a => ({ value: a.id, label: a.nombre }))}
+                      value={uniqueAulas.map(a => ({ value: a.id, label: a.nombre })).find(o => String(o.value) === String(selectedAulaId)) || null}
+                      onChange={selected => handleAulaChange(selected ? selected.value : '')}
+                      placeholder="Seleccionar Aula..."
+                      isClearable={false}
+                    />
                   </Form.Group>
                 </Col>
 
                 <Col md={4}>
                   <Form.Group controlId="selectPeriodo">
                     <Form.Label className="fw-bold text-secondary">Trimestre / Periodo</Form.Label>
-                    <Form.Select
-                      value={selectedPeriodo}
-                      onChange={e => setSelectedPeriodo(e.target.value)}
-                      className="rounded-3 py-2 border-secondary-subtle font-semibold"
-                    >
-                      {periodosEvaluacion.map(pe => (
-                        <option key={pe.id} value={pe.id}>{pe.nombre}</option>
-                      ))}
-                    </Form.Select>
+                    <Select
+                      options={periodosEvaluacion.map(pe => ({ value: pe.id, label: pe.nombre }))}
+                      value={periodosEvaluacion.map(pe => ({ value: pe.id, label: pe.nombre })).find(o => String(o.value) === String(selectedPeriodo)) || null}
+                      onChange={selected => setSelectedPeriodo(selected ? selected.value : '')}
+                      placeholder="Seleccionar Periodo..."
+                      isClearable={false}
+                    />
                   </Form.Group>
                 </Col>
 
@@ -492,31 +489,40 @@ export default function MatrizNotasPage() {
                               const currentVal = grades[alumnoId]?.[compId] || '-';
 
                               return (
-                                <td key={compId} className="text-center py-3">
-                                  <Form.Select
-                                    value={currentVal}
-                                    onChange={e => handleGradeChange(alumnoId, compId, e.target.value)}
-                                    className="mx-auto rounded-3 text-center font-bold border-secondary-subtle"
-                                    style={{
-                                      maxWidth: '90px',
-                                      backgroundColor:
-                                        currentVal === 'AD' ? '#d4edda' :
-                                          currentVal === 'A' ? '#cce5ff' :
-                                            currentVal === 'B' ? '#fff3cd' :
-                                              currentVal === 'C' ? '#f8d7da' : '#fff',
-                                      color:
-                                        currentVal === 'AD' ? '#155724' :
-                                          currentVal === 'A' ? '#004085' :
-                                            currentVal === 'B' ? '#856404' :
-                                              currentVal === 'C' ? '#721c24' : '#495057',
+                                <td key={compId} className="text-center py-3" style={{ minWidth: '100px' }}>
+                                  <Select
+                                    options={[
+                                      { value: '-', label: '-' },
+                                      { value: 'AD', label: 'AD' },
+                                      { value: 'A', label: 'A' },
+                                      { value: 'B', label: 'B' },
+                                      { value: 'C', label: 'C' }
+                                    ]}
+                                    value={{ value: currentVal, label: currentVal }}
+                                    onChange={selected => handleGradeChange(alumnoId, compId, selected ? selected.value : '-')}
+                                    isSearchable={false}
+                                    styles={{
+                                      control: (base) => ({
+                                        ...base,
+                                        backgroundColor:
+                                          currentVal === 'AD' ? '#d4edda' :
+                                            currentVal === 'A' ? '#cce5ff' :
+                                              currentVal === 'B' ? '#fff3cd' :
+                                                currentVal === 'C' ? '#f8d7da' : '#fff',
+                                        fontWeight: 'bold',
+                                        textAlign: 'center',
+                                        minHeight: '36px'
+                                      }),
+                                      singleValue: (base) => ({
+                                        ...base,
+                                        color:
+                                          currentVal === 'AD' ? '#155724' :
+                                            currentVal === 'A' ? '#004085' :
+                                              currentVal === 'B' ? '#856404' :
+                                                currentVal === 'C' ? '#721c24' : '#495057',
+                                      })
                                     }}
-                                  >
-                                    <option value="-">-</option>
-                                    <option value="AD">AD</option>
-                                    <option value="A">A</option>
-                                    <option value="B">B</option>
-                                    <option value="C">C</option>
-                                  </Form.Select>
+                                  />
                                 </td>
                               );
                             })}

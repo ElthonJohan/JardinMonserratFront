@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Button, Row, Col, Spinner, Card } from 'react-bootstrap';
+import Select from 'react-select';
 import toast from 'react-hot-toast';
 import { createAsignacion, updateAsignacion } from '../../../api/academicoAPI';
 
@@ -280,32 +281,26 @@ export default function ModalAsignacionDocente({
 
               <Form.Group className="mb-3">
                 <Form.Label className="fw-semibold">Aula *</Form.Label>
-                <Form.Select
-                  name="aula"
-                  value={singleForm.aula}
-                  onChange={handleSingleInputChange}
-                  required
-                >
-                  <option value="">Seleccione Aula...</option>
-                  {aulas.map(a => (
-                    <option key={a.id} value={a.id}>{a.nombre}</option>
-                  ))}
-                </Form.Select>
+                <Select
+                  options={aulas.map(a => ({ value: a.id, label: a.nombre }))}
+                  value={aulas.map(a => ({ value: a.id, label: a.nombre })).find(o => String(o.value) === String(singleForm.aula)) || null}
+                  onChange={(selected) => handleSingleInputChange({ target: { name: 'aula', value: selected ? selected.value : '' } })}
+                  placeholder="Seleccione Aula..."
+                  isClearable
+                  noOptionsMessage={() => "No se encontraron aulas"}
+                />
               </Form.Group>
 
               <Form.Group className="mb-3">
                 <Form.Label className="fw-semibold">Periodo Lectivo (Matrícula) *</Form.Label>
-                <Form.Select
-                  name="periodo_matricula"
-                  value={singleForm.periodo_matricula}
-                  onChange={handleSingleInputChange}
-                  required
-                >
-                  <option value="">Seleccione Periodo...</option>
-                  {periodosAcademicos.map(p => (
-                    <option key={p.id} value={p.id}>{p.nombre}</option>
-                  ))}
-                </Form.Select>
+                <Select
+                  options={periodosAcademicos.map(p => ({ value: p.id, label: p.nombre }))}
+                  value={periodosAcademicos.map(p => ({ value: p.id, label: p.nombre })).find(o => String(o.value) === String(singleForm.periodo_matricula)) || null}
+                  onChange={(selected) => handleSingleInputChange({ target: { name: 'periodo_matricula', value: selected ? selected.value : '' } })}
+                  placeholder="Seleccione Periodo..."
+                  isClearable
+                  noOptionsMessage={() => "No se encontraron periodos"}
+                />
               </Form.Group>
 
               <Form.Group className="mb-3">
@@ -404,16 +399,14 @@ export default function ModalAsignacionDocente({
                 <Col md={6}>
                   <Form.Group>
                     <Form.Label className="fw-semibold">Periodo Lectivo (Matrícula) *</Form.Label>
-                    <Form.Select
-                      value={selectedPeriodo}
-                      onChange={e => setSelectedPeriodo(e.target.value)}
-                      required
-                    >
-                      <option value="">Seleccione Periodo...</option>
-                      {periodosAcademicos.map(p => (
-                        <option key={p.id} value={p.id}>{p.nombre}</option>
-                      ))}
-                    </Form.Select>
+                    <Select
+                      options={periodosAcademicos.map(p => ({ value: p.id, label: p.nombre }))}
+                      value={periodosAcademicos.map(p => ({ value: p.id, label: p.nombre })).find(o => String(o.value) === String(selectedPeriodo)) || null}
+                      onChange={(selected) => setSelectedPeriodo(selected ? selected.value : '')}
+                      placeholder="Seleccione Periodo..."
+                      isClearable
+                      noOptionsMessage={() => "No se encontraron periodos"}
+                    />
                   </Form.Group>
                 </Col>
               </Row>

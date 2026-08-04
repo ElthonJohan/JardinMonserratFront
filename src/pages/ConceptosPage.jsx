@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Container, Row, Col, Card, Button, Badge, Spinner, Modal, Form } from 'react-bootstrap';
+import Select from 'react-select';
 import toast from 'react-hot-toast';
 import { getConceptosPago, createConceptoPago, updateConceptoPago } from '../api/pagosAPI';
 import { AppNavbar, DataTable } from '../components/shared';
@@ -175,17 +176,25 @@ export default function ConceptosPage() {
 
             <Form.Group className="mb-3">
               <Form.Label>Tipo *</Form.Label>
-              <Form.Select
-                name="tipo"
-                value={formData.tipo}
-                onChange={handleChange}
-                required
-              >
-                <option value="CUOTA_INGRESO">Cuota de Ingreso (Único)</option>
-                <option value="MATRICULA">Matrícula (Anual)</option>
-                <option value="PENSION">Pensión (Mensual)</option>
-                <option value="OTROS">Otros Pagos</option>
-              </Form.Select>
+              <Select
+                options={[
+                  { value: 'CUOTA_INGRESO', label: 'Cuota de Ingreso (Único)' },
+                  { value: 'MATRICULA', label: 'Matrícula (Anual)' },
+                  { value: 'PENSION', label: 'Pensión (Mensual)' },
+                  { value: 'OTROS', label: 'Otros Pagos' }
+                ]}
+                value={
+                  [
+                    { value: 'CUOTA_INGRESO', label: 'Cuota de Ingreso (Único)' },
+                    { value: 'MATRICULA', label: 'Matrícula (Anual)' },
+                    { value: 'PENSION', label: 'Pensión (Mensual)' },
+                    { value: 'OTROS', label: 'Otros Pagos' }
+                  ].find(o => o.value === formData.tipo) || null
+                }
+                onChange={selected => handleChange({ target: { name: 'tipo', value: selected ? selected.value : 'OTROS' } })}
+                placeholder="Seleccionar..."
+                isSearchable={false}
+              />
             </Form.Group>
 
             <Form.Group className="mb-3">

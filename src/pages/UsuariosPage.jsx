@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Container, Card, Button, Modal, Form } from 'react-bootstrap';
 import { AppNavbar, Loading, DataTable } from '../components/shared';
+import Select from 'react-select';
 import axiosInstance from '../api/axiosConfig';
 import toast from 'react-hot-toast';
 
@@ -188,14 +189,14 @@ const UsuariosPage = () => {
               </div>
               <div className="col-md-4">
                 <Form.Label>Filtrar por rol</Form.Label>
-                <Form.Select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
-                  <option value="">Todos los roles</option>
-                  {roles.map((role) => (
-                    <option key={role.id} value={role.id}>
-                      {role.name}
-                    </option>
-                  ))}
-                </Form.Select>
+                <Select
+                  options={roles.map(r => ({ value: r.id, label: r.name }))}
+                  value={roles.map(r => ({ value: r.id, label: r.name })).find(o => String(o.value) === String(roleFilter)) || null}
+                  onChange={(selected) => setRoleFilter(selected ? selected.value : '')}
+                  placeholder="Todos los roles"
+                  isClearable
+                  noOptionsMessage={() => "No se encontraron roles"}
+                />
               </div>
               <div className="col-md-2 d-flex align-items-end">
                 <Button
@@ -253,19 +254,14 @@ const UsuariosPage = () => {
 
               <Form.Group className="mb-3">
                 <Form.Label>Rol / Grupo</Form.Label>
-                <Form.Select
-                  name="role_id"
-                  required
-                  value={formData.role_id}
-                  onChange={handleChange}
-                >
-                  <option value="">Seleccione un rol</option>
-                  {roles.map((r) => (
-                    <option key={r.id} value={r.id}>
-                      {r.name}
-                    </option>
-                  ))}
-                </Form.Select>
+                <Select
+                  options={roles.map(r => ({ value: r.id, label: r.name }))}
+                  value={roles.map(r => ({ value: r.id, label: r.name })).find(o => String(o.value) === String(formData.role_id)) || null}
+                  onChange={(selected) => handleChange({ target: { name: 'role_id', value: selected ? selected.value : '' } })}
+                  placeholder="Seleccione un rol"
+                  isClearable
+                  noOptionsMessage={() => "No se encontraron roles"}
+                />
               </Form.Group>
             </Modal.Body>
             <Modal.Footer>
