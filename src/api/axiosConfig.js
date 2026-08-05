@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
 
+console.log("API URL:", API_BASE_URL);
 // Crear instancia de axios
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -49,11 +50,11 @@ axiosInstance.interceptors.response.use(
             `${API_BASE_URL}/auth/refresh/`,
             { refresh: refreshToken }
           );
-          
+
           localStorage.setItem('access_token', response.data.access);
           axiosInstance.defaults.headers.Authorization = `Bearer ${response.data.access}`;
           originalRequest.headers.Authorization = `Bearer ${response.data.access}`;
-          
+
           return axiosInstance(originalRequest);
         }
       } catch (refreshError) {
