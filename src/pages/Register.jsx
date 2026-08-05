@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axiosInstance from "../api/axiosConfig";
+import Select from "react-select";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/register.css";
 import { useNavigate } from "react-router-dom";
@@ -72,16 +73,23 @@ const Register = () => {
             {/* Rol */}
             <div className="mb-3">
               <label className="form-label">Rol</label>
-              <select
-                name="role"
-                className="form-select"
-                value={form.role}
-                onChange={handleChange}
-              >
-                <option value="admin">Administrador</option>
-                <option value="docente">Docente</option>
-                <option value="padre">Padre</option>
-              </select>
+              <Select
+                options={[
+                  { value: 'admin', label: 'Administrador' },
+                  { value: 'docente', label: 'Docente' },
+                  { value: 'padre', label: 'Padre' }
+                ]}
+                value={
+                  [
+                    { value: 'admin', label: 'Administrador' },
+                    { value: 'docente', label: 'Docente' },
+                    { value: 'padre', label: 'Padre' }
+                  ].find(o => o.value === form.role) || null
+                }
+                onChange={(selected) => setForm({ ...form, role: selected ? selected.value : 'admin' })}
+                placeholder="Seleccionar..."
+                isSearchable={false}
+              />
             </div>
 
             {/* Botón */}

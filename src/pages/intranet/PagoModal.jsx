@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Modal } from "react-bootstrap";
+import Select from "react-select";
 import toast from "react-hot-toast";
 
 import { registrarPagoParent, getBancos } from "../../api/pagosAPI";
@@ -265,24 +266,33 @@ fetchConfiguracion();
         <div className="mb-3">
           <label className="form-label fw-bold">Método de pago</label>
 
-          <select
-            className="form-select"
-            value={formData.metodo_pago}
-            onChange={(e) =>
+          <Select
+            options={[
+              { value: 'Yape', label: 'Yape' },
+              { value: 'Plin', label: 'Plin' },
+              { value: 'Transferencia', label: 'Transferencia' },
+              { value: 'Depósito', label: 'Depósito' }
+            ]}
+            value={
+              [
+                { value: 'Yape', label: 'Yape' },
+                { value: 'Plin', label: 'Plin' },
+                { value: 'Transferencia', label: 'Transferencia' },
+                { value: 'Depósito', label: 'Depósito' }
+              ].find(o => o.value === formData.metodo_pago) || null
+            }
+            onChange={(selected) =>
               setFormData({
                 ...formData,
-                metodo_pago: e.target.value,
-                banco: ["Transferencia", "Depósito"].includes(e.target.value)
+                metodo_pago: selected ? selected.value : 'Yape',
+                banco: selected && ["Transferencia", "Depósito"].includes(selected.value)
                   ? formData.banco
                   : "",
               })
             }
-          >
-            <option>Yape</option>
-            <option>Plin</option>
-            <option>Transferencia</option>
-            <option>Depósito</option>
-          </select>
+            placeholder="Seleccionar..."
+            isSearchable={false}
+          />
         </div>
 
         {
@@ -407,23 +417,19 @@ fetchConfiguracion();
         {["Transferencia", "Depósito"].includes(formData.metodo_pago) && (
           <div className="mb-3">
             <label className="form-label fw-bold">Banco</label>
-            <select
-              className="form-select"
-              value={formData.banco}
-              onChange={(e) =>
+            <Select
+              options={bancos.map(b => ({ value: b.id, label: `${b.nombre} ${b.numero_cuenta ? `- ${b.numero_cuenta}` : ""}` }))}
+              value={bancos.map(b => ({ value: b.id, label: `${b.nombre} ${b.numero_cuenta ? `- ${b.numero_cuenta}` : ""}` })).find(o => String(o.value) === String(formData.banco)) || null}
+              onChange={(selected) =>
                 setFormData({
                   ...formData,
-                  banco: e.target.value,
+                  banco: selected ? selected.value : "",
                 })
               }
-            >
-              <option value="">-- Seleccionar banco --</option>
-              {bancos.map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.nombre} {b.numero_cuenta ? `- ${b.numero_cuenta}` : ""}
-                </option>
-              ))}
-            </select>
+              placeholder="-- Seleccionar banco --"
+              isClearable
+              noOptionsMessage={() => "No se encontraron bancos"}
+            />
           </div>
         )}
 

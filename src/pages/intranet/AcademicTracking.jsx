@@ -3,6 +3,7 @@ import axiosInstance from "../../api/axiosConfig";
 import { getPeriodos, getLibretaVirtual } from "../../api/academicoAPI";
 import { Spinner, Card, Table, Badge, Row, Col } from "react-bootstrap";
 import toast from "react-hot-toast";
+import GuiaAcademicModal from "./GuiaAcademicModal";
 
 import "../../styles/AcademicTracking.css";
 
@@ -22,6 +23,7 @@ const AcademicTracking = () => {
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [loadingPeriodos, setLoadingPeriodos] = useState(false);
   const [loadingLibreta, setLoadingLibreta] = useState(false);
+  const [showGuia, setShowGuia] = useState(false);
 
   // Fetch Parent profile containing children
   const fetchProfile = async () => {
@@ -141,15 +143,29 @@ const AcademicTracking = () => {
 
   return (
     <>
-            <div className="academic-page">
+      <div className="academic-page">
         {/* Banner */}
         <div className="academic-header-banner">
-          <h1>Seguimiento Académico</h1>
-          <p>
-            Consulte la libreta virtual de calificaciones y apreciaciones pedagógicas registradas por los docentes.
-          </p>
+          <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+              <h1>Seguimiento Académico</h1>
+              <p className="mb-0">
+                Consulte la libreta virtual de calificaciones y apreciaciones pedagógicas registradas por los docentes.
+              </p>
+            </div>
+          </div>
         </div>
-
+        <div className="d-flex justify-content-end">
+          <button
+            className="btn btn-success text-white fw-bold d-flex align-items-center gap-2"
+            onClick={() => setShowGuia(true)}
+            style={{ borderRadius: "14px", padding: "12px 20px", border: "none", boxShadow: "0 4px 10px rgba(59, 130, 246, 0.3)", transition: "0.2s" }}
+            onMouseOver={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
+            onMouseOut={(e) => e.currentTarget.style.transform = "translateY(0)"}
+          >
+            ❓ Ayuda / Guía
+          </button>
+        </div>
         {/* 1. Selección de Hijos */}
         <div className="section-title">
           <span>👨‍👩‍👧‍👦</span> Seleccione el estudiante
@@ -321,6 +337,11 @@ const AcademicTracking = () => {
             )}
           </>
         )}
+
+        <GuiaAcademicModal
+          show={showGuia}
+          onHide={() => setShowGuia(false)}
+        />
       </div>
     </>
   );

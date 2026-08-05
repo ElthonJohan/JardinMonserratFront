@@ -118,13 +118,13 @@ export default function EstudiantesPage() {
       apoderado: relPrincipal
         ? { ...relPrincipal.apoderado }
         : {
-            nombres: "",
-            apellidos: "",
-            dni: "",
-            telefono: "",
-            email: "",
-            direccion: "",
-          },
+          nombres: "",
+          apellidos: "",
+          dni: "",
+          telefono: "",
+          email: "",
+          direccion: "",
+        },
       tipo_relacion: relPrincipal?.tipo_relacion ?? "MADRE",
       es_principal: relPrincipal?.es_principal ?? true,
     });
@@ -207,50 +207,50 @@ export default function EstudiantesPage() {
 
   const openAddParentModal = () => openModal("agregarApoderadoModal");
 
- 
+
   const descargarPDF = async () => {
 
-  const canvas = await html2canvas(
-    credRef.current,
-    {
-      scale: 2,
-      useCORS: true
-    }
-  );
+    const canvas = await html2canvas(
+      credRef.current,
+      {
+        scale: 2,
+        useCORS: true
+      }
+    );
 
-  const imgData = canvas.toDataURL(
-    "image/png"
-  );
+    const imgData = canvas.toDataURL(
+      "image/png"
+    );
 
-  const pdf = new jsPDF(
-    "p",
-    "mm",
-    "a4"
-  );
+    const pdf = new jsPDF(
+      "p",
+      "mm",
+      "a4"
+    );
 
-  const pdfWidth =
-    pdf.internal.pageSize.getWidth();
+    const pdfWidth =
+      pdf.internal.pageSize.getWidth();
 
-  const imgProps =
-    pdf.getImageProperties(imgData);
+    const imgProps =
+      pdf.getImageProperties(imgData);
 
-  const pdfHeight =
-    (imgProps.height * pdfWidth) /
-    imgProps.width;
+    const pdfHeight =
+      (imgProps.height * pdfWidth) /
+      imgProps.width;
 
-  pdf.addImage(
-    imgData,
-    "PNG",
-    0,
-    10,
-    pdfWidth,
-    pdfHeight
-  );
+    pdf.addImage(
+      imgData,
+      "PNG",
+      0,
+      10,
+      pdfWidth,
+      pdfHeight
+    );
 
-  pdf.save(
-    `credenciales-${newCredentials?.username}.pdf`
-  );
-};
+    pdf.save(
+      `credenciales-${newCredentials?.username}.pdf`
+    );
+  };
 
 
 
@@ -448,59 +448,59 @@ Por seguridad cambie su contraseña después del primer ingreso.
 
               <div ref={credRef} className="credential-card">
 
-  <div className="credential-header">
-    <div className="school-logo">
-      🎓
-    </div>
+                <div className="credential-header">
+                  <div className="school-logo">
+                    🎓
+                  </div>
 
-    <div>
-      <h4>Jardín Nuestra Señora de Montserrat</h4>
-      <span>Credenciales de Acceso</span>
-    </div>
-  </div>
+                  <div>
+                    <h4>Jardín Nuestra Señora de Montserrat</h4>
+                    <span>Credenciales de Acceso</span>
+                  </div>
+                </div>
 
-  <div className="credential-body">
+                <div className="credential-body">
 
-    <div className="credential-item">
-      <label>Apoderado</label>
-      <span>{newCredentials?.apoderado}</span>
-    </div>
+                  <div className="credential-item">
+                    <label>Apoderado</label>
+                    <span>{newCredentials?.apoderado}</span>
+                  </div>
 
-    <div className="credential-item">
-      <label>Estudiante</label>
-      <span>{newCredentials?.estudiante}</span>
-    </div>
+                  <div className="credential-item">
+                    <label>Estudiante</label>
+                    <span>{newCredentials?.estudiante}</span>
+                  </div>
 
-    <div className="credential-item">
-      <label>Usuario (DNI)</label>
-      <span className="credential-highlight">
-        {newCredentials?.username}
-      </span>
-    </div>
+                  <div className="credential-item">
+                    <label>Usuario (DNI)</label>
+                    <span className="credential-highlight">
+                      {newCredentials?.username}
+                    </span>
+                  </div>
 
-    <div className="credential-item">
-      <label>Contraseña Temporal</label>
-      <span className="credential-password">
-        {newCredentials?.password}
-      </span>
-    </div>
+                  <div className="credential-item">
+                    <label>Contraseña Temporal</label>
+                    <span className="credential-password">
+                      {newCredentials?.password}
+                    </span>
+                  </div>
 
-  </div>
+                </div>
 
-  <div className="credential-footer">
-    <p>
-      ⚠️ Por seguridad cambie su contraseña al primer inicio de sesión.
-    </p>
+                <div className="credential-footer">
+                  <p>
+                    ⚠️ Por seguridad cambie su contraseña al primer inicio de sesión.
+                  </p>
 
-    <small>
-      Emitido:
-      {" "}
-      {new Date().toLocaleDateString("es-PE")}
-    </small>
-  </div>
+                  <small>
+                    Emitido:
+                    {" "}
+                    {new Date().toLocaleDateString("es-PE")}
+                  </small>
+                </div>
 
-</div>
-              <div
+              </div>
+              {/* <div
                 style={{
                   background: "rgba(0,149,217,0.08)",
                   border: "1px solid rgba(0,149,217,0.2)",
@@ -512,36 +512,36 @@ Por seguridad cambie su contraseña después del primer ingreso.
               >
                 💡 El apoderado podrá ingresar con su DNI y esta contraseña
                 temporal.
-              </div>
+              </div> */}
             </div>
 
             <div
-  className="d-flex justify-content-center gap-2 mb-3"
->
-  <button
-    type="button"
-    className="btn btn-success"
-    onClick={descargarImagen}
-  >
-    🖼️ Descargar Imagen
-  </button>
+              className="d-flex justify-content-center gap-2 px-[24px]"
+            >
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={descargarImagen}
+              >
+                🖼️ Descargar Imagen
+              </button>
 
-  <button
-    type="button"
-    className="btn btn-danger"
-    onClick={descargarPDF}
-  >
-    📄 Descargar PDF
-  </button>
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={descargarPDF}
+              >
+                📄 Descargar PDF
+              </button>
 
-  <button
-    type="button"
-    className="btn btn-primary"
-    onClick={copiarCredenciales}
-  >
-    📋 Copiar
-  </button>
-</div>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={copiarCredenciales}
+              >
+                📋 Copiar
+              </button>
+            </div>
 
             <div className="modal-footer">
               <button

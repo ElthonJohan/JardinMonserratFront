@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Card, Button, Modal, Form, Spinner, Badge } from 'react-bootstrap';
+import Select from 'react-select';
 import toast from 'react-hot-toast';
 import { createCompetencia, updateCompetencia, deleteCompetencia } from '../../../api/academicoAPI';
 import { DataTable } from '../../../components/shared';
@@ -167,17 +168,14 @@ export default function CompetenciasTab({ competencias, areas, onRefresh }) {
 
                 <Form.Group className="mb-3">
                   <Form.Label>Área Académica Asociada *</Form.Label>
-                  <Form.Select
-                    name="area"
-                    value={formData.area}
-                    onChange={handleInputChange}
-                    required
-                  >
-                    <option value="">Seleccione Área...</option>
-                    {areas.map(a => (
-                      <option key={a.id} value={a.id}>{a.nombre}</option>
-                    ))}
-                  </Form.Select>
+                  <Select
+                    options={areas.map(a => ({ value: a.id, label: a.nombre }))}
+                    value={areas.map(a => ({ value: a.id, label: a.nombre })).find(o => String(o.value) === String(formData.area)) || null}
+                    onChange={(selected) => handleInputChange({ target: { name: 'area', value: selected ? selected.value : '' } })}
+                    placeholder="Seleccione Área..."
+                    isClearable
+                    noOptionsMessage={() => "No se encontraron áreas"}
+                  />
                 </Form.Group>
 
                 <Form.Group className="mb-3">

@@ -90,7 +90,7 @@ export default function PagosPage() {
           </Tab>
 
           <Tab eventKey="caja" title="💼 Gestión de Caja">
-            <Card className="mt-3">
+            <Card className="mt-3 text-blue">
               <Card.Body>
                 <ErrorBoundary>
                   <GestionCaja onCajaChange={handleCajaChange} />
