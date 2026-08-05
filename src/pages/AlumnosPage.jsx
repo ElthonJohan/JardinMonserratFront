@@ -209,6 +209,7 @@ const AlumnosPage = () => {
           loading={loading}
           onEdit={handleOpenModal}
           onDelete={handleDeleteAlumno}
+          paginated={true}
         />
 
         {/* Modal de Crear/Editar */}
