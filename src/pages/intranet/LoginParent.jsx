@@ -12,6 +12,7 @@ const LoginParent = () => {
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [showManualModal, setShowManualModal] = useState(false);
   const [manualStep, setManualStep] = useState(1);
+  const [showPassword, setShowPassword] = useState(false);
 
   const { loginParent } = useAuth();
   const navigate = useNavigate();
@@ -255,13 +256,32 @@ const LoginParent = () => {
                   </span>
 
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Ingrese su contraseña"
                     className="form-input"
+                    style={{ paddingRight: '45px' }}
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{
+                      position: 'absolute',
+                      right: '15px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '18px',
+                      padding: 0
+                    }}
+                    tabIndex="-1"
+                  >
+                    {showPassword ? "🙈" : "👁️"}
+                  </button>
                 </div>
               </div>
 

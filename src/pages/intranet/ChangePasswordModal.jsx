@@ -18,6 +18,10 @@ export default function ChangePasswordModal({
       confirm_password: "",
     });
 
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
   const handleChange = (e) => {
 
     setFormData({
@@ -135,15 +139,23 @@ export default function ChangePasswordModal({
             Contraseña Actual
           </label>
 
-          <input
-            type="password"
-            className="form-control"
-            name="current_password"
-            value={
-              formData.current_password
-            }
-            onChange={handleChange}
-          />
+          <div className="input-group">
+            <input
+              type={showCurrent ? "text" : "password"}
+              className="form-control"
+              name="current_password"
+              value={formData.current_password}
+              onChange={handleChange}
+            />
+            <button
+              className="btn btn-outline-secondary"
+              type="button"
+              onClick={() => setShowCurrent(!showCurrent)}
+              tabIndex="-1"
+            >
+              {showCurrent ? "🙈" : "👁️"}
+            </button>
+          </div>
 
         </div>
 
@@ -153,15 +165,23 @@ export default function ChangePasswordModal({
             Nueva Contraseña
           </label>
 
-          <input
-            type="password"
-            className="form-control"
-            name="new_password"
-            value={
-              formData.new_password
-            }
-            onChange={handleChange}
-          />
+          <div className="input-group">
+            <input
+              type={showNew ? "text" : "password"}
+              className="form-control"
+              name="new_password"
+              value={formData.new_password}
+              onChange={handleChange}
+            />
+            <button
+              className="btn btn-outline-secondary"
+              type="button"
+              onClick={() => setShowNew(!showNew)}
+              tabIndex="-1"
+            >
+              {showNew ? "🙈" : "👁️"}
+            </button>
+          </div>
 
           <small className="text-muted">
             Mínimo 8 caracteres.
@@ -175,15 +195,23 @@ export default function ChangePasswordModal({
             Confirmar Contraseña
           </label>
 
-          <input
-            type="password"
-            className="form-control"
-            name="confirm_password"
-            value={
-              formData.confirm_password
-            }
-            onChange={handleChange}
-          />
+          <div className="input-group">
+            <input
+              type={showConfirm ? "text" : "password"}
+              className="form-control"
+              name="confirm_password"
+              value={formData.confirm_password}
+              onChange={handleChange}
+            />
+            <button
+              className="btn btn-outline-secondary"
+              type="button"
+              onClick={() => setShowConfirm(!showConfirm)}
+              tabIndex="-1"
+            >
+              {showConfirm ? "🙈" : "👁️"}
+            </button>
+          </div>
 
         </div>
 
