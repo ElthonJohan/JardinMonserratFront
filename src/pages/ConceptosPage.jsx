@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Badge, Spinner, Table, Modal, Form } from 'react-bootstrap';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Container, Row, Col, Card, Button, Badge, Spinner, Modal, Form } from 'react-bootstrap';
+import Select from 'react-select';
 import toast from 'react-hot-toast';
 import { getConceptosPago, createConceptoPago, updateConceptoPago } from '../api/pagosAPI';
-import { AppNavbar } from '../components/shared';
+import { AppNavbar, DataTable } from '../components/shared';
 
 export default function ConceptosPage() {
   const [conceptos, setConceptos] = useState([]);
@@ -18,6 +19,32 @@ export default function ConceptosPage() {
     monto_base: '',
     activo: true,
   });
+
+  const columns = useMemo(
+    () => [
+      { key: 'id', label: 'ID' },
+      { key: 'nombre', label: 'Nombre', render: (val) => <span className="fw-medium">{val}</span> },
+      { key: 'tipo', label: 'Tipo', render: (val) => <Badge bg="secondary">{val}</Badge> },
+      { key: 'monto_base', label: 'Monto Base', render: (val) => `S/ ${parseFloat(val).toFixed(2)}` },
+      { key: 'activo', label: 'Estado', render: (val) => <Badge bg={val ? 'success' : 'danger'}>{val ? 'Activo' : 'Inactivo'}</Badge> },
+      {
+        key: 'acciones',
+        label: 'Acciones',
+        render: (_v, row) => (
+          <div className="text-end">
+            <Button 
+              variant="outline-primary" 
+              size="sm"
+              onClick={() => handleOpenModal(row)}
+            >
+              Editar
+            </Button>
+          </div>
+        )
+      }
+    ],
+    []
+  );
 
   const cargarConceptos = async () => {
     setLoading(true);
@@ -118,60 +145,12 @@ export default function ConceptosPage() {
 
         <Card className="shadow-sm border-0">
           <Card.Body>
-            {loading ? (
-              <div className="text-center py-5">
-                <Spinner animation="border" />
-              </div>
-            ) : (
-              <div className="table-responsive">
-                <Table hover className="align-middle">
-                  <thead className="table-light">
-                    <tr>
-                      <th>ID</th>
-                      <th>Nombre</th>
-                      <th>Tipo</th>
-                      <th>Monto Base</th>
-                      <th>Estado</th>
-                      <th className="text-end">Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {conceptos.length > 0 ? (
-                      conceptos.map(c => (
-                        <tr key={c.id}>
-                          <td>{c.id}</td>
-                          <td className="fw-medium">{c.nombre}</td>
-                          <td>
-                            <Badge bg="secondary">{c.tipo}</Badge>
-                          </td>
-                          <td>S/ {parseFloat(c.monto_base).toFixed(2)}</td>
-                          <td>
-                            <Badge bg={c.activo ? 'success' : 'danger'}>
-                              {c.activo ? 'Activo' : 'Inactivo'}
-                            </Badge>
-                          </td>
-                          <td className="text-end">
-                            <Button 
-                              variant="outline-primary" 
-                              size="sm"
-                              onClick={() => handleOpenModal(c)}
-                            >
-                              Editar
-                            </Button>
-                          </td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="6" className="text-center py-4 text-muted">
-                          No hay conceptos registrados
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </Table>
-              </div>
-            )}
+            <DataTable
+              columns={columns}
+              data={conceptos}
+              loading={loading}
+              paginated={true}
+            />
           </Card.Body>
         </Card>
       </Container>
@@ -197,17 +176,25 @@ export default function ConceptosPage() {
 
             <Form.Group className="mb-3">
               <Form.Label>Tipo *</Form.Label>
-              <Form.Select
-                name="tipo"
-                value={formData.tipo}
-                onChange={handleChange}
-                required
-              >
-                <option value="CUOTA_INGRESO">Cuota de Ingreso (Único)</option>
-                <option value="MATRICULA">Matrícula (Anual)</option>
-                <option value="PENSION">Pensión (Mensual)</option>
-                <option value="OTROS">Otros Pagos</option>
-              </Form.Select>
+              <Select
+                options={[
+                  { value: 'CUOTA_INGRESO', label: 'Cuota de Ingreso (Único)' },
+                  { value: 'MATRICULA', label: 'Matrícula (Anual)' },
+                  { value: 'PENSION', label: 'Pensión (Mensual)' },
+                  { value: 'OTROS', label: 'Otros Pagos' }
+                ]}
+                value={
+                  [
+                    { value: 'CUOTA_INGRESO', label: 'Cuota de Ingreso (Único)' },
+                    { value: 'MATRICULA', label: 'Matrícula (Anual)' },
+                    { value: 'PENSION', label: 'Pensión (Mensual)' },
+                    { value: 'OTROS', label: 'Otros Pagos' }
+                  ].find(o => o.value === formData.tipo) || null
+                }
+                onChange={selected => handleChange({ target: { name: 'tipo', value: selected ? selected.value : 'OTROS' } })}
+                placeholder="Seleccionar..."
+                isSearchable={false}
+              />
             </Form.Group>
 
             <Form.Group className="mb-3">

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Usuario - Primer Ingreso</title>
+    <style>
+        :root {
+            --primary: #245BDB;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --bg-gray: #f8fafc;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+            background-color: white;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .header h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .step {
+            margin-bottom: 50px;
+            background: var(--bg-gray);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .step h2 {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--primary);
+            margin-top: 0;
+        }
+
+        .step-number {
+            background: var(--primary);
+            color: white;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 18px;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            height: 300px;
+            background-color: #cbd5e1;
+            border: 3px dashed #94a3b8;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .image-placeholder span {
+            font-size: 14px;
+            font-weight: normal;
+            margin-top: 10px;
+            color: #64748b;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        /* Para que al imprimir a PDF se vea perfecto */
+        @media print {
+            body {
+                background-color: white;
+            }
+
+            .container {
+                padding: 0;
+                max-width: 100%;
+            }
+
+            .step {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Manual de Usuario para Padres</h1>
+            <p>Guía paso a paso para su primer inicio de sesión en la Intranet</p>
+        </div>
+
+        <div class="step">
+            <h2>
+                <div class="step-number">1</div> Ingrese sus Credenciales
+            </h2>
+            <p>Para comenzar, diríjase a la página de inicio de sesión. Ingrese su <strong>DNI</strong> o el
+                <strong>código</strong> proporcionado por el colegio (Ejemplo: ES0001) y escriba la contraseña temporal
+                que le fue asignada por Secretaría.
+            </p>
+
+            <!-- INSTRUCCIONES PARA AGREGAR LA IMAGEN -->
+            <!-- 1. Coloca tu imagen (ej. paso1.png) en la misma carpeta que este archivo -->
+            <!-- 2. Borra el <div> de abajo (image-placeholder) -->
+            <!-- 3. Descomenta (quita los <!--) de la etiqueta <img> y pon el nombre de tu foto -->
+            <div class="align-items: center;">
+                <img src="LoginIntra.png" alt="Paso 1: Pantalla de Login"
+                    style="margin-left: 20%; width: 50%; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+
+            </div>
+        </div>
+
+        <div class="step">
+            <h2>
+                <div class="step-number">2</div> Cambio de Contraseña Obligatorio
+            </h2>
+            <p>Por políticas de seguridad, al ser su primer ingreso, el sistema le redirigirá automáticamente a una
+                pantalla donde deberá crear una nueva contraseña personal y secreta. Asegúrese de recordarla para
+                futuros accesos.</p>
+
+            <div class="align-items: center;">
+                <img src="LoginChangePassword.png" alt="Paso 1: Pantalla de Login"
+                    style="margin-left: 20%; width: 50%; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+
+            </div>
+            <!-- <img src="paso2.png" alt="Paso 2" style="width: 100%; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 20px;"> -->
+        </div>
+
+        <div class="step">
+            <h2>
+                <div class="step-number">3</div> Acceso a la Intranet
+            </h2>
+            <p>¡Felicidades! Una vez actualizada su contraseña, el sistema lo llevará a la pantalla principal de la
+                intranet donde podrá visualizar sus pagos pendientes, historial y comunicados.</p>
+
+            <div class="align-items: center;">
+                <img src="PaginaInicioIntra.png" alt="Paso 1: Pantalla de Login"
+                    style="margin-left: 20%; width: 50%; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+
+            </div>
+            <!-- <img src="paso3.png" alt="Paso 3" style="width: 100%; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 20px;"> -->
+        </div>
+
+        <div class="footer">
+            <p>¿Olvidó su contraseña? Acérquese a Secretaría o comuníquese con la institución.</p>
+            <p>© 2026 Jardín Nuestra Señora de Montserrat</p>
+        </div>
+    </div>
+
+</body>
+
+</html>

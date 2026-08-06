@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Container, Card, Table, Button, Form, Row, Col } from 'react-bootstrap';
-import { AppNavbar, Loading } from '../components/shared';
+import { AppNavbar, Loading, DataTable } from '../components/shared';
 import axiosInstance from '../api/axiosConfig';
 import toast from 'react-hot-toast';
 
@@ -15,6 +15,24 @@ const RolesPage = () => {
     name: '',
     permission_ids: []
   });
+
+  const columns = useMemo(
+    () => [
+      { key: 'id', label: 'ID' },
+      { key: 'name', label: 'Nombre de Rol' },
+      { key: 'permissions', label: 'Cant. Permisos', render: (val) => val?.length || 0 },
+      {
+        key: 'acciones',
+        label: 'Acciones',
+        render: (_v, row) => (
+          <Button variant="outline-primary" size="sm" onClick={() => handleEdit(row)}>
+            Editar
+          </Button>
+        )
+      }
+    ],
+    []
+  );
 
   const fetchDatos = async () => {
     try {
@@ -122,37 +140,11 @@ const RolesPage = () => {
 
           <Card className="glass-card">
             <Card.Body>
-              <Table responsive hover className="mt-3 align-middle">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Nombre de Rol</th>
-                    <th>Cant. Permisos</th>
-                    <th>Acciones</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {roles.map((r) => (
-                    <tr key={r.id}>
-                      <td>{r.id}</td>
-                      <td>{r.name}</td>
-                      <td>{r.permissions?.length || 0}</td>
-                      <td>
-                        <Button variant="outline-primary" size="sm" onClick={() => handleEdit(r)}>
-                          Editar
-                        </Button>
-                      </td>
-                    </tr>
-                  ))}
-                  {roles.length === 0 && (
-                    <tr>
-                      <td colSpan="4" className="text-center text-muted py-4">
-                        No hay roles registrados
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </Table>
+              <DataTable
+                columns={columns}
+                data={roles}
+                paginated={true}
+              />
             </Card.Body>
           </Card>
         </Container>

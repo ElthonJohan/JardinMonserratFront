@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
+import Select from 'react-select';
 import AsyncSelect from 'react-select/async';
 import axiosInstance from '../../api/axiosConfig';
 import '../../styles/MatriculaForm.css';
@@ -27,6 +28,35 @@ export default function MatriculaForm({
       label: getAlumnoLabel(a)
     })), [alumnos]
   );
+
+  const periodoOptions = useMemo(() => 
+    periodos.map(p => ({
+      value: String(p.id),
+      label: `${p.nombre} (${p.anio})`
+    })), [periodos]
+  );
+
+  const aulaOptions = useMemo(() => 
+    aulas.map(a => ({
+      value: String(a.id),
+      label: a.nombre
+    })), [aulas]
+  );
+
+  const estadoOptions = [
+    { value: 'Activa', label: 'Activo' },
+    { value: 'Trasladado', label: 'Trasladado' },
+    { value: 'Retirado', label: 'Retirado' }
+  ];
+
+  const handleGenericSelectChange = (name, selected) => {
+    onChange({ 
+      target: { 
+        name, 
+        value: selected ? selected.value : '' 
+      } 
+    });
+  };
 
   // Cargar opciones desde el servidor
   const loadOptions = async (search) => {
@@ -100,18 +130,14 @@ export default function MatriculaForm({
         <Col md={4}>
           <Form.Group className="mb-3">
             <Form.Label>Período académico *</Form.Label>
-            <Form.Select 
-              name="periodo_academico" 
-              value={formData.periodo_academico} 
-              onChange={onChange}
-            >
-              <option value="">-- Seleccionar período --</option>
-              {periodos.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.nombre} ({p.anio})
-                </option>
-              ))}
-            </Form.Select>
+            <Select
+              options={periodoOptions}
+              value={periodoOptions.find(o => o.value === String(formData.periodo_academico)) || null}
+              onChange={(selected) => handleGenericSelectChange('periodo_academico', selected)}
+              placeholder="Buscar período..."
+              isClearable
+              noOptionsMessage={() => "No se encontraron períodos"}
+            />
           </Form.Group>
         </Col>
       </Row>
@@ -120,18 +146,14 @@ export default function MatriculaForm({
         <Col md={6}>
           <Form.Group className="mb-3">
             <Form.Label>Aula *</Form.Label>
-            <Form.Select 
-              name="aula" 
-              value={formData.aula} 
-              onChange={onChange}
-            >
-              <option value="">-- Seleccionar aula --</option>
-              {aulas.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.nombre}
-                </option>
-              ))}
-            </Form.Select>
+            <Select
+              options={aulaOptions}
+              value={aulaOptions.find(o => o.value === String(formData.aula)) || null}
+              onChange={(selected) => handleGenericSelectChange('aula', selected)}
+              placeholder="Buscar aula..."
+              isClearable
+              noOptionsMessage={() => "No se encontraron aulas"}
+            />
           </Form.Group>
         </Col>
       </Row>
@@ -140,15 +162,13 @@ export default function MatriculaForm({
         <Col md={6}>
           <Form.Group className="mb-3">
             <Form.Label>Estado</Form.Label>
-            <Form.Select 
-              name="estado" 
-              value={formData.estado} 
-              onChange={onChange}
-            >
-              <option value="Activa">Activo</option>
-              <option value="Trasladado">Trasladado</option>
-              <option value="Retirado">Retirado</option>
-            </Form.Select>
+            <Select
+              options={estadoOptions}
+              value={estadoOptions.find(o => o.value === String(formData.estado)) || estadoOptions[0]}
+              onChange={(selected) => handleGenericSelectChange('estado', selected)}
+              placeholder="Buscar estado..."
+              isSearchable={false}
+            />
           </Form.Group>
         </Col>
         <Col md={6}>

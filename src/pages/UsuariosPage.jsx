@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Container, Card, Table, Button, Modal, Form, Pagination } from 'react-bootstrap';
-import { AppNavbar, Loading } from '../components/shared';
+import { Container, Card, Button, Modal, Form } from 'react-bootstrap';
+import { AppNavbar, Loading, DataTable } from '../components/shared';
+import Select from 'react-select';
 import axiosInstance from '../api/axiosConfig';
 import toast from 'react-hot-toast';
 
@@ -11,8 +12,6 @@ const UsuariosPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 8;
   
   const [formData, setFormData] = useState({
     id: null,
@@ -20,6 +19,33 @@ const UsuariosPage = () => {
     password: '',
     role_id: ''
   });
+
+  const columns = useMemo(
+    () => [
+      { key: 'id', label: 'ID' },
+      { key: 'username', label: 'Username' },
+      {
+        key: 'groups',
+        label: 'Rol / Grupo',
+        render: (val) => (val && val.length > 0 ? val.map((g) => g.name).join(', ') : 'Sin rol')
+      },
+      {
+        key: 'acciones',
+        label: 'Acciones',
+        render: (_v, row) => (
+          <div className="d-flex gap-2">
+            <Button variant="outline-primary" size="sm" onClick={() => openModal(row)}>
+              Editar
+            </Button>
+            <Button variant="outline-danger" size="sm" onClick={() => handleDelete(row.id)}>
+              Eliminar
+            </Button>
+          </div>
+        )
+      }
+    ],
+    []
+  );
 
   const fetchDatos = async () => {
     try {
@@ -61,10 +87,6 @@ const UsuariosPage = () => {
     fetchDatos();
   }, []);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTerm, roleFilter]);
-
   const filteredUsuarios = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
 
@@ -78,16 +100,6 @@ const UsuariosPage = () => {
       return matchesSearch && matchesRole;
     });
   }, [usuarios, searchTerm, roleFilter]);
-
-  const totalPages = Math.max(1, Math.ceil(filteredUsuarios.length / pageSize));
-  const startIndex = (currentPage - 1) * pageSize;
-  const paginatedUsuarios = filteredUsuarios.slice(startIndex, startIndex + pageSize);
-
-  useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
-    }
-  }, [currentPage, totalPages]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -177,14 +189,14 @@ const UsuariosPage = () => {
               </div>
               <div className="col-md-4">
                 <Form.Label>Filtrar por rol</Form.Label>
-                <Form.Select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
-                  <option value="">Todos los roles</option>
-                  {roles.map((role) => (
-                    <option key={role.id} value={role.id}>
-                      {role.name}
-                    </option>
-                  ))}
-                </Form.Select>
+                <Select
+                  options={roles.map(r => ({ value: r.id, label: r.name }))}
+                  value={roles.map(r => ({ value: r.id, label: r.name })).find(o => String(o.value) === String(roleFilter)) || null}
+                  onChange={(selected) => setRoleFilter(selected ? selected.value : '')}
+                  placeholder="Todos los roles"
+                  isClearable
+                  noOptionsMessage={() => "No se encontraron roles"}
+                />
               </div>
               <div className="col-md-2 d-flex align-items-end">
                 <Button
@@ -193,7 +205,6 @@ const UsuariosPage = () => {
                   onClick={() => {
                     setSearchTerm('');
                     setRoleFilter('');
-                    setCurrentPage(1);
                   }}
                 >
                   Limpiar
@@ -201,73 +212,12 @@ const UsuariosPage = () => {
               </div>
             </div>
 
-            <div className="text-muted small mb-3">
-              Mostrando {filteredUsuarios.length === 0 ? 0 : startIndex + 1}-{Math.min(startIndex + pageSize, filteredUsuarios.length)} de {filteredUsuarios.length} usuarios
-            </div>
-
-            <Table responsive hover className="align-middle">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Username</th>
-                  <th>Rol / Grupo</th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedUsuarios.map((u) => (
-                  <tr key={u.id}>
-                    <td>{u.id}</td>
-                    <td>{u.username}</td>
-                    <td>
-                      {u.groups && u.groups.length > 0 
-                        ? u.groups.map(g => g.name).join(', ') 
-                        : 'Sin rol'}
-                    </td>
-                    <td>
-                      <Button variant="outline-primary" size="sm" className="me-2" onClick={() => openModal(u)}>
-                        Editar
-                      </Button>
-                      <Button variant="outline-danger" size="sm" onClick={() => handleDelete(u.id)}>
-                        Eliminar
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-                {paginatedUsuarios.length === 0 && (
-                  <tr>
-                    <td colSpan="4" className="text-center text-muted py-4">
-                      No hay usuarios que coincidan con la búsqueda
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </Table>
-
-            {totalPages > 1 && (
-              <div className="d-flex justify-content-between align-items-center mt-3">
-                <span className="text-muted small">Página {currentPage} de {totalPages}</span>
-                <Pagination className="mb-0">
-                  <Pagination.Prev
-                    onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-                    disabled={currentPage === 1}
-                  />
-                  {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-                    <Pagination.Item
-                      key={page}
-                      active={page === currentPage}
-                      onClick={() => setCurrentPage(page)}
-                    >
-                      {page}
-                    </Pagination.Item>
-                  ))}
-                  <Pagination.Next
-                    onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
-                    disabled={currentPage === totalPages}
-                  />
-                </Pagination>
-              </div>
-            )}
+            <DataTable
+              columns={columns}
+              data={filteredUsuarios}
+              loading={loading}
+              paginated={true}
+            />
           </Card.Body>
         </Card>
 
@@ -304,19 +254,14 @@ const UsuariosPage = () => {
 
               <Form.Group className="mb-3">
                 <Form.Label>Rol / Grupo</Form.Label>
-                <Form.Select
-                  name="role_id"
-                  required
-                  value={formData.role_id}
-                  onChange={handleChange}
-                >
-                  <option value="">Seleccione un rol</option>
-                  {roles.map((r) => (
-                    <option key={r.id} value={r.id}>
-                      {r.name}
-                    </option>
-                  ))}
-                </Form.Select>
+                <Select
+                  options={roles.map(r => ({ value: r.id, label: r.name }))}
+                  value={roles.map(r => ({ value: r.id, label: r.name })).find(o => String(o.value) === String(formData.role_id)) || null}
+                  onChange={(selected) => handleChange({ target: { name: 'role_id', value: selected ? selected.value : '' } })}
+                  placeholder="Seleccione un rol"
+                  isClearable
+                  noOptionsMessage={() => "No se encontraron roles"}
+                />
               </Form.Group>
             </Modal.Body>
             <Modal.Footer>

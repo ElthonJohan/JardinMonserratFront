@@ -5,6 +5,7 @@ import PagoModal from "./PagoModal";
 import toast from "react-hot-toast";
 import HistorialPagosModal from "./HistorialPagosModal";
 import DetallePagoModal from "./DetallePagoModal";
+import GuiaPagosModal from "./GuiaPagosModal";
 
 const Payments = () => {
   const [dashboard, setDashboard] = useState(null);
@@ -29,6 +30,7 @@ const Payments = () => {
   const [pagoSeleccionado, setPagoSeleccionado] = useState(null);
 
   const [showHistorialPagos, setShowHistorialPagos] = useState(false);
+  const [showGuia, setShowGuia] = useState(false);
 
   const loadDashboard = async (isRefresh = false) => {
     if (isRefresh) {
@@ -188,20 +190,33 @@ const Payments = () => {
           </div>
         </div>
 
-        <button
-          className="refresh-btn"
-          onClick={() => loadDashboard(true)}
-          disabled={refreshing}
-        >
-          {refreshing ? (
-            <>
-              <div className="btn-spinner"></div>
-              <span>Actualizando...</span>
-            </>
-          ) : (
-            <span>🔄 Actualizar Datos</span>
-          )}
-        </button>
+        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+          <button
+            className="btn btn-success text-white fw-bold d-flex align-items-center gap-2"
+            onClick={() => setShowGuia(true)}
+            style={{ borderRadius: "14px", padding: "12px 20px", boxShadow: "0 4px 10px rgba(59, 130, 246, 0.3)", transition: "0.2s" }}
+            onMouseOver={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
+            onMouseOut={(e) => e.currentTarget.style.transform = "translateY(0)"}
+          >
+            ❓ Ayuda / Guía
+          </button>
+
+          <button
+            className="btn text-white fw-bold d-flex align-items-center gap-2"
+            style={{ borderRadius: "14px", padding: "12px 20px", backgroundColor: "#3b82f6", border: "none", boxShadow: "0 4px 10px rgba(59, 130, 246, 0.3)", transition: "0.2s" }}
+            onClick={() => loadDashboard(true)}
+            disabled={refreshing}
+          >
+            {refreshing ? (
+              <>
+                <div className="btn-spinner"></div>
+                <span>Actualizando...</span>
+              </>
+            ) : (
+              <span className="text-white">🔄 Actualizar Datos</span>
+            )}
+          </button>
+        </div>
       </div>
 
       <div className="student-selector">
@@ -351,7 +366,7 @@ const Payments = () => {
                 </button>
               </div>
 
-              
+
               {selectedAlumno?.pagos_recientes.length === 0 ? (
                 <div className="empty-state">
                   <p>No hay pagos registrados</p>
@@ -400,11 +415,10 @@ const Payments = () => {
                           </span>
 
                           <span
-                            className={`badge ${
-                              pago.origen === "ADMINISTRACION"
-                                ? "bg-info text-dark"
-                                : "bg-primary"
-                            }`}
+                            className={`badge ${pago.origen === "ADMINISTRACION"
+                              ? "bg-info text-dark"
+                              : "bg-primary"
+                              }`}
                           >
                             {pago.origen === "ADMINISTRACION"
                               ? "🏫 Administración"
@@ -478,6 +492,11 @@ const Payments = () => {
 
           setShowDetallePago(true);
         }}
+      />
+
+      <GuiaPagosModal
+        show={showGuia}
+        onHide={() => setShowGuia(false)}
       />
     </div>
   );
