@@ -72,27 +72,21 @@ const LoginParent = () => {
               🔐
             </div>
 
-            <h2>Recuperación de contraseña</h2>
+            <h3>Recuperación de contraseña</h3>
 
             <p>
               Por motivos de seguridad, el restablecimiento de contraseña
               debe ser realizado por la administración del Jardín.
             </p>
-
             <div className="forgot-info">
-              <p>
+              {/* <p>
                 <strong>Acérquese a Secretaría</strong> o comuníquese con la
                 institución para solicitar una contraseña temporal.
               </p>
-
-              <hr />
-
+              <hr /> */}
               <p>📍 Jardín Nuestra Señora de Montserrat</p>
-
               <p>🕗 Horario:</p>
-
               <p>Lunes a Viernes</p>
-
               <p>8:00 a.m. - 5:00 p.m.</p>
             </div>
 
