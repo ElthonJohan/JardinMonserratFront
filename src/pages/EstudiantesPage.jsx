@@ -4,6 +4,7 @@ import EstudianteForm from "../components/estudiantes/EstudianteForm";
 import EstudianteTable from "../components/estudiantes/EstudianteTable";
 import ApoderadosModal from "../components/estudiantes/ApoderadoModal";
 import AgregarApoderadoModal from "../components/estudiantes/AgregarApoderadoModal";
+import ImportarEstudiantesModal from "../components/estudiantes/ImportarEstudiantesModal";
 import {
   getEstudiantes,
   createEstudiante,
@@ -331,6 +332,9 @@ Por seguridad cambie su contraseña después del primer ingreso.
                 <Button className="btn-nueva-matricula" onClick={openCreateModal}>
                   ➕ Nuevo Estudiante
                 </Button>
+                <Button variant="info" style={{ borderRadius: '8px', fontWeight: 500, color: 'white' }} onClick={() => openModal("importarEstudiantesModal")}>
+                  📥 Importar
+                </Button>
                 <Button variant="success" className="d-flex align-items-center gap-2" style={{ borderRadius: '8px', fontWeight: 500 }} onClick={() => exportStudentsToExcel(estudiantes)}>
                   📊 Exportar Excel
                 </Button>
@@ -583,6 +587,8 @@ Por seguridad cambie su contraseña después del primer ingreso.
       />
 
       <AgregarApoderadoModal onSubmit={handleCreateParent} />
+
+      <ImportarEstudiantesModal onSuccess={loadData} />
     </>
   );
 }

@@ -107,3 +107,12 @@ export const buscarApoderadoPorDni = async (dni) => {
 
   return response.data;
 };
+
+export const importarAlumnosMasivo = async (data) => {
+  try {
+    const response = await axiosInstance.post('/importacion-masiva/', data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
