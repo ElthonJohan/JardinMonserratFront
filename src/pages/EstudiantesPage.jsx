@@ -74,7 +74,21 @@ export default function EstudiantesPage() {
   const handleSubmit = async (data) => {
     try {
       if (isEditMode) {
-        await updateEstudiante(selectedEstudiante.id, data);
+        // Actualizar estudiante
+        await updateEstudiante(selectedEstudiante.id, data.estudiante);
+        
+        // Actualizar apoderado si es necesario
+        if (data.apoderado && data.apoderado.id) {
+          await axiosInstance.put(`/apoderados/${data.apoderado.id}/`, data.apoderado);
+        }
+
+        // Actualizar relación si existe
+        if (selectedEstudiante.relacion_id && data.tipo_relacion) {
+          await axiosInstance.patch(`/apoderado-relacion/${selectedEstudiante.relacion_id}/`, {
+            tipo_relacion: data.tipo_relacion
+          });
+        }
+
         toast.success("Actualizado correctamente");
       } else {
         const res = await createRegistroAlumno(data);
@@ -108,6 +122,7 @@ export default function EstudiantesPage() {
       listaApoderados.find((r) => r.es_principal) || listaApoderados[0];
     setSelectedEstudiante({
       id: estudiante.id,
+      relacion_id: relPrincipal?.id,
       estudiante: {
         nombres: estudiante.nombres,
         apellidos: estudiante.apellidos,

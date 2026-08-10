@@ -14,6 +14,10 @@ const ChangePassword = () => {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -102,14 +106,33 @@ const ChangePassword = () => {
               </span>
 
               <input
-                type="password"
+                type={showOldPassword ? "text" : "password"}
                 name="old_password"
                 value={formData.old_password}
                 onChange={handleChange}
                 className="form-input"
+                style={{ paddingRight: '45px' }}
                 placeholder="Ingrese la contraseña temporal"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowOldPassword(!showOldPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '15px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '18px',
+                  padding: 0
+                }}
+                tabIndex="-1"
+              >
+                {showOldPassword ? "🙈" : "👁️"}
+              </button>
 
             </div>
 
@@ -129,14 +152,33 @@ const ChangePassword = () => {
               </span>
 
               <input
-                type="password"
+                type={showNewPassword ? "text" : "password"}
                 name="new_password"
                 value={formData.new_password}
                 onChange={handleChange}
                 className="form-input"
+                style={{ paddingRight: '45px' }}
                 placeholder="Ingrese una nueva contraseña"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '15px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '18px',
+                  padding: 0
+                }}
+                tabIndex="-1"
+              >
+                {showNewPassword ? "🙈" : "👁️"}
+              </button>
 
             </div>
 
@@ -156,14 +198,33 @@ const ChangePassword = () => {
               </span>
 
               <input
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 name="confirm_password"
                 value={formData.confirm_password}
                 onChange={handleChange}
                 className="form-input"
+                style={{ paddingRight: '45px' }}
                 placeholder="Repita la nueva contraseña"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={{
+                  position: 'absolute',
+                  right: '15px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '18px',
+                  padding: 0
+                }}
+                tabIndex="-1"
+              >
+                {showConfirmPassword ? "🙈" : "👁️"}
+              </button>
 
             </div>
 

@@ -12,6 +12,7 @@ const LoginParent = () => {
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [showManualModal, setShowManualModal] = useState(false);
   const [manualStep, setManualStep] = useState(1);
+  const [showPassword, setShowPassword] = useState(false);
 
   const { loginParent } = useAuth();
   const navigate = useNavigate();
@@ -72,27 +73,21 @@ const LoginParent = () => {
               🔐
             </div>
 
-            <h2>Recuperación de contraseña</h2>
+            <h3>Recuperación de contraseña</h3>
 
             <p>
               Por motivos de seguridad, el restablecimiento de contraseña
               debe ser realizado por la administración del Jardín.
             </p>
-
             <div className="forgot-info">
-              <p>
+              {/* <p>
                 <strong>Acérquese a Secretaría</strong> o comuníquese con la
                 institución para solicitar una contraseña temporal.
               </p>
-
-              <hr />
-
+              <hr /> */}
               <p>📍 Jardín Nuestra Señora de Montserrat</p>
-
               <p>🕗 Horario:</p>
-
               <p>Lunes a Viernes</p>
-
               <p>8:00 a.m. - 5:00 p.m.</p>
             </div>
 
@@ -261,13 +256,32 @@ const LoginParent = () => {
                   </span>
 
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Ingrese su contraseña"
                     className="form-input"
+                    style={{ paddingRight: '45px' }}
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{
+                      position: 'absolute',
+                      right: '15px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '18px',
+                      padding: 0
+                    }}
+                    tabIndex="-1"
+                  >
+                    {showPassword ? "🙈" : "👁️"}
+                  </button>
                 </div>
               </div>
 

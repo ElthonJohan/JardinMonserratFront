@@ -337,8 +337,12 @@ fetchConfiguracion();
   type="button"
   className="btn btn-outline-primary btn-sm mt-2"
   onClick={() => {
+    if (!configPago.numero_yape) {
+      toast.error("Número Yape no disponible");
+      return;
+    }
     navigator.clipboard.writeText(
-      configPago.numero_yape
+      configPago.numero_yape || ""
     );
 
     toast.success(
@@ -396,8 +400,12 @@ fetchConfiguracion();
   type="button"
   className="btn btn-outline-primary btn-sm mt-2"
   onClick={() => {
+    if (!configPago.numero_plin) {
+      toast.error("Número Plin no disponible");
+      return;
+    }
     navigator.clipboard.writeText(
-      configPago.numero_plin
+      configPago.numero_plin || ""
     );
 
     toast.success(
