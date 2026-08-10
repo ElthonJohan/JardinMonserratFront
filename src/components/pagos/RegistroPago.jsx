@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Button, Col, Form, Row, Spinner } from 'react-bootstrap';
+import Select from 'react-select';
 import toast from 'react-hot-toast';
 import AsyncSelect from 'react-select/async';
 import axiosInstance from '../../api/axiosConfig';
@@ -352,17 +353,27 @@ export default function RegistroPago({
               <label className="pagos-form-label">
                 Método de Pago <span className="required">*</span>
               </label>
-              <Form.Select
-                name="metodo_pago"
-                value={formData.metodo_pago}
-                onChange={handleInputChange}
-              >
-                <option value="Efectivo">Efectivo</option>
-                <option value="Yape">Yape</option>
-                <option value="Plin">Plin</option>
-                <option value="Transferencia">Transferencia</option>
-                <option value="Depósito">Depósito</option>
-              </Form.Select>
+                <Select
+                  options={[
+                    { value: 'Efectivo', label: 'Efectivo' },
+                    { value: 'Yape', label: 'Yape' },
+                    { value: 'Plin', label: 'Plin' },
+                    { value: 'Transferencia', label: 'Transferencia' },
+                    { value: 'Depósito', label: 'Depósito' }
+                  ]}
+                  value={
+                    [
+                      { value: 'Efectivo', label: 'Efectivo' },
+                      { value: 'Yape', label: 'Yape' },
+                      { value: 'Plin', label: 'Plin' },
+                      { value: 'Transferencia', label: 'Transferencia' },
+                      { value: 'Depósito', label: 'Depósito' }
+                    ].find(o => o.value === formData.metodo_pago) || null
+                  }
+                  onChange={selected => handleInputChange({ target: { name: 'metodo_pago', value: selected ? selected.value : 'Efectivo' } })}
+                  placeholder="Seleccionar..."
+                  isSearchable={false}
+                />
             </Form.Group>
           </Col>
           <Col md={4}>
@@ -370,17 +381,15 @@ export default function RegistroPago({
               <label className="pagos-form-label">
                 Banco Destino <span className="required">{['Transferencia', 'Depósito'].includes(formData.metodo_pago) && '*'}</span>
               </label>
-              <Form.Select
-                name="banco"
-                value={formData.banco}
-                onChange={handleInputChange}
-                disabled={['Efectivo', 'Yape', 'Plin'].includes(formData.metodo_pago)}
-              >
-                <option value="">-- Seleccionar banco --</option>
-                {bancos.map(b => (
-                  <option key={b.id} value={b.id}>{b.nombre}</option>
-                ))}
-              </Form.Select>
+                <Select
+                  options={bancos.map(b => ({ value: b.id, label: b.nombre }))}
+                  value={bancos.map(b => ({ value: b.id, label: b.nombre })).find(o => String(o.value) === String(formData.banco)) || null}
+                  onChange={selected => handleInputChange({ target: { name: 'banco', value: selected ? selected.value : '' } })}
+                  placeholder="-- Seleccionar banco --"
+                  isClearable
+                  isDisabled={['Efectivo', 'Yape', 'Plin'].includes(formData.metodo_pago)}
+                  noOptionsMessage={() => "No se encontraron bancos"}
+                />
             </Form.Group>
           </Col>
           <Col md={4}>
@@ -442,6 +451,7 @@ export default function RegistroPago({
               striped
               bordered
               hover
+              paginated={false}
             />
           </div>
           {!loadingDeudas && deudas.length > 0 && (

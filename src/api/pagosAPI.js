@@ -45,25 +45,42 @@ async (formData)=>{
 }
 
 /**
- * Actualizar configuración
+ * Actualizar configuración (Cambiado a PATCH para permitir actualizaciones parciales y de archivos)
  */
-export const updateConfiguracionPagos =
-async (id, data) => {
-
-  const response =
-    await axiosInstance.put(
-      `${CONFI_PAGO}/${id}/`,
-      data,
-      {
-        headers: {
-          "Content-Type":
-            "multipart/form-data"
-        }
+export const updateConfiguracionPagos = async (id, data) => {
+  const response = await axiosInstance.patch(
+    `${CONFI_PAGO}/${id}/`,
+    data,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data"
       }
-    );
+    }
+  );
 
   return response.data;
 };
+
+/**
+ * Actualizar configuración
+ */
+// export const updateConfiguracionPagos =
+// async (id, data) => {
+
+//   const response =
+//     await axiosInstance.put(
+//       `${CONFI_PAGO}/${id}/`,
+//       data,
+//       {
+//         headers: {
+//           "Content-Type":
+//             "multipart/form-data"
+//         }
+//       }
+//     );
+
+//   return response.data;
+// };
 
 /**
  * Obtener configuración pública

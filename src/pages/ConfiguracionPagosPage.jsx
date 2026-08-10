@@ -11,7 +11,6 @@ import toast from "react-hot-toast";
 export default function ConfiguracionPagosPage() {
 
   const [loading, setLoading] = useState(true);
-
   const [configId, setConfigId] = useState(null);
 
   const [formData, setFormData] = useState({
@@ -32,14 +31,11 @@ export default function ConfiguracionPagosPage() {
   }, []);
 
   const loadConfiguracion = async () => {
-
     try {
-
       const data = await getConfiguracionPagos();
       console.log(data);
 
       if (data) {
-
         setConfigId(data.id);
 
         setFormData({
@@ -55,17 +51,14 @@ export default function ConfiguracionPagosPage() {
         setPreviewYape(data.qr_yape);
         setPreviewPlin(data.qr_plin);
       }
-
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
     }
-
   };
 
   const handleChange = (e) => {
-
     const { name, value } = e.target;
 
     setFormData(prev => ({
@@ -75,7 +68,6 @@ export default function ConfiguracionPagosPage() {
   };
 
   const handleFile = (e) => {
-
     const { name, files } = e.target;
 
     if (!files.length) return;
@@ -99,63 +91,81 @@ export default function ConfiguracionPagosPage() {
   };
 
   const handleSubmit = async (e) => {
-
     e.preventDefault();
 
     try {
-
       const payload = new FormData();
 
-      Object.entries(formData).forEach(([key, value]) => {
+      payload.append("titular_yape", formData.titular_yape || "");
+      payload.append("numero_yape", formData.numero_yape || "");
+      
+      // Solo enviamos el archivo si el usuario seleccionó uno nuevo desde el input
+      if (formData.qr_yape instanceof File) {
+        payload.append("qr_yape", formData.qr_yape);
+      }
 
-        if (value !== null) {
-          payload.append(key, value);
-        }
-
-      });
+      payload.append("titular_plin", formData.titular_plin || "");
+      payload.append("numero_plin", formData.numero_plin || "");
+      
+      if (formData.qr_plin instanceof File) {
+        payload.append("qr_plin", formData.qr_plin);
+      }
 
       if (configId) {
-
-        await updateConfiguracionPagos(
-          configId,
-          payload
-        );
-
-        toast.success(
-          "Configuración actualizada"
-        );
-
+        await updateConfiguracionPagos(configId, payload);
+        toast.success("Configuración actualizada");
       } else {
-
-        await createConfiguracionPagos(
-          payload
-        );
-
-        toast.success(
-          "Configuración creada"
-        );
-
+        await createConfiguracionPagos(payload);
+        toast.success("Configuración creada");
       }
 
       loadConfiguracion();
 
     } catch (error) {
-
-      console.error(error);
-
-      toast.error(
-        "No se pudo guardar"
-      );
+      console.error("Error al guardar:", error.response?.data || error);
+      toast.error("No se pudo guardar");
     }
   };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   try {
+  //     const payload = new FormData();
+
+  //     payload.append("titular_yape", formData.titular_yape || "");
+  //     payload.append("numero_yape", formData.numero_yape || "");
+      
+  //     if (formData.qr_yape instanceof File) {
+  //       payload.append("qr_yape", formData.qr_yape);
+  //     }
+
+  //     payload.append("titular_plin", formData.titular_plin || "");
+  //     payload.append("numero_plin", formData.numero_plin || "");
+      
+  //     if (formData.qr_plin instanceof File) {
+  //       payload.append("qr_plin", formData.qr_plin);
+  //     }
+
+  //     if (configId) {
+  //       await updateConfiguracionPagos(configId, payload);
+  //       toast.success("Configuración actualizada");
+  //     } else {
+  //       await createConfiguracionPagos(payload);
+  //       toast.success("Configuración creada");
+  //     }
+
+  //     loadConfiguracion();
+
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error("No se pudo guardar");
+  //   }
+  // };
 
   if (loading) {
     return <div>Cargando...</div>;
   }
-
-
-  console.log("QR YAPE:", previewYape);
-console.log("QR PLIN:", previewPlin);
 
   return (
     <>

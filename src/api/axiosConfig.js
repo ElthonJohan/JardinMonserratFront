@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
 
+console.log("API URL:", API_BASE_URL);
 // Crear instancia de axios
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -10,13 +11,22 @@ const axiosInstance = axios.create({
   },
 });
 
-// Interceptor para agregar token JWT a cada solicitud
+// Interceptor para agregar token JWT y manejar FormData
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('access_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    // 🚀 AQUÍ ESTÁ LA SOLUCIÓN:
+    // Si los datos a enviar son un FormData (archivos), eliminamos el 
+    // 'Content-Type' fijo de JSON para que el navegador cree el 'multipart/form-data' 
+    // correcto con su respectivo boundary.
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    }
+
     return config;
   },
   (error) => {
@@ -40,11 +50,11 @@ axiosInstance.interceptors.response.use(
             `${API_BASE_URL}/auth/refresh/`,
             { refresh: refreshToken }
           );
-          
+
           localStorage.setItem('access_token', response.data.access);
           axiosInstance.defaults.headers.Authorization = `Bearer ${response.data.access}`;
           originalRequest.headers.Authorization = `Bearer ${response.data.access}`;
-          
+
           return axiosInstance(originalRequest);
         }
       } catch (refreshError) {

@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import { Card, Table, Button, Modal, Form, Spinner, Badge } from 'react-bootstrap';
+import React, { useState, useMemo } from 'react';
+import { Card, Button, Modal, Form, Spinner, Badge } from 'react-bootstrap';
 import toast from 'react-hot-toast';
 import { createArea, updateArea, deleteArea } from '../../../api/academicoAPI';
+import { DataTable } from '../../../components/shared';
 
 export default function AreasTab({ areas, onRefresh }) {
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [loadingForm, setLoadingForm] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     nombre: '',
     orden: 1,
@@ -67,10 +68,10 @@ export default function AreasTab({ areas, onRefresh }) {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (row) => {
     if (window.confirm('¿Está seguro de que desea eliminar esta área?')) {
       try {
-        await deleteArea(id);
+        await deleteArea(row.id);
         toast.success('Área académica eliminada');
         onRefresh();
       } catch (error) {
@@ -79,6 +80,28 @@ export default function AreasTab({ areas, onRefresh }) {
       }
     }
   };
+
+  const columns = useMemo(() => [
+    {
+      key: 'orden',
+      label: 'Orden',
+      render: (_, row) => row.orden
+    },
+    {
+      key: 'nombre',
+      label: 'Nombre',
+      render: (_, row) => <span className="fw-semibold">{row.nombre}</span>
+    },
+    {
+      key: 'estado',
+      label: 'Estado',
+      render: (_, row) => (
+        <Badge bg={row.activo ? 'success' : 'secondary'} className="px-3 py-2 rounded-pill">
+          {row.activo ? 'Activo' : 'Inactivo'}
+        </Badge>
+      )
+    }
+  ], []);
 
   return (
     <>
@@ -89,48 +112,18 @@ export default function AreasTab({ areas, onRefresh }) {
               <h4 className="fw-bold m-0 text-dark">Áreas Académicas</h4>
               <p className="text-muted small m-0">Gestionar las áreas de estudio de la institución</p>
             </div>
-            <Button variant="danger" className="rounded-3 px-4 py-2" onClick={() => handleOpenModal()}>
-              + Nueva Área
+            <Button className="btn-nueva-matricula" onClick={() => handleOpenModal()}>
+              ➕ Nueva Área
             </Button>
           </div>
-          <Table responsive hover className="align-middle">
-            <thead className="bg-light">
-              <tr>
-                <th className="border-0">Orden</th>
-                <th className="border-0">Nombre</th>
-                <th className="border-0 text-center">Estado</th>
-                <th className="border-0 text-center">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {areas.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.orden}</td>
-                  <td className="fw-semibold">{item.nombre}</td>
-                  <td className="text-center">
-                    <Badge bg={item.activo ? 'success' : 'secondary'} className="px-3 py-2 rounded-pill">
-                      {item.activo ? 'Activo' : 'Inactivo'}
-                    </Badge>
-                  </td>
-                  <td className="text-center">
-                    <Button variant="outline-primary" size="sm" className="rounded-3 me-2" onClick={() => handleOpenModal(item)}>
-                      Editar
-                    </Button>
-                    <Button variant="outline-danger" size="sm" className="rounded-3" onClick={() => handleDelete(item.id)}>
-                      Eliminar
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-              {areas.length === 0 && (
-                <tr>
-                  <td colSpan="4" className="text-center text-muted py-5">
-                    No hay áreas académicas registradas.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </Table>
+
+          <DataTable
+            columns={columns}
+            data={areas}
+            onEdit={handleOpenModal}
+            onDelete={handleDelete}
+            paginated={true}
+          />
         </Card.Body>
       </Card>
 

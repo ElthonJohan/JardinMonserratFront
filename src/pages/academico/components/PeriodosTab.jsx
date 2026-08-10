@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import { Card, Table, Button, Modal, Form, Spinner, Badge } from 'react-bootstrap';
+import React, { useState, useMemo } from 'react';
+import { Card, Button, Modal, Form, Spinner, Badge } from 'react-bootstrap';
+import Select from 'react-select';
 import toast from 'react-hot-toast';
 import { createPeriodo, updatePeriodo, deletePeriodo } from '../../../api/academicoAPI';
+import { DataTable } from '../../../components/shared';
 
 export default function PeriodosTab({ periodos, periodosAcademicos, onRefresh }) {
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [loadingForm, setLoadingForm] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     nombre: '',
     periodo_matricula: '',
@@ -75,10 +77,10 @@ export default function PeriodosTab({ periodos, periodosAcademicos, onRefresh })
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (row) => {
     if (window.confirm('¿Está seguro de que desea eliminar este periodo de evaluación?')) {
       try {
-        await deletePeriodo(id);
+        await deletePeriodo(row.id);
         toast.success('Periodo de evaluación eliminado');
         onRefresh();
       } catch (error) {
@@ -87,6 +89,41 @@ export default function PeriodosTab({ periodos, periodosAcademicos, onRefresh })
       }
     }
   };
+
+  const columns = useMemo(() => [
+    {
+      key: 'nombre',
+      label: 'Nombre',
+      render: (_, row) => <span className="fw-semibold">{row.nombre}</span>
+    },
+    {
+      key: 'periodo_matricula',
+      label: 'Periodo Lectivo',
+      render: (_, row) => {
+        const periodoMat = periodosAcademicos.find(p => p.id === row.periodo_matricula);
+        return <span className="text-muted">{periodoMat ? periodoMat.nombre : 'Periodo Académico no encontrado'}</span>;
+      }
+    },
+    {
+      key: 'fecha_inicio',
+      label: 'Fecha Inicio',
+      render: (_, row) => row.fecha_inicio
+    },
+    {
+      key: 'fecha_fin',
+      label: 'Fecha Fin',
+      render: (_, row) => row.fecha_fin
+    },
+    {
+      key: 'estado',
+      label: 'Estado',
+      render: (_, row) => (
+        <Badge bg={row.activo ? 'success' : 'secondary'} className="px-3 py-2 rounded-pill">
+          {row.activo ? 'Activo' : 'Inactivo'}
+        </Badge>
+      )
+    }
+  ], [periodosAcademicos]);
 
   return (
     <>
@@ -97,55 +134,18 @@ export default function PeriodosTab({ periodos, periodosAcademicos, onRefresh })
               <h4 className="fw-bold m-0 text-dark">Periodos de Evaluación</h4>
               <p className="text-muted small m-0">Administrar bimestres o trimestres lectivos</p>
             </div>
-            <Button variant="danger" className="rounded-3 px-4 py-2" onClick={() => handleOpenModal()}>
+            <Button variant="success" className="rounded-3 px-4 py-2" onClick={() => handleOpenModal()}>
               + Nuevo Periodo
             </Button>
           </div>
-          <Table responsive hover className="align-middle">
-            <thead className="bg-light">
-              <tr>
-                <th className="border-0">Nombre</th>
-                <th className="border-0">Periodo Lectivo</th>
-                <th className="border-0">Fecha Inicio</th>
-                <th className="border-0">Fecha Fin</th>
-                <th className="border-0 text-center">Estado</th>
-                <th className="border-0 text-center">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {periodos.map((item) => {
-                const periodoMat = periodosAcademicos.find(p => p.id === item.periodo_matricula);
-                return (
-                  <tr key={item.id}>
-                    <td className="fw-semibold">{item.nombre}</td>
-                    <td className="text-muted">{periodoMat ? periodoMat.nombre : 'Periodo Académico no encontrado'}</td>
-                    <td>{item.fecha_inicio}</td>
-                    <td>{item.fecha_fin}</td>
-                    <td className="text-center">
-                      <Badge bg={item.activo ? 'success' : 'secondary'} className="px-3 py-2 rounded-pill">
-                        {item.activo ? 'Activo' : 'Inactivo'}
-                      </Badge>
-                    </td>
-                    <td className="text-center">
-                      <Button variant="outline-primary" size="sm" className="rounded-3 me-2" onClick={() => handleOpenModal(item)}>
-                        Editar
-                      </Button>
-                      <Button variant="outline-danger" size="sm" className="rounded-3" onClick={() => handleDelete(item.id)}>
-                        Eliminar
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              })}
-              {periodos.length === 0 && (
-                <tr>
-                  <td colSpan="6" className="text-center text-muted py-5">
-                    No hay periodos de evaluación registrados.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </Table>
+
+          <DataTable
+            columns={columns}
+            data={periodos}
+            onEdit={handleOpenModal}
+            onDelete={handleDelete}
+            paginated={true}
+          />
         </Card.Body>
       </Card>
 
@@ -176,17 +176,14 @@ export default function PeriodosTab({ periodos, periodosAcademicos, onRefresh })
 
                 <Form.Group className="mb-3">
                   <Form.Label>Periodo Lectivo (Matrícula) *</Form.Label>
-                  <Form.Select
-                    name="periodo_matricula"
-                    value={formData.periodo_matricula}
-                    onChange={handleInputChange}
-                    required
-                  >
-                    <option value="">Seleccione Periodo Lectivo...</option>
-                    {periodosAcademicos.map(p => (
-                      <option key={p.id} value={p.id}>{p.nombre}</option>
-                    ))}
-                  </Form.Select>
+                  <Select
+                    options={periodosAcademicos.map(p => ({ value: p.id, label: p.nombre }))}
+                    value={periodosAcademicos.map(p => ({ value: p.id, label: p.nombre })).find(o => String(o.value) === String(formData.periodo_matricula)) || null}
+                    onChange={(selected) => handleInputChange({ target: { name: 'periodo_matricula', value: selected ? selected.value : '' } })}
+                    placeholder="Seleccione Periodo Lectivo..."
+                    isClearable
+                    noOptionsMessage={() => "No se encontraron periodos"}
+                  />
                 </Form.Group>
 
                 <Form.Group className="mb-3">

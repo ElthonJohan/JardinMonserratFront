@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
-import { Card, Table, Button, Modal, Form, Spinner, Badge } from 'react-bootstrap';
+import React, { useState, useMemo } from 'react';
+import { Card, Button, Modal, Form, Spinner, Badge } from 'react-bootstrap';
+import Select from 'react-select';
 import toast from 'react-hot-toast';
 import { createCompetencia, updateCompetencia, deleteCompetencia } from '../../../api/academicoAPI';
+import { DataTable } from '../../../components/shared';
 
 export default function CompetenciasTab({ competencias, areas, onRefresh }) {
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [loadingForm, setLoadingForm] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     descripcion: '',
     area: '',
@@ -71,10 +73,10 @@ export default function CompetenciasTab({ competencias, areas, onRefresh }) {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (row) => {
     if (window.confirm('¿Está seguro de que desea eliminar esta competencia?')) {
       try {
-        await deleteCompetencia(id);
+        await deleteCompetencia(row.id);
         toast.success('Competencia eliminada');
         onRefresh();
       } catch (error) {
@@ -83,6 +85,36 @@ export default function CompetenciasTab({ competencias, areas, onRefresh }) {
       }
     }
   };
+
+  const columns = useMemo(() => [
+    {
+      key: 'area',
+      label: 'Área',
+      render: (_, row) => {
+        const areaObj = areas.find(a => a.id === row.area);
+        return <span className="text-muted">{areaObj ? areaObj.nombre : 'Área no encontrada'}</span>;
+      }
+    },
+    {
+      key: 'orden',
+      label: 'Orden',
+      render: (_, row) => row.orden
+    },
+    {
+      key: 'descripcion',
+      label: 'Descripción',
+      render: (_, row) => <span className="text-wrap">{row.descripcion}</span>
+    },
+    {
+      key: 'estado',
+      label: 'Estado',
+      render: (_, row) => (
+        <Badge bg={row.activo ? 'success' : 'secondary'} className="px-3 py-2 rounded-pill">
+          {row.activo ? 'Activo' : 'Inactivo'}
+        </Badge>
+      )
+    }
+  ], [areas]);
 
   return (
     <>
@@ -93,53 +125,18 @@ export default function CompetenciasTab({ competencias, areas, onRefresh }) {
               <h4 className="fw-bold m-0 text-dark">Competencias</h4>
               <p className="text-muted small m-0">Configurar las competencias asociadas a cada área</p>
             </div>
-            <Button variant="danger" className="rounded-3 px-4 py-2" onClick={() => handleOpenModal()}>
-              + Nueva Competencia
+            <Button className="btn-nueva-matricula" onClick={() => handleOpenModal()}>
+              ➕ Nueva Competencia
             </Button>
           </div>
-          <Table responsive hover className="align-middle">
-            <thead className="bg-light">
-              <tr>
-                <th className="border-0">Área</th>
-                <th className="border-0">Orden</th>
-                <th className="border-0">Descripción</th>
-                <th className="border-0 text-center">Estado</th>
-                <th className="border-0 text-center">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {competencias.map((item) => {
-                const areaObj = areas.find(a => a.id === item.area);
-                return (
-                  <tr key={item.id}>
-                    <td className="text-muted">{areaObj ? areaObj.nombre : 'Área no encontrada'}</td>
-                    <td>{item.orden}</td>
-                    <td className="text-wrap">{item.descripcion}</td>
-                    <td className="text-center">
-                      <Badge bg={item.activo ? 'success' : 'secondary'} className="px-3 py-2 rounded-pill">
-                        {item.activo ? 'Activo' : 'Inactivo'}
-                      </Badge>
-                    </td>
-                    <td className="text-center">
-                      <Button variant="outline-primary" size="sm" className="rounded-3 me-2" onClick={() => handleOpenModal(item)}>
-                        Editar
-                      </Button>
-                      <Button variant="outline-danger" size="sm" className="rounded-3" onClick={() => handleDelete(item.id)}>
-                        Eliminar
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              })}
-              {competencias.length === 0 && (
-                <tr>
-                  <td colSpan="5" className="text-center text-muted py-5">
-                    No hay competencias registradas.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </Table>
+
+          <DataTable
+            columns={columns}
+            data={competencias}
+            onEdit={handleOpenModal}
+            onDelete={handleDelete}
+            paginated={true}
+          />
         </Card.Body>
       </Card>
 
@@ -171,17 +168,14 @@ export default function CompetenciasTab({ competencias, areas, onRefresh }) {
 
                 <Form.Group className="mb-3">
                   <Form.Label>Área Académica Asociada *</Form.Label>
-                  <Form.Select
-                    name="area"
-                    value={formData.area}
-                    onChange={handleInputChange}
-                    required
-                  >
-                    <option value="">Seleccione Área...</option>
-                    {areas.map(a => (
-                      <option key={a.id} value={a.id}>{a.nombre}</option>
-                    ))}
-                  </Form.Select>
+                  <Select
+                    options={areas.map(a => ({ value: a.id, label: a.nombre }))}
+                    value={areas.map(a => ({ value: a.id, label: a.nombre })).find(o => String(o.value) === String(formData.area)) || null}
+                    onChange={(selected) => handleInputChange({ target: { name: 'area', value: selected ? selected.value : '' } })}
+                    placeholder="Seleccione Área..."
+                    isClearable
+                    noOptionsMessage={() => "No se encontraron áreas"}
+                  />
                 </Form.Group>
 
                 <Form.Group className="mb-3">

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Col, Container, Form, Row, Spinner, Table } from 'react-bootstrap';
+import { Alert, Col, Container, Button, Form, Row, Spinner, Table } from 'react-bootstrap';
 import toast from 'react-hot-toast';
 import { abrirCaja, cerrarCaja, getMiEstadoCaja, getResumenIngresos, getPagosByAlumno } from '../../api/pagosAPI';
+import { exportResumenToExcel, exportResumenToPdf } from './pagoExportTemplates';
 
 export default function GestionCaja({ onCajaChange = null }) {
   const [cajaActual, setCajaActual] = useState(null);
@@ -10,6 +11,7 @@ export default function GestionCaja({ onCajaChange = null }) {
   const [montoInicialForm, setMontoInicialForm] = useState('0.00');
   const [showAbrirForm, setShowAbrirForm] = useState(false);
   const [pagosRecientes, setPagosRecientes] = useState([]);
+  const [todosLosPagos, setTodosLosPagos] = useState([]);
 
   const cargarEstadoCaja = async () => {
     setLoading(true);
@@ -31,12 +33,14 @@ export default function GestionCaja({ onCajaChange = null }) {
           const pagosDelDia = pagosData.results.filter((p) => {
             const fechaPago = new Date(p.fecha_pago).toDateString();
             return fechaPago === hoy;
-          }).slice(0, 10); // Últimos 10 pagos
-          setPagosRecientes(pagosDelDia);
+          });
+          setTodosLosPagos(pagosDelDia);
+          setPagosRecientes(pagosDelDia.slice(0, 10)); // Mostrar solo los últimos 10 en la tabla
         }
       } else {
         setResumen(null);
         setPagosRecientes([]);
+        setTodosLosPagos([]);
       }
 
       if (onCajaChange) {
@@ -47,6 +51,7 @@ export default function GestionCaja({ onCajaChange = null }) {
       setCajaActual(null);
       setResumen(null);
       setPagosRecientes([]);
+      setTodosLosPagos([]);
     } finally {
       setLoading(false);
     }
@@ -193,6 +198,14 @@ export default function GestionCaja({ onCajaChange = null }) {
                   <div className="pagos-deudas-header">
                     <div className="pagos-deudas-header-icon" style={{ background: 'rgba(0,149,217,0.15)', color: '#0095d9' }}>📊</div>
                     <h5 className="pagos-deudas-title">Resumen de Ingresos</h5>
+                    <div className="d-flex gap-2">
+                      <Button variant="success" className="d-flex align-items-center gap-2" style={{ borderRadius: '8px', fontWeight: 500 }} onClick={() => exportResumenToExcel(resumen)}>
+                        📊 Exportar Excel
+                      </Button>
+                      <Button variant="danger" className="d-flex align-items-center gap-2" style={{ borderRadius: '8px', fontWeight: 500 }} onClick={() => exportResumenToPdf(resumen)}>
+                        📄 Exportar PDF
+                      </Button>
+                    </div>
                   </div>
                   <div style={{ padding: '24px' }}>
                     <Row className="mb-4">
@@ -221,7 +234,6 @@ export default function GestionCaja({ onCajaChange = null }) {
                         </div>
                       </Col>
                     </Row>
-
                     <h6 style={{ fontFamily: 'Quicksand', fontWeight: 700, marginBottom: 16 }}>
                       Desglose por Método de Pago
                     </h6>
@@ -265,10 +277,6 @@ export default function GestionCaja({ onCajaChange = null }) {
                 {/* Últimos Pagos */}
                 {pagosRecientes.length > 0 && (
                   <div className="pagos-table-container">
-                    <div className="pagos-deudas-header" style={{ background: '#d1fae5' }}>
-                      <div className="pagos-deudas-header-icon" style={{ background: '#10b981', color: '#fff' }}>⏰</div>
-                      <h5 className="pagos-deudas-title">Últimos Pagos de Hoy</h5>
-                    </div>
                     <div style={{ padding: '0' }}>
                       <div className="table-responsive">
                         <Table striped bordered hover size="sm" className="mb-0">
@@ -296,13 +304,12 @@ export default function GestionCaja({ onCajaChange = null }) {
                                     : `Alumno #${pago.alumno}`}
                                 </td>
                                 <td>
-                                  <span className={`pagos-badge ${
-                                    pago.metodo_pago === 'Efectivo'
-                                      ? 'success'
-                                      : pago.metodo_pago === 'Yape'
-                                        ? 'warning'
-                                        : 'info'
-                                  }`}>
+                                  <span className={`pagos-badge ${pago.metodo_pago === 'Efectivo'
+                                    ? 'success'
+                                    : pago.metodo_pago === 'Yape'
+                                      ? 'warning'
+                                      : 'info'
+                                    }`}>
                                     {pago.metodo_pago}
                                   </span>
                                 </td>

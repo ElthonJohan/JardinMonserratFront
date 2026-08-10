@@ -2,7 +2,7 @@
 
 .profile-page {
   font-family: var(--font-tertiary);
-  background: var(--color-slate-100);
+  background: var(--color-gray-100);
   min-height: 100vh;
   padding: 32px 28px 48px;
   max-width: 1100px;
@@ -17,14 +17,14 @@
 .profile-header h1 {
   font-size: 1.6rem;
   font-weight: 800;
-  color: var(--color-slate-800);
+  color: var(--color-gray-800);
   letter-spacing: -0.5px;
   margin: 0 0 4px;
 }
 
 .profile-header p {
   font-size: 0.88rem;
-  color: var(--color-slate-500);
+  color: var(--color-gray-500);
   margin: 0;
   font-weight: 500;
 }
@@ -49,7 +49,7 @@
   top: -40px;
   width: 200px;
   height: 200px;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 50%;
 }
 
@@ -60,7 +60,7 @@
   bottom: -60px;
   width: 150px;
   height: 150px;
-  background: rgba(255,255,255,0.04);
+  background: rgba(255, 255, 255, 0.04);
   border-radius: 50%;
 }
 
@@ -68,8 +68,8 @@
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.18);
-  border: 2.5px solid rgba(255,255,255,0.35);
+  background: rgba(255, 255, 255, 0.18);
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -98,7 +98,7 @@
 
 .profile-hero-info p {
   font-size: 0.82rem;
-  color: rgba(255,255,255,0.7);
+  color: rgba(255, 255, 255, 0.7);
   margin: 0 0 10px;
   font-weight: 500;
 }
@@ -108,8 +108,8 @@
   align-items: center;
   gap: 5px;
   padding: 4px 12px;
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 20px;
   font-size: 0.75rem;
   font-weight: 700;
@@ -120,7 +120,7 @@
 
 .profile-hero-desc {
   font-size: 0.8rem;
-  color: rgba(255,255,255,0.65);
+  color: rgba(255, 255, 255, 0.65);
   margin: 10px 0 0;
   line-height: 1.5;
   max-width: 480px;
@@ -134,15 +134,16 @@
   margin-bottom: 20px;
 }
 
-.stat-card {
+
+/* .stat-card {
   background: var(--color-white);
-  border: 1px solid var(--color-slate-200);
+  border: 1px solid var(--color-gray-200);
   border-radius: 14px;
   padding: 18px 22px;
   display: flex;
   align-items: center;
   gap: 14px;
-}
+} */
 
 .stat-icon {
   width: 42px;
@@ -159,7 +160,7 @@
 .stat-content h4 {
   font-size: 1.35rem;
   font-weight: 800;
-  color: var(--color-slate-800);
+  color: var(--color-gray-800);
   margin: 0 0 2px;
   letter-spacing: -0.5px;
   line-height: 1;
@@ -170,7 +171,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  color: var(--color-slate-400);
+  color: var(--color-gray-400);
 }
 
 /* ── Grid ── */
@@ -181,24 +182,36 @@
 }
 
 @media (max-width: 768px) {
-  .profile-grid { grid-template-columns: 1fr; }
-  .profile-stats { grid-template-columns: 1fr 1fr; }
-  .profile-hero { flex-direction: column; text-align: center; }
-  .profile-hero-desc { text-align: left; }
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .profile-hero {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-hero-desc {
+    text-align: left;
+  }
 }
 
 /* ── Cards ── */
 .profile-card {
   background: var(--color-white);
-  border: 1px solid var(--color-slate-200);
+  border: 1px solid var(--color-gray-200);
   border-radius: 16px;
   overflow: hidden;
 }
 
 .profile-card-header {
   padding: 16px 22px;
-  border-bottom: 1px solid var(--color-slate-100);
-  background: var(--color-slate-50);
+  border-bottom: 1px solid var(--color-gray-100);
+  background: var(--color-gray-50);
 }
 
 .profile-card-header h3 {
@@ -206,7 +219,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  color: var(--color-slate-500);
+  color: var(--color-gray-500);
   margin: 0;
 }
 
@@ -217,7 +230,7 @@
 /* ── Info items ── */
 .info-item {
   padding: 13px 22px;
-  border-bottom: 1px solid var(--color-slate-50);
+  border-bottom: 1px solid var(--color-gray-50);
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -232,18 +245,18 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  color: var(--color-slate-400);
+  color: var(--color-gray-400);
 }
 
 .info-value {
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--color-slate-800);
+  color: var(--color-gray-800);
 }
 
 .info-note {
   font-size: 0.72rem;
-  color: var(--color-slate-400);
+  color: var(--color-gray-400);
   font-weight: 400;
   margin-top: 2px;
 }
@@ -252,13 +265,13 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: var(--color-slate-100);
-  border: 1px solid var(--color-slate-200);
+  background: var(--color-gray-100);
+  border: 1px solid var(--color-gray-200);
   border-radius: 6px;
   padding: 3px 10px;
   font-family: var(--font-mono);
   font-size: 0.85rem;
-  color: var(--color-slate-600);
+  color: var(--color-gray-600);
   letter-spacing: 0.5px;
 }
 
@@ -267,7 +280,7 @@
   padding: 16px 22px;
   display: flex;
   gap: 10px;
-  border-top: 1px solid var(--color-slate-100);
+  border-top: 1px solid var(--color-gray-100);
   flex-wrap: wrap;
 }
 
@@ -296,9 +309,9 @@
 .btn-change-password {
   flex: 1;
   padding: 9px 16px;
-  background: var(--color-slate-100);
-  color: var(--color-slate-600);
-  border: 1.5px solid var(--color-slate-200);
+  background: red;
+  color: var(--color-white);
+  border: 1.5px solid var(--color-gray-200);
   border-radius: 9px;
   font-size: 0.83rem;
   font-weight: 600;
@@ -312,8 +325,8 @@
 }
 
 .btn-change-password:hover {
-  background: var(--color-slate-200);
-  color: var(--color-slate-800);
+  background: var(--color-gray-200);
+  color: var(--color-gray-800);
 }
 
 /* ── Student cards ── */
@@ -325,7 +338,7 @@
 }
 
 .student-card {
-  border: 1px solid var(--color-slate-200);
+  border: 1px solid var(--color-gray-200);
   border-radius: 12px;
   padding: 14px 16px;
   display: flex;
@@ -357,11 +370,10 @@
 }
 
 .student-code {
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: bold;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
-  color: var(--color-slate-400);
+  color: var(--color-gray-400);
   margin-bottom: 2px;
   font-family: var(--font-mono);
 }
@@ -369,7 +381,7 @@
 .student-name {
   font-size: 0.92rem;
   font-weight: 700;
-  color: var(--color-slate-800);
+  color: var(--color-gray-800);
   margin: 0 0 4px;
   white-space: nowrap;
   overflow: hidden;
@@ -385,8 +397,8 @@
 
 .student-relacion {
   font-size: 0.75rem;
-  color: var(--color-slate-500);
-  font-weight: 500;
+  color: var(--color-gray-500);
+  font-weight: bold;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -423,7 +435,7 @@
   align-items: center;
   justify-content: center;
   min-height: 50vh;
-  color: var(--color-slate-500);
+  color: var(--color-gray-500);
   font-size: 0.9rem;
   font-weight: 500;
   gap: 10px;
@@ -437,10 +449,25 @@
   animation: pulse-dot 1.2s infinite;
 }
 
-.loading-dot:nth-child(2) { animation-delay: 0.2s; }
-.loading-dot:nth-child(3) { animation-delay: 0.4s; }
+.loading-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
 
 @keyframes pulse-dot {
-  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
-  40% { opacity: 1; transform: scale(1); }
+
+  0%,
+  80%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

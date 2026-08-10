@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Select from "react-select";
 
 export default function AgregarApoderadoModal({ onSubmit }) {
   const [formData, setFormData] = useState({
@@ -13,6 +14,23 @@ export default function AgregarApoderadoModal({ onSubmit }) {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const relacionOptions = [
+    { value: "PADRE", label: "Padre" },
+    { value: "MADRE", label: "Madre" },
+    { value: "TUTOR", label: "Tutor" },
+    { value: "ABUELO", label: "Abuelo/a" },
+    { value: "OTRO", label: "Otro" }
+  ];
+
+  const handleSelectChange = (selected) => {
+    handleChange({
+      target: {
+        name: "tipo_relacion",
+        value: selected ? selected.value : ""
+      }
+    });
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -101,13 +119,13 @@ export default function AgregarApoderadoModal({ onSubmit }) {
 
                 <div className="col-12 col-md-6">
                   <label className="form-label fw-semibold">Relación</label>
-                  <select className="form-select" name="tipo_relacion" value={formData.tipo_relacion} onChange={handleChange}>
-                    <option value="PADRE">Padre</option>
-                    <option value="MADRE">Madre</option>
-                    <option value="TUTOR">Tutor</option>
-                    <option value="ABUELO">Abuelo/a</option>
-                    <option value="OTRO">Otro</option>
-                  </select>
+                  <Select
+                    options={relacionOptions}
+                    value={relacionOptions.find(o => o.value === formData.tipo_relacion) || null}
+                    onChange={handleSelectChange}
+                    placeholder="Seleccionar..."
+                    isSearchable={false}
+                  />
                 </div>
 
                 <div className="col-12">

@@ -6,10 +6,10 @@ import CampanitaNotificaciones from './CampanitaNotificaciones';
 import { getPagosPendientesCount } from '../../api/pagosAPI';
 
 const NAV_LINKS = [
-  { label: 'Dashboard',   path: '/dashboard'   },
+  { label: 'Dashboard', path: '/dashboard' },
   { label: 'Estudiantes', path: '/estudiantes' },
-  { label: 'Matrículas',  path: '/matriculas'  },
-  { label: 'Pagos',       path: '/pagos'       },
+  { label: 'Matrículas', path: '/matriculas' },
+  { label: 'Pagos', path: '/pagos' },
 ];
 
 const S = {
@@ -135,9 +135,9 @@ function useHover() {
 }
 
 function NavLinkItem({ label, path, badge }) {
-  const location  = useLocation();
-  const navigate  = useNavigate();
-  const isActive  = location.pathname === path;
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isActive = location.pathname === path;
   const [hov, hovProps] = useHover();
 
   return (
@@ -166,11 +166,11 @@ function DropdownItemCustom({ children, onClick, danger }) {
 }
 
 const AppNavbar = ({ title = 'Jardín Monserrat' }) => {
-  const { user, logout }  = useAuth();
-  const navigate          = useNavigate();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [pendientesCount, setPendientesCount] = useState(0);
-  const [dropOpen, setDropOpen]               = useState(false);
-  const [togHov, togHovProps]                 = useHover();
+  const [dropOpen, setDropOpen] = useState(false);
+  const [togHov, togHovProps] = useHover();
 
   const canValidate = user?.permissions?.includes('view_pago');
   const canViewAcademico = user?.role === 'admin' || user?.role === 'director' || user?.permissions?.includes('view_asignaciondocente') || user?.permissions?.includes('view_periodoacademico');
@@ -189,7 +189,7 @@ const AppNavbar = ({ title = 'Jardín Monserrat' }) => {
     if (canValidate) {
       getPagosPendientesCount()
         .then(res => setPendientesCount(res.count || 0))
-        .catch(() => {});
+        .catch(() => { });
     }
   }, [canValidate]);
 
@@ -248,9 +248,9 @@ const AppNavbar = ({ title = 'Jardín Monserrat' }) => {
                     onClick={() => setDropOpen(false)}
                   />
                   <div style={{ ...S.dropdownMenu, position: 'absolute', right: 0, top: 'calc(100% + 8px)', zIndex: 1000 }}>
-                    <DropdownItemCustom onClick={() => { navigate('/perfil');        setDropOpen(false); }}>
+                    {/* <DropdownItemCustom onClick={() => { navigate('/'); setDropOpen(false); }}>
                       👤 Perfil
-                    </DropdownItemCustom>
+                    </DropdownItemCustom> */}
                     {!user?.isTeacher && (
                       <DropdownItemCustom onClick={() => { navigate('/configuracion'); setDropOpen(false); }}>
                         ⚙️ Configuración

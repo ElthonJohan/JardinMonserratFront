@@ -15,10 +15,10 @@ export default function PagosPage() {
   const [cajaAbierta, setCajaAbierta] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-const activeTab =
-  searchParams.get("tab") || "registro";
+  const activeTab =
+    searchParams.get("tab") || "registro";
 
   const cargarAlumnos = async () => {
     setLoading(true);
@@ -60,13 +60,13 @@ const activeTab =
         </Row>
 
         <Tabs
-  activeKey={activeTab}
-  onSelect={(tab) => {
-    navigate(`/pagos?tab=${tab}`);
-  }}
-  className="mb-4"
-  id="pagos-tabs"
->
+          activeKey={activeTab}
+          onSelect={(tab) => {
+            navigate(`/pagos?tab=${tab}`);
+          }}
+          className="mb-4"
+          id="pagos-tabs"
+        >
           <Tab eventKey="registro" title="📝 Registro de Pago">
             <Card className="mt-3">
               <Card.Body>
@@ -90,7 +90,7 @@ const activeTab =
           </Tab>
 
           <Tab eventKey="caja" title="💼 Gestión de Caja">
-            <Card className="mt-3">
+            <Card className="mt-3 text-blue">
               <Card.Body>
                 <ErrorBoundary>
                   <GestionCaja onCajaChange={handleCajaChange} />

@@ -17,7 +17,7 @@ import {
 
 import { getEstudiantes } from '../api/estudiantesAPI';
 import { getAulas } from '../api/estudiantesAPI';
-
+import { exportMatriculasToExcel, exportMatriculasToPdf } from '../components/matriculas/matriculaExportTemplates';
 
 export default function MatriculasPage() {
   const location = useLocation();
@@ -259,14 +259,22 @@ export default function MatriculasPage() {
               <h1>📝 Gestión de Matrículas</h1>
             </div>
             <p>Registra y administra las matrículas de los alumnos para el año lectivo actual de manera centralizada y eficiente.</p>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
               <div />
-              <Button
-                className="btn-nueva-matricula"
-                onClick={handleOpenNewMatricula}
-              >
-                ➕ Nueva Matrícula
-              </Button>
+              <div className="d-flex gap-2 flex-wrap">
+                <Button
+                  className="btn-nueva-matricula"
+                  onClick={handleOpenNewMatricula}
+                >
+                  ➕ Nueva Matrícula
+                </Button>
+                <Button variant="success" className="d-flex align-items-center gap-2" style={{ borderRadius: '8px', fontWeight: 500 }} onClick={() => exportMatriculasToExcel(filteredMatriculas)}>
+                  📊 Exportar Excel
+                </Button>
+                <Button variant="danger" className="d-flex align-items-center gap-2" style={{ borderRadius: '8px', fontWeight: 500 }} onClick={() => exportMatriculasToPdf(filteredMatriculas)}>
+                  📄 Exportar PDF
+                </Button>
+              </div>
             </div>
           </div>
 

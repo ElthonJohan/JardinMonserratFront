@@ -16,8 +16,8 @@ const IntranetLayout = () => {
       <aside className="sidebar">
         {/* LOGO */}
         <div className="sidebar-header">
-          <h1>Intranet</h1>
-          <p>Jardín Monserrat</p>
+          <h1>Jardín Monserrat</h1>
+          <h2 className="text-white">Intranet</h2>
         </div>
 
         {/* USER */}
@@ -30,9 +30,8 @@ const IntranetLayout = () => {
         <nav className="nav-menu">
           <Link
             to="/intranet/dashboard"
-            className={`nav-link ${
-              location.pathname === "/intranet/dashboard" ? "active" : ""
-            }`}
+            className={`nav-link ${location.pathname === "/intranet/dashboard" ? "active" : ""
+              }`}
           >
             <span>🏠</span>
             <span>Dashboard</span>
@@ -40,9 +39,8 @@ const IntranetLayout = () => {
 
           <Link
             to="/intranet/pagos"
-            className={`nav-link ${
-              location.pathname === "/intranet/pagos" ? "active" : ""
-            }`}
+            className={`nav-link ${location.pathname === "/intranet/pagos" ? "active" : ""
+              }`}
           >
             <span>💰</span>
             <span>Seguimiento de Pagos</span>
@@ -50,9 +48,8 @@ const IntranetLayout = () => {
 
           <Link
             to="/intranet/academic-tracking"
-            className={`nav-link ${
-              location.pathname === "/intranet/academic-tracking" ? "active" : ""
-            }`}
+            className={`nav-link ${location.pathname === "/intranet/academic-tracking" ? "active" : ""
+              }`}
           >
             <span>📈</span>
             <span>Seguimiento Académico</span>
@@ -60,9 +57,8 @@ const IntranetLayout = () => {
 
           <Link
             to="/intranet/profile"
-            className={`nav-link ${
-              location.pathname === "/intranet/profile" ? "active" : ""
-            }`}
+            className={`nav-link ${location.pathname === "/intranet/profile" ? "active" : ""
+              }`}
           >
             <span>👤</span>
             <span>Perfil</span>

@@ -155,6 +155,7 @@ const BancosPage = () => {
                 loading={loading}
                 onEdit={canEdit ? (banco) => handleOpenModal('EDIT', banco) : null}
                 onDelete={canEdit ? (banco) => handleToggleActive(banco) : null}
+                paginated={true}
               />
               {canEdit && (
                 <div className="mt-2 small text-muted text-end">

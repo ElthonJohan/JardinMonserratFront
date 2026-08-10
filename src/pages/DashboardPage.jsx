@@ -3,6 +3,7 @@ import {
   Container, Row, Col, Card, Spinner,
   Table, Modal, Button, ProgressBar
 } from 'react-bootstrap';
+import Select from 'react-select';
 import { useNavigate } from 'react-router-dom';
 import { getDashboardStats } from '../api/dashboardAPI';
 import { AppNavbar } from '../components/shared';
@@ -64,13 +65,25 @@ export default function DashboardPage() {
           </div>
           <div className="d-flex align-items-center gap-2">
             <span className="year-label">Año Escolar:</span>
-            <select
-              className="year-select"
-              value={anioFiltro}
-              onChange={e => setAnioFiltro(Number(e.target.value))}
-            >
-              {[2026, 2025, 2024].map(y => <option key={y}>{y}</option>)}
-            </select>
+            <Select
+              options={[2026, 2025, 2024].map(y => ({ value: y, label: y }))}
+              value={{ value: anioFiltro, label: anioFiltro }}
+              onChange={(selected) => setAnioFiltro(selected ? selected.value : new Date().getFullYear())}
+              isSearchable={false}
+              styles={{
+                control: (base) => ({
+                  ...base,
+                  borderRadius: '999px',
+                  minHeight: '36px',
+                  border: '1px solid var(--outline-variant)',
+                  boxShadow: 'var(--shadow-soft)',
+                  backgroundColor: 'var(--surface-lowest)',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  color: 'var(--on-surface)'
+                })
+              }}
+            />
           </div>
         </div>
 

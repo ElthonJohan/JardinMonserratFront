@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Form, Card } from 'react-bootstrap';
+import Select from 'react-select';
 import toast from 'react-hot-toast';
 import { AppNavbar, DataTable, Loading, Modal } from '../components';
 import {
@@ -209,6 +210,7 @@ const AlumnosPage = () => {
           loading={loading}
           onEdit={handleOpenModal}
           onDelete={handleDeleteAlumno}
+          paginated={true}
         />
 
         {/* Modal de Crear/Editar */}
@@ -346,15 +348,23 @@ const AlumnosPage = () => {
 
             <Form.Group className="mb-3">
               <Form.Label>Estado</Form.Label>
-              <Form.Select
-                name="estado"
-                value={formData.estado}
-                onChange={handleInputChange}
-              >
-                <option value="Activo">Activo</option>
-                <option value="Retirado">Retirado</option>
-                <option value="Egresado">Egresado</option>
-              </Form.Select>
+              <Select
+                options={[
+                  { value: 'Activo', label: 'Activo' },
+                  { value: 'Retirado', label: 'Retirado' },
+                  { value: 'Egresado', label: 'Egresado' }
+                ]}
+                value={
+                  [
+                    { value: 'Activo', label: 'Activo' },
+                    { value: 'Retirado', label: 'Retirado' },
+                    { value: 'Egresado', label: 'Egresado' }
+                  ].find(o => o.value === formData.estado) || null
+                }
+                onChange={(selected) => handleInputChange({ target: { name: 'estado', value: selected ? selected.value : '' } })}
+                placeholder="Seleccionar..."
+                isSearchable={false}
+              />
             </Form.Group>
           </Form>
         </Modal>

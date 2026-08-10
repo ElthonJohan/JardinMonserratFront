@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import axiosInstance from '../../api/axiosConfig';
 import '../../styles/dashboard.css';
 import { Spinner } from 'react-bootstrap';
+import GuiaDashboardModal from './GuiaDashboardModal';
 
 const Dashboard = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showGuia, setShowGuia] = useState(false);
 
   const fetchDashboardData = async () => {
     try {
@@ -117,16 +119,27 @@ const Dashboard = () => {
   return (
     <div className="dashboard-page">
       {/* HEADER */}
-      <div className="dashboard-header">
+      <div className="dashboard-header d-flex justify-content-between align-items-center flex-wrap gap-3">
         <div className="dashboard-title">
           <h1>Dashboard</h1>
-          <p>
+          <p className="mb-0">
             Bienvenido, <strong>{data.apoderado_nombre}</strong>. Aquí tienes el resumen financiero y académico de tu familia.
           </p>
         </div>
 
-        <div className="dashboard-date">
-          📅 {new Date().toLocaleDateString('es-PE')}
+        <div className="d-flex align-items-center gap-3 flex-wrap">
+          <button
+            className="btn btn-success text-white fw-bold d-flex align-items-center gap-2"
+            onClick={() => setShowGuia(true)}
+            style={{ borderRadius: "14px", padding: "12px 20px", border: "none", boxShadow: "0 4px 10px rgba(59, 130, 246, 0.3)", transition: "0.2s" }}
+            onMouseOver={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
+            onMouseOut={(e) => e.currentTarget.style.transform = "translateY(0)"}
+          >
+            ❓ Ayuda / Guía
+          </button>
+          <div className="dashboard-date">
+            📅 {new Date().toLocaleDateString('es-PE')}
+          </div>
         </div>
       </div>
 
@@ -135,33 +148,41 @@ const Dashboard = () => {
         {/* CARD 1 */}
         <div className="stat-card card-blue">
           <div className="stat-icon blue-icon">👨‍🎓</div>
-          <p className="stat-title">Hijos Registrados</p>
-          <h2 className="stat-value">{data.cantidad_hijos}</h2>
-          <p className="stat-description">Estudiantes bajo tu tutela</p>
+          <div className="stat-content">
+            <p className="stat-title">Hijos Registrados</p>
+            <h2 className="stat-value">{data.cantidad_hijos}</h2>
+            <p className="stat-description">Estudiantes bajo tu tutela</p>
+          </div>
         </div>
 
         {/* CARD 2 */}
         <div className="stat-card card-green">
           <div className="stat-icon green-icon">💰</div>
-          <p className="stat-title">Pagos Reportados</p>
-          <h2 className="stat-value">{totalPagosReportados}</h2>
-          <p className="stat-description">Transacciones registradas</p>
+          <div className="stat-content">
+            <p className="stat-title">Pagos Reportados</p>
+            <h2 className="stat-value">{totalPagosReportados}</h2>
+            <p className="stat-description">Transacciones registradas</p>
+          </div>
         </div>
 
         {/* CARD 3 */}
         <div className="stat-card card-orange">
           <div className="stat-icon orange-icon">📄</div>
-          <p className="stat-title">Deuda Pendiente</p>
-          <h2 className="stat-value">S/ {data.total_pendiente.toFixed(2)}</h2>
-          <p className="stat-description">{totalDeudasPendientes} concepto(s) por regularizar</p>
+          <div className="stat-content">
+            <p className="stat-title">Deuda Pendiente</p>
+            <h2 className="stat-value">S/ {data.total_pendiente.toFixed(2)}</h2>
+            <p className="stat-description">{totalDeudasPendientes} concepto(s) por regularizar</p>
+          </div>
         </div>
 
         {/* CARD 4 */}
         <div className="stat-card card-purple">
           <div className="stat-icon purple-icon">🏫</div>
-          <p className="stat-title">Año Escolar</p>
-          <h2 className="stat-value">{currentYear}</h2>
-          <p className="stat-description">Gestión académica activa</p>
+          <div className="stat-content">
+            <p className="stat-title">Año Escolar</p>
+            <h2 className="stat-value">{currentYear}</h2>
+            <p className="stat-description">Gestión académica activa</p>
+          </div>
         </div>
       </div>
 
@@ -248,6 +269,11 @@ const Dashboard = () => {
           )}
         </div>
       </div>
+
+      <GuiaDashboardModal 
+        show={showGuia} 
+        onHide={() => setShowGuia(false)} 
+      />
     </div>
   );
 };
