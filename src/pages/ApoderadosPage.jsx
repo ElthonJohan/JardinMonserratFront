@@ -12,6 +12,7 @@ import ApoderadoTable from "../components/apoderados/ApoderadoTable.jsx";
 import { AppNavbar, Loading } from "../components/shared";
 import { Modal } from "bootstrap";
 import toast from "react-hot-toast";
+import "../styles/MatriculasPage.css";
 
 export default function ApoderadosPage() {
   const [apoderados, setApoderados] = useState([]);
@@ -127,37 +128,55 @@ export default function ApoderadosPage() {
   return (
     <>
       <AppNavbar />
-      <div className="container container-custom mt-4">
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h1 className="text-2xl font-bold">👥 Gestión de Apoderados</h1>
-          <button className="btn btn-primary shadow-sm" onClick={() => openModal()}>
-            + Nuevo Apoderado
-          </button>
-        </div>
+      <div className="matriculas-container">
+        <div className="container-matriculas">
+          {/* ─── HEADER ─── */}
+          <div className="matriculas-header">
+            <div className="matriculas-header-top">
+              <h1>👥 Gestión de Apoderados</h1>
+            </div>
+            <p>Administra los datos de los padres y tutores registrados en el sistema.</p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button className="btn-nueva-matricula" onClick={() => openModal()}>
+                ➕ Nuevo Apoderado
+              </button>
+            </div>
+          </div>
 
-        <div className="card shadow-sm mb-4 border-0">
-          <div className="card-body bg-light rounded">
-            <div className="row align-items-center">
-              <div className="col-md-8">
-                <div className="input-group">
-                  <span className="input-group-text bg-white border-end-0">🔍</span>
-                  <input
-                    type="text"
-                    className="form-control border-start-0 ps-0"
-                    placeholder="Buscar por nombre, apellidos, DNI o email..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
+          {/* ─── SEARCH & STATS SECTION ─── */}
+          <div className="matriculas-search-section">
+            <div className="search-card">
+              <label>Buscar Apoderado</label>
+              <div className="search-input-wrapper">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Buscar por nombre, apellidos, DNI o email..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{ paddingLeft: '40px' }}
+                />
               </div>
-              <div className="col-md-4 text-md-end mt-3 mt-md-0">
-                <span className="text-muted small">
-                  Total: <strong>{filteredApoderados.length}</strong> encontrados
+            </div>
+
+            <div className="stats-card">
+              <div className="stats-card-content">
+                <div className="stats-card-text">
+                  <span className="stats-label">Total Apoderados</span>
+                  <div className="stats-number">{apoderados.length}</div>
+                </div>
+                <div className="stats-icon">👥</div>
+              </div>
+              <div className="stats-badges">
+                <span className="stats-badge active">
+                   Encontrados: {filteredApoderados.length}
                 </span>
               </div>
             </div>
           </div>
-        </div>
+
+          <div className="table-container">
+            <div className="table-wrapper">
 
         {loading ? (
           <Loading message="Cargando apoderados..." />
@@ -167,8 +186,11 @@ export default function ApoderadosPage() {
             onEdit={openModal}
             onDelete={handleDelete}
             onResetPassword={handleResetPassword}
+            tableClassName="matriculas-table"
           />
         )}
+        </div>
+      </div>
 
         {/* Modal de Creación/Edición */}
         <div className="modal fade" id="apoderadoModal" tabIndex="-1" aria-hidden="true">
@@ -192,6 +214,39 @@ export default function ApoderadosPage() {
           </div>
         </div>
       </div>
+      </div>
+      {/* ══════════════════════════════════════
+          MODAL: Reset Password
+      ══════════════════════════════════════ */}
+      {showResetModal && resetResult && (
+        <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header bg-success text-white">
+                <h5 className="modal-title">✅ Contraseña Restablecida</h5>
+                <button type="button" className="btn-close btn-close-white" onClick={() => setShowResetModal(false)}></button>
+              </div>
+              <div className="modal-body text-center">
+                <p>Las nuevas credenciales para <strong>{resetResult.apoderado}</strong> son:</p>
+                <div className="alert alert-info">
+                  <strong>Usuario:</strong> {resetResult.username} <br />
+                  <strong>Contraseña:</strong> {resetResult.password}
+                </div>
+                <small className="text-danger">⚠️ Por favor, comparta estos datos ahora. La contraseña no se volverá a mostrar.</small>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-primary" onClick={() => {
+                  navigator.clipboard.writeText(`Usuario: ${resetResult.username}\nContraseña: ${resetResult.password}`);
+                  toast.success("Credenciales copiadas al portapapeles");
+                }}>
+                  📋 Copiar
+                </button>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowResetModal(false)}>Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

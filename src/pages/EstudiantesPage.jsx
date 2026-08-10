@@ -48,7 +48,7 @@ export default function EstudiantesPage() {
   const loadData = async () => {
     try {
       const [estRes] = await Promise.all([getEstudiantes()]);
-      const estudiantesData = estRes.results || estRes.data;
+      const estudiantesData = estRes.results || estRes.data || estRes;
       setEstudiantes(Array.isArray(estudiantesData) ? estudiantesData : []);
     } catch (error) {
       console.error("ERROR 👉", error.response?.data);
