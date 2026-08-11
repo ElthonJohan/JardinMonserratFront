@@ -58,6 +58,24 @@ export default function MatriculaForm({
     });
   };
 
+  useEffect(() => {
+    if (!formData.periodo_academico && periodos.length > 0) {
+      const currentYear = new Date().getFullYear();
+      let defaultPeriodo = periodos.find(p => p.anio === currentYear);
+      if (!defaultPeriodo) {
+        defaultPeriodo = [...periodos].sort((a, b) => b.anio - a.anio)[0];
+      }
+      if (defaultPeriodo) {
+        onChange({
+          target: {
+            name: 'periodo_academico',
+            value: defaultPeriodo.id
+          }
+        });
+      }
+    }
+  }, [periodos, formData.periodo_academico, onChange]);
+
   // Cargar opciones desde el servidor
   const loadOptions = async (search) => {
     try {

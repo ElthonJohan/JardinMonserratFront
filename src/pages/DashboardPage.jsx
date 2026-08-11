@@ -90,12 +90,30 @@ export default function DashboardPage() {
         {/* ── KPI CARDS ── */}
         <Row className="g-4 mb-4">
 
-          {/* Alumnos */}
-          <Col md={6} xl={3}>
+          {/* Total Estudiantes */}
+          <Col md={6} xl>
+            <Card className="kpi-card kpi-blue h-100" onClick={() => navigate('/estudiantes')}>
+              <Card.Body className="text-center py-4">
+                <div className="kpi-icon-wrap blue">🧑‍🎓</div>
+                <h5>Total Estudiantes</h5>
+                {loading
+                  ? <Spinner animation="border" size="sm" />
+                  : <div className="kpi-badge blue">{kpis.total_estudiantes_registrados}</div>
+                }
+                <p className="kpi-sub">Registrados en sistema</p>
+                <a className="kpi-link blue" onClick={e => { e.preventDefault(); navigate('/estudiantes'); }}>
+                  Ir a directorio →
+                </a>
+              </Card.Body>
+            </Card>
+          </Col>
+
+          {/* Estudiantes Matriculados */}
+          <Col md={6} xl>
             <Card className="kpi-card kpi-blue h-100" onClick={() => setShowModal(true)}>
               <Card.Body className="text-center py-4">
                 <div className="kpi-icon-wrap blue">👥</div>
-                <h5>Alumnos</h5>
+                <h5>Estudiantes Matriculados</h5>
                 {loading
                   ? <Spinner animation="border" size="sm" />
                   : <div className="kpi-badge blue">{kpis.total_alumnos_activos}</div>
@@ -109,7 +127,7 @@ export default function DashboardPage() {
           </Col>
 
           {/* Matrículas */}
-          <Col md={6} xl={3}>
+          <Col md={6} xl>
             <Card className="kpi-card kpi-green h-100" onClick={() => navigate('/matriculas')}>
               <Card.Body className="text-center py-4">
                 <div className="kpi-icon-wrap green">📚</div>
@@ -127,7 +145,7 @@ export default function DashboardPage() {
           </Col>
 
           {/* Deudas */}
-          <Col md={6} xl={3}>
+          <Col md={6} xl>
             <Card className="kpi-card kpi-amber h-100" onClick={() => navigate('/pagos')}>
               <Card.Body className="text-center py-4">
                 <div className="kpi-icon-wrap amber">💰</div>
@@ -150,7 +168,7 @@ export default function DashboardPage() {
           </Col>
 
           {/* Recaudado */}
-          <Col md={6} xl={3}>
+          <Col md={6} xl>
             <Card className="kpi-card kpi-teal h-100">
               <Card.Body className="text-center py-4">
                 <div className="kpi-icon-wrap teal">📈</div>
