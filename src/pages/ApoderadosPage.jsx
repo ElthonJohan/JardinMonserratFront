@@ -22,6 +22,8 @@ export default function ApoderadosPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showResetModal, setShowResetModal] = useState(false);
   const [resetResult, setResetResult] = useState(null);
+  const [apoderadoToReset, setApoderadoToReset] = useState(null);
+  const [isResetting, setIsResetting] = useState(false);
 
   const loadData = async () => {
     setLoading(true);
@@ -82,35 +84,54 @@ export default function ApoderadosPage() {
     }
   };
 
-  const handleResetPassword = async (apoderado) => {
+  const handleResetPassword = (apoderado) => {
+    setApoderadoToReset(apoderado);
+    setResetResult(null);
+  };
 
-    if (
-      !window.confirm(
-        `¿Desea restablecer la contraseña de ${apoderado.nombres} ${apoderado.apellidos}?`
-      )
-    ) {
-      return;
-    }
+  const executeResetPassword = async () => {
+    if (!apoderadoToReset || isResetting) return;
 
+    setIsResetting(true);
     try {
-
-      const data = await resetPassword(apoderado.id);
-
-      setResetResult(data);
-
+      const result = await resetPassword(apoderadoToReset.id);
+      setResetResult(result);
       setShowResetModal(true);
-
+      setApoderadoToReset(null);
       toast.success("Contraseña restablecida correctamente");
-
     } catch (error) {
-
-      toast.error(
-        error.response?.data?.detail ||
-        "No se pudo restablecer la contraseña."
-      );
-
+      console.error(error);
+      const status = error.response?.status;
+      const detail = error.response?.data?.detail;
+      
+      let message = "No se pudo restablecer la contraseña. Inténtalo nuevamente.";
+      if (status === 401) {
+        message = "Tu sesión ha expirado. Inicia sesión nuevamente.";
+      } else if (status === 403) {
+        message = "No tienes permisos para restablecer contraseñas.";
+      } else if (status === 404) {
+        message = "Este apoderado no tiene una cuenta de acceso asociada.";
+      } else if (status === 500) {
+        message = "No se pudo restablecer la contraseña. Inténtalo nuevamente.";
+      } else if (detail) {
+        message = detail;
+      }
+      toast.error(message);
+    } finally {
+      setIsResetting(false);
     }
+  };
 
+  const closeResetResultModal = () => {
+    setShowResetModal(false);
+    setResetResult(null);
+  };
+
+  const copyToClipboard = () => {
+    if (resetResult?.password) {
+      navigator.clipboard.writeText(resetResult.password);
+      toast.success("Contraseña copiada");
+    }
   };
 
   const filteredApoderados = useMemo(() => {
@@ -218,30 +239,96 @@ export default function ApoderadosPage() {
       {/* ══════════════════════════════════════
           MODAL: Reset Password
       ══════════════════════════════════════ */}
+      {/* ══════════════════════════════════════
+          MODAL: Confirm Reset Password
+      ══════════════════════════════════════ */}
+      {apoderadoToReset && !resetResult && (
+        <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content border-0 shadow-lg">
+              <div className="modal-header bg-warning text-dark">
+                <h5 className="modal-title">🔑 Restablecer contraseña</h5>
+                <button 
+                  type="button" 
+                  className="btn-close" 
+                  disabled={isResetting}
+                  onClick={() => setApoderadoToReset(null)}
+                ></button>
+              </div>
+              <div className="modal-body p-4">
+                <p className="mb-3 fs-5">¿Está seguro de que desea restablecer la contraseña de este apoderado?</p>
+                <div className="card bg-light border-0 p-3 mb-3">
+                  <div className="mb-2">
+                    <strong>Apoderado:</strong> {apoderadoToReset.nombres} {apoderadoToReset.apellidos}
+                  </div>
+                  {apoderadoToReset.dni && (
+                    <div>
+                      <strong>DNI:</strong> {apoderadoToReset.dni}
+                    </div>
+                  )}
+                </div>
+                <div className="alert alert-warning py-2 mb-0">
+                  <small>Esta acción generará una contraseña temporal y obligará al apoderado a cambiarla en su próximo inicio de sesión.</small>
+                </div>
+              </div>
+              <div className="modal-footer bg-light">
+                <button 
+                  type="button" 
+                  className="btn btn-secondary" 
+                  disabled={isResetting}
+                  onClick={() => setApoderadoToReset(null)}
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-warning text-dark fw-bold" 
+                  disabled={isResetting}
+                  onClick={executeResetPassword}
+                >
+                  {isResetting ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Procesando...
+                    </>
+                  ) : (
+                    "Restablecer contraseña"
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════
+          MODAL: Result Reset Password
+      ══════════════════════════════════════ */}
       {showResetModal && resetResult && (
         <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
+            <div className="modal-content border-0 shadow-lg">
               <div className="modal-header bg-success text-white">
                 <h5 className="modal-title">✅ Contraseña Restablecida</h5>
-                <button type="button" className="btn-close btn-close-white" onClick={() => setShowResetModal(false)}></button>
+                <button type="button" className="btn-close btn-close-white" onClick={closeResetResultModal}></button>
               </div>
-              <div className="modal-body text-center">
-                <p>Las nuevas credenciales para <strong>{resetResult.apoderado}</strong> son:</p>
-                <div className="alert alert-info">
-                  <strong>Usuario:</strong> {resetResult.username} <br />
-                  <strong>Contraseña:</strong> {resetResult.password}
+              <div className="modal-body text-center p-4">
+                <div className="mb-3 text-success" style={{ fontSize: '3rem' }}>🔑</div>
+                <p className="fs-5 mb-3 fw-semibold">Contraseña restablecida correctamente</p>
+                <p className="text-muted">Las nuevas credenciales de acceso para <strong>{resetResult?.apoderado}</strong> son:</p>
+                <div className="alert alert-info py-3 my-3">
+                  <div className="mb-2"><strong>Usuario:</strong> <span className="font-monospace">{resetResult?.username}</span></div>
+                  <div><strong>Contraseña temporal:</strong> <span className="font-monospace fw-bold text-danger fs-5">{resetResult?.password}</span></div>
                 </div>
-                <small className="text-danger">⚠️ Por favor, comparta estos datos ahora. La contraseña no se volverá a mostrar.</small>
+                <div className="alert alert-warning py-2 mb-0">
+                  <small className="text-dark">⚠️ Esta contraseña es temporal. El apoderado deberá cambiarla obligatoriamente al iniciar sesión.</small>
+                </div>
               </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-primary" onClick={() => {
-                  navigator.clipboard.writeText(`Usuario: ${resetResult.username}\nContraseña: ${resetResult.password}`);
-                  toast.success("Credenciales copiadas al portapapeles");
-                }}>
-                  📋 Copiar
+              <div className="modal-footer bg-light justify-content-center">
+                <button type="button" className="btn btn-success px-4 fw-semibold" onClick={copyToClipboard}>
+                  📋 Copiar contraseña
                 </button>
-                <button type="button" className="btn btn-secondary" onClick={() => setShowResetModal(false)}>Cerrar</button>
+                <button type="button" className="btn btn-secondary px-4" onClick={closeResetResultModal}>Cerrar</button>
               </div>
             </div>
           </div>

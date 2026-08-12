@@ -94,9 +94,9 @@ export const deleteApoderado = async (id) => {
 };
 
 export const resetPassword = async (id) => {
-  const data = await axiosInstance.post(
+  const response = await axiosInstance.post(
     `/apoderados/${id}/reset_password/`
   );
 
-  return data;
+  return response.data;
 };
