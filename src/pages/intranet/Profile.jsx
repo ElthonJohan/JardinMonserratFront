@@ -3,15 +3,36 @@ import { useAuth } from "../../context/AuthContext";
 import axiosInstance from "../../api/axiosConfig";
 import EditProfileModal from "./EditProfileModal";
 import ChangePasswordModal from "./ChangePasswordModal";
+import { Spinner } from "react-bootstrap";
 
 import "../../styles/Profile.css";
 
+// Iconos vectoriales
+const EditIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+);
+const LockIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+);
+const MailIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+);
+const PhoneIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+);
+const IdIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="7" y1="8" x2="17" y2="8"></line><line x1="7" y1="12" x2="11" y2="12"></line></svg>
+);
+const MapIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+);
+
 const getRelacionLabel = (tipo) => {
   switch (tipo) {
-    case "PADRE": return "👨 Padre";
-    case "MADRE": return "👩 Madre";
-    case "TUTOR": return "🧑 Tutor";
-    case "ABUELO": return "👴 Abuelo";
+    case "PADRE": return "Padre";
+    case "MADRE": return "Madre";
+    case "TUTOR": return "Tutor Legal";
+    case "ABUELO": return "Abuelo/a";
     default: return tipo;
   }
 };
@@ -37,146 +58,144 @@ const Profile = () => {
 
   if (!userData) {
     return (
-      <>
-                <div className="profile-loading">
-          <div className="loading-dot" />
-          <div className="loading-dot" />
-          <div className="loading-dot" />
-          <span>Cargando perfil...</span>
-        </div>
-      </>
+      <div className="profile-loading-container">
+        <Spinner animation="border" variant="primary" />
+        <p className="mt-3 text-muted">Cargando perfil del apoderado...</p>
+      </div>
     );
   }
 
+  const getInitials = () => {
+    const n = userData.nombres?.charAt(0) || "";
+    const a = userData.apellidos?.charAt(0) || "";
+    return `${n}${a}`.toUpperCase() || "AP";
+  };
+
   return (
-    <>
-            <div className="profile-page">
+    <div className="profile-container">
+      {/* HEADER PAGE */}
+      <div className="profile-page-header">
+        <h1>Mi Perfil</h1>
+        <p>Administra tu información personal y revisa los datos de tus representados.</p>
+      </div>
 
-        {/* Header */}
-        <div className="profile-header">
-          <h1>Mi Perfil</h1>
-          <p>Información personal y académica del apoderado.</p>
+      {/* HERO CARD DE USUARIO */}
+      <div className="profile-hero-card">
+        <div className="hero-avatar">
+          {getInitials()}
         </div>
-
-        {/* Hero */}
-        <div className="profile-hero">
-          <div className="profile-avatar">
-            {userData.nombres?.charAt(0)}
-            {userData.apellidos?.charAt(0)}
-          </div>
-          <div className="profile-hero-info">
+        <div className="hero-info">
+          <div className="hero-title-row">
             <h2>{userData.nombres} {userData.apellidos}</h2>
-            <p>{userData.hijos?.length || 0} hijo{userData.hijos?.length !== 1 ? "s" : ""} registrado{userData.hijos?.length !== 1 ? "s" : ""}</p>
-            <span className="profile-role-badge">🎓 {userData.role}</span>
-            <p className="profile-hero-desc">
-              Bienvenido al portal institucional. Desde aquí puede consultar información académica, pagos y datos relacionados a sus hijos.
-            </p>
+            <span className="role-pill">{userData.role || "Apoderado"}</span>
           </div>
+          <p className="hero-desc">
+            Portal Institucional Jardín Montserrat • {userData.hijos?.length || 0} alumno(s) bajo tutela
+          </p>
         </div>
+      </div>
 
-        {/* Stats */}
-        <div className="profile-stats">
-          <div className="stat-card">
-            <div className="stat-icon">👨‍👧‍👦</div>
-            <div className="stat-content">
-              <h4>{userData.hijos?.length || 0}</h4>
-              <span>Hijos registrados</span>
+      {/* GRID DE INFORMACIÓN */}
+      <div className="profile-grid">
+        {/* TARJETA: INFORMACIÓN PERSONAL */}
+        <div className="profile-card">
+          <div className="card-header-flex">
+            <h3>Información Personal</h3>
+            <div className="card-actions-inline">
+              <button className="btn-secondary-action" onClick={() => setShowEditModal(true)}>
+                <EditIcon /> Editar
+              </button>
+              <button className="btn-primary-action" onClick={() => setShowPasswordModal(true)}>
+                <LockIcon /> Contraseña
+              </button>
             </div>
           </div>
-          <div className="stat-card">
-            <div className="stat-icon">🎓</div>
-            <div className="stat-content">
-              <h4>{userData.role}</h4>
-              <span>Rol en el sistema</span>
-            </div>
-          </div>
-        </div>
 
-        {/* Grid */}
-        <div className="profile-grid">
-
-          {/* Información personal */}
-          <div className="profile-card">
-            <div className="profile-card-header">
-              <h3>Información Personal</h3>
-            </div>
-            <div className="profile-card-body">
-              <div className="info-item">
+          <div className="info-list">
+            <div className="info-row">
+              <div className="info-icon"><MailIcon /></div>
+              <div className="info-content">
                 <span className="info-label">Correo electrónico</span>
                 <span className="info-value">{userData.email}</span>
               </div>
-              <div className="info-item">
-                <span className="info-label">Teléfono</span>
-                <span className="info-value">{userData.telefono || "—"}</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Documento DNI</span>
-                <span className="info-value">
-                  <span className="info-dni">🔒 {userData.dni}</span>
-                </span>
-                <span className="info-note">El DNI no puede modificarse.</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Dirección</span>
-                <span className="info-value">{userData.direccion || "—"}</span>
+            </div>
+
+            <div className="info-row">
+              <div className="info-icon"><PhoneIcon /></div>
+              <div className="info-content">
+                <span className="info-label">Teléfono de contacto</span>
+                <span className="info-value">{userData.telefono || "Sin registrar"}</span>
               </div>
             </div>
-            <div className="profile-actions">
-              <button className="btn-edit-profile" onClick={() => setShowEditModal(true)}>
-                ✏️ Editar Perfil
-              </button>
-              <button className="btn-change-password" onClick={() => setShowPasswordModal(true)}>
-                🔑 Cambiar Contraseña
-              </button>
+
+            <div className="info-row">
+              <div className="info-icon"><IdIcon /></div>
+              <div className="info-content">
+                <span className="info-label">Documento de Identidad (DNI)</span>
+                <span className="info-value font-mono">{userData.dni || "—"}</span>
+                <span className="info-subtext">El DNI no puede editarse manualmente.</span>
+              </div>
+            </div>
+
+            <div className="info-row">
+              <div className="info-icon"><MapIcon /></div>
+              <div className="info-content">
+                <span className="info-label">Dirección domiciliaria</span>
+                <span className="info-value">{userData.direccion || "Sin registrar"}</span>
+              </div>
             </div>
           </div>
-
-          {/* Hijos */}
-          <div className="profile-card">
-            <div className="profile-card-header">
-              <h3>Hijos Registrados</h3>
-            </div>
-            {userData.hijos?.length > 0 ? (
-              <div className="student-list">
-                {userData.hijos.map((hijo) => (
-                  <div key={hijo.id} className="student-card">
-                    <div className="student-avatar">👦</div>
-                    <div className="student-info">
-                      <div className="student-code">{hijo.codigo_estudiante}</div>
-                      <div className="student-name">{hijo.nombre}</div>
-                      <div className="student-meta">
-                        <span className="student-relacion">
-                          {getRelacionLabel(hijo.tipo_relacion)}
-                        </span>
-                        {hijo.es_principal && (
-                          <span className="student-principal-badge">Principal</span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="student-empty">
-                📭 No tiene hijos registrados aún.
-              </div>
-            )}
-          </div>
-
         </div>
 
-        <EditProfileModal
-          show={showEditModal}
-          onHide={() => setShowEditModal(false)}
-          userData={userData}
-          onSuccess={fetchProfile}
-        />
-        <ChangePasswordModal
-          show={showPasswordModal}
-          onHide={() => setShowPasswordModal(false)}
-        />
+        {/* TARJETA: HIJOS / REPRESENTADOS */}
+        <div className="profile-card">
+          <div className="card-header-flex">
+            <h3>Estudiantes Asignados</h3>
+            <span className="count-badge">{userData.hijos?.length || 0} Registrados</span>
+          </div>
+
+          {userData.hijos?.length > 0 ? (
+            <div className="students-stack">
+              {userData.hijos.map((hijo) => (
+                <div key={hijo.id} className="student-profile-item">
+                  <div className="student-avatar-circle">
+                    {hijo.nombre?.charAt(0)}
+                  </div>
+                  <div className="student-details-col">
+                    <div className="student-header-line">
+                      <h4 className="student-name">{hijo.nombre}</h4>
+                      {hijo.es_principal && (
+                        <span className="badge-principal">Contacto Principal</span>
+                      )}
+                    </div>
+                    <p className="student-code">Código Estudiantil: <strong>{hijo.codigo_estudiante}</strong></p>
+                    <div className="student-relation-tag">
+                      Relación: {getRelacionLabel(hijo.tipo_relacion)}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="empty-state">
+              <p>No tienes estudiantes vinculados a tu cuenta de apoderado.</p>
+            </div>
+          )}
+        </div>
       </div>
-    </>
+
+      <EditProfileModal
+        show={showEditModal}
+        onHide={() => setShowEditModal(false)}
+        userData={userData}
+        onSuccess={fetchProfile}
+      />
+
+      <ChangePasswordModal
+        show={showPasswordModal}
+        onHide={() => setShowPasswordModal(false)}
+      />
+    </div>
   );
 };
 

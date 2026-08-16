@@ -1,11 +1,32 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../api/axiosConfig";
-import "../../styles/intranetPagos.css"; // Asegúrate de crear este archivo CSS para estilos específicos
 import PagoModal from "./PagoModal";
 import toast from "react-hot-toast";
 import HistorialPagosModal from "./HistorialPagosModal";
 import DetallePagoModal from "./DetallePagoModal";
 import GuiaPagosModal from "./GuiaPagosModal";
+import { Spinner } from "react-bootstrap";
+
+import "../../styles/intranetPagos.css";
+
+// Iconos vectoriales
+const RefreshIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+);
+const HelpIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+);
+const DownloadIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+);
+const CreditCardIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+);
+
+const getNombreMes = (num) => {
+  const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+  return meses[num - 1] || "";
+};
 
 const Payments = () => {
   const [dashboard, setDashboard] = useState(null);
@@ -14,30 +35,15 @@ const Payments = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
 
-  const [expandedDeudas, setExpandedDeudas] = useState(window.innerWidth > 768);
-  const [expandedPagos, setExpandedPagos] = useState(window.innerWidth > 768);
-
-  const [formData, setFormData] = useState({
-    deuda_id: "",
-    metodo_pago: "Yape",
-    numero_operacion: "",
-    comprobante: null,
-  });
   const [showPagoModal, setShowPagoModal] = useState(false);
-
   const [showDetallePago, setShowDetallePago] = useState(false);
-
   const [pagoSeleccionado, setPagoSeleccionado] = useState(null);
-
   const [showHistorialPagos, setShowHistorialPagos] = useState(false);
   const [showGuia, setShowGuia] = useState(false);
 
   const loadDashboard = async (isRefresh = false) => {
-    if (isRefresh) {
-      setRefreshing(true);
-    } else {
-      setLoading(true);
-    }
+    if (isRefresh) setRefreshing(true);
+    else setLoading(true);
 
     try {
       const response = await axiosInstance.get("/pagos/parent/pagos/");
@@ -45,24 +51,18 @@ const Payments = () => {
 
       if (response.data.alumnos && response.data.alumnos.length > 0) {
         if (selectedAlumno) {
-          const updated = response.data.alumnos.find(
-            (a) => a.id === selectedAlumno.id,
-          );
+          const updated = response.data.alumnos.find((a) => a.id === selectedAlumno.id);
           setSelectedAlumno(updated || response.data.alumnos[0]);
         } else {
           setSelectedAlumno(response.data.alumnos[0]);
         }
       }
 
-      if (isRefresh) {
-        toast.success("Información actualizada");
-      }
+      if (isRefresh) toast.success("Información actualizada");
     } catch (err) {
       console.error(err);
       setError("No se pudo cargar la información de pagos.");
-      if (isRefresh) {
-        toast.error("Error al actualizar la información de pagos.");
-      }
+      if (isRefresh) toast.error("Error al actualizar la información de pagos.");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -73,161 +73,49 @@ const Payments = () => {
     loadDashboard(false);
   }, []);
 
-  const getEstadoBadge = (estado) => {
-    switch (estado) {
-      case "APROBADO":
-        return <span className="badge bg-success">✅ Pago Validado</span>;
-
-      case "RECHAZADO":
-        return <span className="badge bg-danger">❌ Pago Rechazado</span>;
-
-      default:
-        return (
-          <span className="badge bg-warning text-dark">
-            ⏳ Pendiente de Validación
-          </span>
-        );
-    }
-  };
-
-  const getNombreMes = (mes) => {
-    const meses = [
-      "Enero",
-      "Febrero",
-      "Marzo",
-      "Abril",
-      "Mayo",
-      "Junio",
-      "Julio",
-      "Agosto",
-      "Septiembre",
-      "Octubre",
-      "Noviembre",
-      "Diciembre",
-    ];
-
-    return meses[mes - 1] || "";
-  };
-
-  const getBadgeProps = (estado) => {
-    switch (estado) {
-      case "APROBADO":
-        return {
-          className: "bg-success",
-          label: "Válido",
-        };
-
-      case "RECHAZADO":
-        return {
-          className: "bg-danger",
-          label: "Rechazado",
-        };
-
-      default:
-        return {
-          className: "bg-warning text-dark",
-          label: "Pendiente",
-        };
-    }
-  };
-
-  const getPriceColor = (estado) => {
-    switch (estado) {
-      case "APROBADO":
-        return "#16a34a"; // Green
-      case "RECHAZADO":
-        return "#dc2626"; // Red
-      default:
-        return "#d97706"; // Dark yellow/orange
-    }
-  };
-
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="loading-box">
-          <div className="spinner"></div>
-          <p>Cargando información de pagos...</p>
-        </div>
+      <div className="payments-loading">
+        <Spinner animation="border" variant="primary" />
+        <p className="mt-3 text-muted">Cargando módulos de pago...</p>
       </div>
     );
   }
 
-  const voucherUrl = pagoSeleccionado?.comprobante_img
-    ? pagoSeleccionado.comprobante_img.startsWith("http")
-      ? pagoSeleccionado.comprobante_img
-      : `http://localhost:8000${pagoSeleccionado.comprobante_img}`
-    : null;
-  console.log("ALUMNO SELECCIONADO:", selectedAlumno);
   if (error || !dashboard) {
-    return <div className="error-box">{error || "Error al cargar datos"}</div>;
+    return <div className="payments-error-card">{error || "Error al cargar datos"}</div>;
   }
+
+  // Deuda principal destacada (la más próxima a vencer)
+  const proximaDeuda = selectedAlumno?.deudas?.[0];
+  const totalPagado = selectedAlumno?.total_pagado || 0;
+  const porcentajeProgreso = selectedAlumno?.porcentaje_progreso || 0;
+
   return (
-    <div className="payments-page">
-      {/* HEADER */}
-      <div className="payments-header">
+    <div className="payments-container">
+      {/* HEADER PRINCIPAL */}
+      <div className="payments-page-header">
         <div>
           <h1>Seguimiento de Pagos</h1>
-          <p>
-            Apoderado:
-            <span> {dashboard.apoderado_nombre}</span>
-          </p>
-          <div className="family-summary">
-            <div className="summary-card">
-              <h4>👨‍👩‍👧‍👦 Hijos</h4>
-
-              <span>{dashboard.cantidad_hijos}</span>
-            </div>
-
-            <div className="summary-card">
-              <h4>💰 Deuda Familiar</h4>
-
-              <span>
-                S/
-                {Number(dashboard.total_pendiente).toFixed(2)}
-              </span>
-            </div>
-          </div>
+          <p>Gestiona las colegiaturas y revisa el historial de transacciones.</p>
         </div>
 
-        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-          <button
-            className="btn btn-success text-white fw-bold d-flex align-items-center gap-2"
-            onClick={() => setShowGuia(true)}
-            style={{ borderRadius: "14px", padding: "12px 20px", boxShadow: "0 4px 10px rgba(59, 130, 246, 0.3)", transition: "0.2s" }}
-            onMouseOver={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
-            onMouseOut={(e) => e.currentTarget.style.transform = "translateY(0)"}
-          >
-            ❓ Ayuda / Guía
+        <div className="header-buttons">
+          <button className="btn-action-light" onClick={() => setShowGuia(true)}>
+            <HelpIcon /> Guía de Pagos
           </button>
-
-          <button
-            className="btn text-white fw-bold d-flex align-items-center gap-2"
-            style={{ borderRadius: "14px", padding: "12px 20px", backgroundColor: "#3b82f6", border: "none", boxShadow: "0 4px 10px rgba(59, 130, 246, 0.3)", transition: "0.2s" }}
-            onClick={() => loadDashboard(true)}
-            disabled={refreshing}
-          >
-            {refreshing ? (
-              <>
-                <div className="btn-spinner"></div>
-                <span>Actualizando...</span>
-              </>
-            ) : (
-              <span className="text-white">🔄 Actualizar Datos</span>
-            )}
+          <button className="btn-action-primary" onClick={() => loadDashboard(true)} disabled={refreshing}>
+            <RefreshIcon /> {refreshing ? "Actualizando..." : "Actualizar"}
           </button>
         </div>
       </div>
 
-      <div className="student-selector">
+      {/* SELECTOR DE ESTUDIANTE */}
+      <div className="student-selector-bar">
         {dashboard.alumnos?.map((alumno) => (
           <button
             key={alumno.id}
-            className={
-              selectedAlumno?.id === alumno.id
-                ? "student-btn active"
-                : "student-btn"
-            }
+            className={`student-tab ${selectedAlumno?.id === alumno.id ? "active" : ""}`}
             onClick={() => setSelectedAlumno(alumno)}
           >
             👦 {alumno.nombre}
@@ -235,239 +123,193 @@ const Payments = () => {
         ))}
       </div>
 
-      {/* BALANCE */}
-      <div className="balance-card">
-        <div className="balance-content">
-          <div>
-            <p className="balance-label">
-              Saldo Pendiente de {selectedAlumno?.nombre}
-            </p>
-
-            <h2 className="balance-amount">
-              S/ {Number(selectedAlumno?.total_pendiente || 0).toFixed(2)}
-            </h2>
+      {/* TOP SUMMARY CARDS GRID */}
+      <div className="payments-top-grid">
+        {/* TARJETA PRÓXIMO VENCIMIENTO / PAGAR AHORA */}
+        <div className={`featured-pay-card ${proximaDeuda ? "has-debt" : "no-debt"}`}>
+          <div className="featured-card-top">
+            <span className={`status-pill ${proximaDeuda ? "overdue" : "success"}`}>
+              {proximaDeuda ? "Acción Requerida" : "Al Día"}
+            </span>
+            <div className="amount-group">
+              <span className="amount-label">Monto a Pagar</span>
+              <h2 className="amount-value">
+                S/ {Number(selectedAlumno?.total_pendiente || 0).toFixed(2)}
+              </h2>
+            </div>
           </div>
 
-          <button className="pay-btn" onClick={() => setShowPagoModal(true)}>
-            Pagar Ahora
-          </button>
+          <div className="featured-card-body">
+            <h3>
+              {proximaDeuda
+                ? `${proximaDeuda.concepto_detail?.nombre || "Colegiatura"} ${
+                    proximaDeuda.mes ? `- ${getNombreMes(proximaDeuda.mes)}` : ""
+                  }`
+                : "Sin pensiones pendientes"}
+            </h3>
+            <p className="student-sub">Estudiante: {selectedAlumno?.nombre}</p>
+
+            {proximaDeuda && (
+              <div className="debt-details-box">
+                <span>Fecha Vencimiento: <strong>{new Date(proximaDeuda.fecha_vencimiento).toLocaleDateString("es-PE")}</strong></span>
+              </div>
+            )}
+          </div>
+
+          <div className="featured-card-actions">
+            <button
+              className="btn-pay-now"
+              onClick={() => setShowPagoModal(true)}
+              disabled={selectedAlumno?.deudas?.length === 0}
+            >
+              Pagar Ahora
+            </button>
+          </div>
+        </div>
+
+        {/* COLUMNA DERECHA: PROGRESO Y MÉTODOS */}
+        <div className="side-summary-stack">
+          {/* TARJETA TOTAL PAGADO */}
+          <div className="summary-card-mini">
+            <div className="mini-card-header">
+              <span>Total Pagado (Ciclo)</span>
+              <span className="check-icon">✓</span>
+            </div>
+            <h3 className="mini-card-amount">S/ {Number(totalPagado).toFixed(2)}</h3>
+            <div className="progress-bar-container">
+              <div
+                className="progress-bar-fill"
+                style={{ width: `${Math.min(porcentajeProgreso, 100)}%` }}
+              ></div>
+            </div>
+            <span className="progress-text">{porcentajeProgreso.toFixed(0)}% Completado</span>
+          </div>
+
+          {/* TARJETA MÉTODOS DISPONIBLES */}
+          <div className="summary-card-mini">
+            <span className="mini-card-title">Métodos de Pago Aceptados</span>
+            <div className="payment-methods-list">
+              <div className="method-item">
+                <CreditCardIcon />
+                <div>
+                  <p className="method-name">Yape / Plin / BCP</p>
+                  <span className="method-sub">Transferencia directa</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* GRID */}
-      <div className="payments-grid">
-        {/* DEUDAS */}
-        <div className="section-card accordion-card">
-          <div
-            className="accordion-header"
-            onClick={() => setExpandedDeudas(!expandedDeudas)}
-          >
-            <h3 className="section-title">📅 Deudas Pendientes</h3>
-            <span className="accordion-icon">{expandedDeudas ? "▲" : "▼"}</span>
+      {/* SECCIÓN DETALLE: CUOTAS Y PAGOS */}
+      <div className="payments-tables-section">
+        <div className="table-card">
+          <div className="table-card-header">
+            <h3>Cuotas del Ciclo Escolar</h3>
           </div>
 
-          {expandedDeudas && (
-            <div className="accordion-content">
-              {selectedAlumno?.deudas?.length === 0 ? (
-                <div className="empty-state">
-                  <div className="emoji">🎉</div>
-                  <p>No tienes deudas pendientes</p>
-                </div>
-              ) : (
-                selectedAlumno?.deudas?.map((deuda) => {
-                  const getNombreMes = (num) => {
-                    const meses = [
-                      "Enero",
-                      "Febrero",
-                      "Marzo",
-                      "Abril",
-                      "Mayo",
-                      "Junio",
-                      "Julio",
-                      "Agosto",
-                      "Septiembre",
-                      "Octubre",
-                      "Noviembre",
-                      "Diciembre",
-                    ];
-                    return meses[num - 1] || "";
-                  };
-
-                  const conceptoNombre =
-                    deuda.concepto_detail?.nombre ||
-                    deuda.concepto_nombre ||
-                    "Concepto";
-                  const mesNombre = deuda.mes
-                    ? ` - ${getNombreMes(deuda.mes)} ${deuda.anio}`
-                    : "";
-                  const alumnoNombre = deuda.alumno_detail
-                    ? `${deuda.alumno_detail.nombres} ${deuda.alumno_detail.apellidos}`.trim()
-                    : deuda.alumno_nombre || selectedAlumno?.nombre;
-
-                  return (
-                    <div key={deuda.id} className="debt-item">
-                      <div className="debt-top">
-                        <div>
-                          <h4 className="debt-title">
-                            {conceptoNombre}
-                            {mesNombre}
-                          </h4>
-
-                          <p className="debt-subtitle">{alumnoNombre}</p>
-
-                          {deuda.detalle_adicional && (
-                            <p className="debt-detail">
-                              {deuda.detalle_adicional}
-                            </p>
-                          )}
+          {selectedAlumno?.deudas?.length === 0 ? (
+            <div className="empty-table-state">
+              <p>🎉 ¡Excelente! No hay cuotas pendientes para este estudiante.</p>
+            </div>
+          ) : (
+            <div className="table-responsive">
+              <table className="custom-payments-table">
+                <thead>
+                  <tr>
+                    <th>CONCEPTO</th>
+                    <th>VENCIMIENTO</th>
+                    <th>MONTO</th>
+                    <th>ESTADO</th>
+                    <th className="text-right">ACCIONES</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {selectedAlumno?.deudas?.map((deuda) => (
+                    <tr key={deuda.id}>
+                      <td>
+                        <div className="concept-cell">
+                          <span className="concept-title">
+                            {deuda.concepto_detail?.nombre || "Cuota"} {deuda.mes ? `- ${getNombreMes(deuda.mes)}` : ""}
+                          </span>
+                          <span className="concept-sub">{deuda.anio ? `Año: ${deuda.anio}` : ""}</span>
                         </div>
+                      </td>
+                      <td className="text-muted">
+                        {new Date(deuda.fecha_vencimiento).toLocaleDateString("es-PE")}
+                      </td>
+                      <td className="font-semibold">
+                        S/ {Number(deuda.saldo_pendiente).toFixed(2)}
+                      </td>
+                      <td>
+                        <span className={`status-pill ${deuda.estado === "VENCIDO" ? "overdue" : "pending"}`}>
+                          {deuda.estado}
+                        </span>
+                      </td>
+                      <td className="text-right">
+                        <button className="btn-table-pay" onClick={() => setShowPagoModal(true)}>
+                          Pagar
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
 
-                        <div>
-                          <div className="debt-price">
-                            S/ {Number(deuda.saldo_pendiente).toFixed(2)}
-                          </div>
+        {/* ÚLTIMAS TRANSACTIONS / HISTORIAL */}
+        <div className="table-card mt-4">
+          <div className="table-card-header">
+            <h3>Historial Reciente de Pagos</h3>
+            <button className="btn-link-action" onClick={() => setShowHistorialPagos(true)}>
+              Ver Historial Completo →
+            </button>
+          </div>
 
-                          <span className="status-badge">{deuda.estado}</span>
-                        </div>
-                      </div>
-
-                      <p className="debt-date">
-                        Vence:{" "}
-                        {new Date(deuda.fecha_vencimiento).toLocaleDateString(
-                          "es-PE",
-                        )}
+          {selectedAlumno?.pagos_recientes?.length === 0 ? (
+            <div className="empty-table-state">
+              <p>No se han registrado reportes de pago recientemente.</p>
+            </div>
+          ) : (
+            <div className="recent-payments-list">
+              {selectedAlumno?.pagos_recientes?.map((pago) => (
+                <div
+                  key={pago.id}
+                  className="recent-payment-row"
+                  onClick={() => {
+                    setPagoSeleccionado(pago);
+                    setShowDetallePago(true);
+                  }}
+                >
+                  <div className="row-main-info">
+                    <span className="payment-origin-badge">
+                      {pago.origen === "ADMINISTRACION" ? "🏫 Caja Presencial" : "📱 App Apoderado"}
+                    </span>
+                    <div>
+                      <h4 className="payment-monto">S/ {Number(pago.monto_total_entregado).toFixed(2)}</h4>
+                      <p className="payment-meta">
+                        {new Date(pago.fecha_pago).toLocaleDateString("es-PE")} • {pago.metodo_pago}
                       </p>
                     </div>
-                  );
-                })
-              )}
-            </div>
-          )}
-        </div>
+                  </div>
 
-        {/* PAGOS */}
-        <div className="section-card accordion-card">
-          <div
-            className="accordion-header"
-            onClick={() => setExpandedPagos(!expandedPagos)}
-          >
-            <h3 className="section-title">💰 Últimos Pagos</h3>
-            <span className="accordion-icon">{expandedPagos ? "▲" : "▼"}</span>
-          </div>
-
-          {expandedPagos && (
-            <div className="accordion-content">
-              <div className="d-flex justify-content-end mb-3">
-                <button
-                  className="btn btn-outline-primary btn-sm"
-                  onClick={() => setShowHistorialPagos(true)}
-                >
-                  📋 Ver Historial Completo
-                </button>
-              </div>
-
-
-              {selectedAlumno?.pagos_recientes.length === 0 ? (
-                <div className="empty-state">
-                  <p>No hay pagos registrados</p>
+                  <div className="row-status-col">
+                    <span className={`status-pill ${
+                      pago.estado === "APROBADO" ? "approved" : pago.estado === "RECHAZADO" ? "rejected" : "pending"
+                    }`}>
+                      {pago.estado}
+                    </span>
+                  </div>
                 </div>
-              ) : (
-                selectedAlumno?.pagos_recientes?.map((pago) => {
-                  const badge = getBadgeProps(pago.estado);
-
-                  return (
-                    <div
-                      key={pago.id}
-                      className="payment-item"
-                      style={{
-                        cursor: "pointer",
-                        transition: "all .2s ease",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = "translateY(-2px)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = "translateY(0)";
-                      }}
-                      onClick={() => {
-                        setPagoSeleccionado(pago);
-                        setShowDetallePago(true);
-                      }}
-                    >
-                      <div>
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                            flexWrap: "wrap",
-                            marginBottom: "4px",
-                          }}
-                        >
-                          <h4 className="payment-title" style={{ margin: 0 }}>
-                            {pago.origen === "ADMINISTRACION"
-                              ? "🏫 Pago registrado en Administración"
-                              : "📱 Pago reportado"}
-                          </h4>
-
-                          <span className={`badge ${badge.className}`}>
-                            {badge.label}
-                          </span>
-
-                          <span
-                            className={`badge ${pago.origen === "ADMINISTRACION"
-                              ? "bg-info text-dark"
-                              : "bg-primary"
-                              }`}
-                          >
-                            {pago.origen === "ADMINISTRACION"
-                              ? "🏫 Administración"
-                              : "👤 Apoderado"}
-                          </span>
-                        </div>
-
-                        <p className="payment-date" style={{ margin: 0 }}>
-                          {new Date(pago.fecha_pago).toLocaleDateString(
-                            "es-PE",
-                          )}
-                          {" • "}
-                          {pago.metodo_pago}
-                        </p>
-
-                        {pago.numero_operacion && (
-                          <p
-                            className="payment-op"
-                            style={{ margin: "2px 0 0 0" }}
-                          >
-                            Op. {pago.numero_operacion}
-                          </p>
-                        )}
-
-                        {pago.estado === "RECHAZADO" && pago.motivo_rechazo && (
-                          <p
-                            className="payment-op text-danger fw-semibold"
-                            style={{ margin: "4px 0 0 0" }}
-                          >
-                            Motivo: {pago.motivo_rechazo}
-                          </p>
-                        )}
-                      </div>
-
-                      <div
-                        className="payment-price"
-                        style={{ color: getPriceColor(pago.estado) }}
-                      >
-                        + S/ {Number(pago.monto_total_entregado).toFixed(2)}
-                      </div>
-                    </div>
-                  );
-                })
-              )}
+              ))}
             </div>
           )}
         </div>
       </div>
 
+      {/* MODALES */}
       <PagoModal
         show={showPagoModal}
         onHide={() => setShowPagoModal(false)}
@@ -487,9 +329,7 @@ const Payments = () => {
         pagos={selectedAlumno?.historial_pagos || []}
         onVerDetalle={(pago) => {
           setPagoSeleccionado(pago);
-
           setShowHistorialPagos(false);
-
           setShowDetallePago(true);
         }}
       />
