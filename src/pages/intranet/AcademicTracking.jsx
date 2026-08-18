@@ -169,7 +169,7 @@ const AcademicTracking = () => {
       {/* HEADER TOP BAR */}
       <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
         <div>
-          <h4 className="fw-bold text-dark mb-1">Academic Performance</h4>
+          <h4 className="fw-bold text-dark mb-1">Seguimiento Académico</h4>
           <p className="text-muted small mb-0">
             Seguimiento de rendimiento académico y observaciones pedagógicas por asignatura.
           </p>
@@ -274,7 +274,8 @@ const AcademicTracking = () => {
 
           {/* DETAILED SUBJECTS SECTION */}
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <h6 className="fw-bold text-dark mb-0">Detailed Subjects & Competencies</h6>
+            <h6 className="fw-bold text-dark mb-0">
+Temas y competencias detallados</h6>
           </div>
 
           {loadingLibreta ? (
@@ -344,7 +345,8 @@ const AcademicTracking = () => {
           {/* APRECIACIÓN PEDAGÓGICA (Comentario del Profesor) */}
           {libreta && libreta.apreciacion && (
             <div className="card border-0 shadow-sm rounded-3 p-3 bg-white mb-4">
-              <h6 className="fw-bold text-dark mb-2">Teacher's Pedagogical Feedback</h6>
+              <h6 className="fw-bold text-dark mb-2">Retroalimentación pedagógica del docente
+</h6>
               <div className="p-3 bg-light rounded-3 text-secondary extra-small border-start border-3 border-primary">
                 "{libreta.apreciacion}"
               </div>

@@ -91,7 +91,7 @@ const Dashboard = () => {
       {/* BANNER / WELCOME HEADER */}
       <div className="welcome-header">
         <div>
-          <h1>Welcome Back, {data.apoderado_nombre?.split(' ')[0]}</h1>
+          <h1>Bienvenido de nuevo, {data.apoderado_nombre?.split(' ')[0]}</h1>
           <p>Aquí tienes el resumen del progreso académico y tareas administrativas de tus hijos.</p>
         </div>
         <div className="header-actions">
