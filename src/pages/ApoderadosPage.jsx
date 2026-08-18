@@ -12,6 +12,7 @@ import ApoderadoTable from "../components/apoderados/ApoderadoTable.jsx";
 import { AppNavbar, Loading } from "../components/shared";
 import { Modal } from "bootstrap";
 import toast from "react-hot-toast";
+import "../styles/MatriculasPage.css";
 
 export default function ApoderadosPage() {
   const [apoderados, setApoderados] = useState([]);
@@ -21,6 +22,8 @@ export default function ApoderadosPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showResetModal, setShowResetModal] = useState(false);
   const [resetResult, setResetResult] = useState(null);
+  const [apoderadoToReset, setApoderadoToReset] = useState(null);
+  const [isResetting, setIsResetting] = useState(false);
 
   const loadData = async () => {
     setLoading(true);
@@ -81,35 +84,54 @@ export default function ApoderadosPage() {
     }
   };
 
-  const handleResetPassword = async (apoderado) => {
+  const handleResetPassword = (apoderado) => {
+    setApoderadoToReset(apoderado);
+    setResetResult(null);
+  };
 
-    if (
-      !window.confirm(
-        `¿Desea restablecer la contraseña de ${apoderado.nombres} ${apoderado.apellidos}?`
-      )
-    ) {
-      return;
-    }
+  const executeResetPassword = async () => {
+    if (!apoderadoToReset || isResetting) return;
 
+    setIsResetting(true);
     try {
-
-      const data = await resetPassword(apoderado.id);
-
-      setResetResult(data);
-
+      const result = await resetPassword(apoderadoToReset.id);
+      setResetResult(result);
       setShowResetModal(true);
-
+      setApoderadoToReset(null);
       toast.success("Contraseña restablecida correctamente");
-
     } catch (error) {
-
-      toast.error(
-        error.response?.data?.detail ||
-        "No se pudo restablecer la contraseña."
-      );
-
+      console.error(error);
+      const status = error.response?.status;
+      const detail = error.response?.data?.detail;
+      
+      let message = "No se pudo restablecer la contraseña. Inténtalo nuevamente.";
+      if (status === 401) {
+        message = "Tu sesión ha expirado. Inicia sesión nuevamente.";
+      } else if (status === 403) {
+        message = "No tienes permisos para restablecer contraseñas.";
+      } else if (status === 404) {
+        message = "Este apoderado no tiene una cuenta de acceso asociada.";
+      } else if (status === 500) {
+        message = "No se pudo restablecer la contraseña. Inténtalo nuevamente.";
+      } else if (detail) {
+        message = detail;
+      }
+      toast.error(message);
+    } finally {
+      setIsResetting(false);
     }
+  };
 
+  const closeResetResultModal = () => {
+    setShowResetModal(false);
+    setResetResult(null);
+  };
+
+  const copyToClipboard = () => {
+    if (resetResult?.password) {
+      navigator.clipboard.writeText(resetResult.password);
+      toast.success("Contraseña copiada");
+    }
   };
 
   const filteredApoderados = useMemo(() => {
@@ -127,37 +149,55 @@ export default function ApoderadosPage() {
   return (
     <>
       <AppNavbar />
-      <div className="container container-custom mt-4">
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h1 className="text-2xl font-bold">👥 Gestión de Apoderados</h1>
-          <button className="btn btn-primary shadow-sm" onClick={() => openModal()}>
-            + Nuevo Apoderado
-          </button>
-        </div>
+      <div className="matriculas-container">
+        <div className="container-matriculas">
+          {/* ─── HEADER ─── */}
+          <div className="matriculas-header">
+            <div className="matriculas-header-top">
+              <h1>👥 Gestión de Apoderados</h1>
+            </div>
+            <p>Administra los datos de los padres y tutores registrados en el sistema.</p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button className="btn-nueva-matricula" onClick={() => openModal()}>
+                ➕ Nuevo Apoderado
+              </button>
+            </div>
+          </div>
 
-        <div className="card shadow-sm mb-4 border-0">
-          <div className="card-body bg-light rounded">
-            <div className="row align-items-center">
-              <div className="col-md-8">
-                <div className="input-group">
-                  <span className="input-group-text bg-white border-end-0">🔍</span>
-                  <input
-                    type="text"
-                    className="form-control border-start-0 ps-0"
-                    placeholder="Buscar por nombre, apellidos, DNI o email..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
+          {/* ─── SEARCH & STATS SECTION ─── */}
+          <div className="matriculas-search-section">
+            <div className="search-card">
+              <label>Buscar Apoderado</label>
+              <div className="search-input-wrapper">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Buscar por nombre, apellidos, DNI o email..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{ paddingLeft: '40px' }}
+                />
               </div>
-              <div className="col-md-4 text-md-end mt-3 mt-md-0">
-                <span className="text-muted small">
-                  Total: <strong>{filteredApoderados.length}</strong> encontrados
+            </div>
+
+            <div className="stats-card">
+              <div className="stats-card-content">
+                <div className="stats-card-text">
+                  <span className="stats-label">Total Apoderados</span>
+                  <div className="stats-number">{apoderados.length}</div>
+                </div>
+                <div className="stats-icon">👥</div>
+              </div>
+              <div className="stats-badges">
+                <span className="stats-badge active">
+                   Encontrados: {filteredApoderados.length}
                 </span>
               </div>
             </div>
           </div>
-        </div>
+
+          <div className="table-container">
+            <div className="table-wrapper">
 
         {loading ? (
           <Loading message="Cargando apoderados..." />
@@ -167,8 +207,11 @@ export default function ApoderadosPage() {
             onEdit={openModal}
             onDelete={handleDelete}
             onResetPassword={handleResetPassword}
+            tableClassName="matriculas-table"
           />
         )}
+        </div>
+      </div>
 
         {/* Modal de Creación/Edición */}
         <div className="modal fade" id="apoderadoModal" tabIndex="-1" aria-hidden="true">
@@ -192,6 +235,105 @@ export default function ApoderadosPage() {
           </div>
         </div>
       </div>
+      </div>
+      {/* ══════════════════════════════════════
+          MODAL: Reset Password
+      ══════════════════════════════════════ */}
+      {/* ══════════════════════════════════════
+          MODAL: Confirm Reset Password
+      ══════════════════════════════════════ */}
+      {apoderadoToReset && !resetResult && (
+        <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content border-0 shadow-lg">
+              <div className="modal-header bg-warning text-dark">
+                <h5 className="modal-title">🔑 Restablecer contraseña</h5>
+                <button 
+                  type="button" 
+                  className="btn-close" 
+                  disabled={isResetting}
+                  onClick={() => setApoderadoToReset(null)}
+                ></button>
+              </div>
+              <div className="modal-body p-4">
+                <p className="mb-3 fs-5">¿Está seguro de que desea restablecer la contraseña de este apoderado?</p>
+                <div className="card bg-light border-0 p-3 mb-3">
+                  <div className="mb-2">
+                    <strong>Apoderado:</strong> {apoderadoToReset.nombres} {apoderadoToReset.apellidos}
+                  </div>
+                  {apoderadoToReset.dni && (
+                    <div>
+                      <strong>DNI:</strong> {apoderadoToReset.dni}
+                    </div>
+                  )}
+                </div>
+                <div className="alert alert-warning py-2 mb-0">
+                  <small>Esta acción generará una contraseña temporal y obligará al apoderado a cambiarla en su próximo inicio de sesión.</small>
+                </div>
+              </div>
+              <div className="modal-footer bg-light">
+                <button 
+                  type="button" 
+                  className="btn btn-secondary" 
+                  disabled={isResetting}
+                  onClick={() => setApoderadoToReset(null)}
+                >
+                  Cancelar
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-warning text-dark fw-bold" 
+                  disabled={isResetting}
+                  onClick={executeResetPassword}
+                >
+                  {isResetting ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                      Procesando...
+                    </>
+                  ) : (
+                    "Restablecer contraseña"
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════
+          MODAL: Result Reset Password
+      ══════════════════════════════════════ */}
+      {showResetModal && resetResult && (
+        <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content border-0 shadow-lg">
+              <div className="modal-header bg-success text-white">
+                <h5 className="modal-title">✅ Contraseña Restablecida</h5>
+                <button type="button" className="btn-close btn-close-white" onClick={closeResetResultModal}></button>
+              </div>
+              <div className="modal-body text-center p-4">
+                <div className="mb-3 text-success" style={{ fontSize: '3rem' }}>🔑</div>
+                <p className="fs-5 mb-3 fw-semibold">Contraseña restablecida correctamente</p>
+                <p className="text-muted">Las nuevas credenciales de acceso para <strong>{resetResult?.apoderado}</strong> son:</p>
+                <div className="alert alert-info py-3 my-3">
+                  <div className="mb-2"><strong>Usuario:</strong> <span className="font-monospace">{resetResult?.username}</span></div>
+                  <div><strong>Contraseña temporal:</strong> <span className="font-monospace fw-bold text-danger fs-5">{resetResult?.password}</span></div>
+                </div>
+                <div className="alert alert-warning py-2 mb-0">
+                  <small className="text-dark">⚠️ Esta contraseña es temporal. El apoderado deberá cambiarla obligatoriamente al iniciar sesión.</small>
+                </div>
+              </div>
+              <div className="modal-footer bg-light justify-content-center">
+                <button type="button" className="btn btn-success px-4 fw-semibold" onClick={copyToClipboard}>
+                  📋 Copiar contraseña
+                </button>
+                <button type="button" className="btn btn-secondary px-4" onClick={closeResetResultModal}>Cerrar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

@@ -227,7 +227,6 @@
   box-shadow: var(--shadow-card);
   border: 1px solid var(--surface-container);
   overflow: hidden;
-  margin-bottom: 20px;
 }
 
 .table-wrapper {

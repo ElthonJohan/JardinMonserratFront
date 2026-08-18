@@ -1,8 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../../api/axiosConfig';
-import '../../styles/dashboard.css';
 import { Spinner } from 'react-bootstrap';
 import GuiaDashboardModal from './GuiaDashboardModal';
+import '../../styles/dashboard.css';
+
+// Iconos vectoriales
+const StudentIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+);
+const DebtIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+);
+const GradeIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+);
+const HelpIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+);
 
 const Dashboard = () => {
   const [data, setData] = useState(null);
@@ -29,250 +43,203 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
-        <div className="text-center">
-          <Spinner animation="border" variant="primary" />
-          <p className="mt-3 text-muted">Cargando información del panel...</p>
-        </div>
+      <div className="loader-container">
+        <Spinner animation="border" variant="primary" />
+        <p className="mt-3 text-muted">Cargando información del panel...</p>
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="container mt-5">
-        <div className="alert alert-danger shadow-sm" role="alert">
-          <h4 className="alert-heading">⚠️ Error</h4>
-          <p>{error || 'No se pudieron cargar los datos del dashboard.'}</p>
-          <hr />
-          <button className="btn btn-outline-danger btn-sm" onClick={fetchDashboardData}>
-            Reintentar
-          </button>
-        </div>
+      <div className="error-card">
+        <h4>⚠️ Error de Carga</h4>
+        <p>{error || 'No se pudieron cargar los datos del dashboard.'}</p>
+        <button className="retry-btn" onClick={fetchDashboardData}>
+          Reintentar
+        </button>
       </div>
     );
   }
 
-  // Cálculos estadísticos reales
-  const totalPagosReportados = data.alumnos.reduce(
-    (acc, al) => acc + (al.pagos_recientes?.length || 0),
-    0
-  );
-
-  const totalDeudasPendientes = data.alumnos.reduce(
-    (acc, al) => acc + (al.deudas?.length || 0),
-    0
-  );
-
-  // Recopilar y ordenar pagos recientes de todos los alumnos
+  // Recopilar y ordenar pagos recientes
   const recentPayments = [];
   data.alumnos.forEach((al) => {
     if (al.pagos_recientes) {
       al.pagos_recientes.forEach((pago) => {
-        recentPayments.push({
-          ...pago,
-          alumno_nombre: al.nombre,
-        });
+        recentPayments.push({ ...pago, alumno_nombre: al.nombre });
       });
     }
   });
 
-  // Ordenar de más reciente a más antiguo
   recentPayments.sort((a, b) => new Date(b.fecha_pago) - new Date(a.fecha_pago));
   const topRecentPayments = recentPayments.slice(0, 5);
 
-  const currentYear = new Date().getFullYear();
-
-  const getStatusIcon = (estado) => {
+  const getStatusBadge = (estado) => {
     switch (estado) {
       case 'APROBADO':
-        return '✅';
+        return <span className="status-badge approved">Aprobado</span>;
       case 'RECHAZADO':
-        return '❌';
+        return <span className="status-badge rejected">Rechazado</span>;
       default:
-        return '⏳';
-    }
-  };
-
-  const getStatusLabel = (pago) => {
-    switch (pago.estado) {
-      case 'APROBADO':
-        return 'Aprobado';
-      case 'RECHAZADO':
-        return `Rechazado${pago.motivo_rechazo ? `: ${pago.motivo_rechazo}` : ''}`;
-      default:
-        return 'Pendiente de validación';
-    }
-  };
-
-  const getStatusClass = (estado) => {
-    switch (estado) {
-      case 'APROBADO':
-        return 'text-success fw-bold';
-      case 'RECHAZADO':
-        return 'text-danger fw-bold';
-      default:
-        return 'text-warning fw-bold';
+        return <span className="status-badge pending">Pendiente</span>;
     }
   };
 
   return (
-    <div className="dashboard-page">
-      {/* HEADER */}
-      <div className="dashboard-header d-flex justify-content-between align-items-center flex-wrap gap-3">
-        <div className="dashboard-title">
-          <h1>Dashboard</h1>
-          <p className="mb-0">
-            Bienvenido, <strong>{data.apoderado_nombre}</strong>. Aquí tienes el resumen financiero y académico de tu familia.
-          </p>
+    <div className="dashboard-container">
+      {/* BANNER / WELCOME HEADER */}
+      <div className="welcome-header">
+        <div>
+          <h1>Welcome Back, {data.apoderado_nombre?.split(' ')[0]}</h1>
+          <p>Aquí tienes el resumen del progreso académico y tareas administrativas de tus hijos.</p>
         </div>
-
-        <div className="d-flex align-items-center gap-3 flex-wrap">
-          <button
-            className="btn btn-success text-white fw-bold d-flex align-items-center gap-2"
-            onClick={() => setShowGuia(true)}
-            style={{ borderRadius: "14px", padding: "12px 20px", border: "none", boxShadow: "0 4px 10px rgba(59, 130, 246, 0.3)", transition: "0.2s" }}
-            onMouseOver={(e) => e.currentTarget.style.transform = "translateY(-2px)"}
-            onMouseOut={(e) => e.currentTarget.style.transform = "translateY(0)"}
-          >
-            ❓ Ayuda / Guía
+        <div className="header-actions">
+          <button className="help-btn" onClick={() => setShowGuia(true)}>
+            <HelpIcon />
+            <span>Ayuda / Guía</span>
           </button>
-          <div className="dashboard-date">
-            📅 {new Date().toLocaleDateString('es-PE')}
-          </div>
         </div>
       </div>
 
-      {/* STATS */}
-      <div className="stats-grid">
-        {/* CARD 1 */}
-        <div className="stat-card card-blue">
-          <div className="stat-icon blue-icon">👨‍🎓</div>
-          <div className="stat-content">
-            <p className="stat-title">Hijos Registrados</p>
-            <h2 className="stat-value">{data.cantidad_hijos}</h2>
-            <p className="stat-description">Estudiantes bajo tu tutela</p>
-          </div>
-        </div>
-
-        {/* CARD 2 */}
-        <div className="stat-card card-green">
-          <div className="stat-icon green-icon">💰</div>
-          <div className="stat-content">
-            <p className="stat-title">Pagos Reportados</p>
-            <h2 className="stat-value">{totalPagosReportados}</h2>
-            <p className="stat-description">Transacciones registradas</p>
-          </div>
-        </div>
-
-        {/* CARD 3 */}
-        <div className="stat-card card-orange">
-          <div className="stat-icon orange-icon">📄</div>
-          <div className="stat-content">
-            <p className="stat-title">Deuda Pendiente</p>
-            <h2 className="stat-value">S/ {data.total_pendiente.toFixed(2)}</h2>
-            <p className="stat-description">{totalDeudasPendientes} concepto(s) por regularizar</p>
-          </div>
-        </div>
-
-        {/* CARD 4 */}
-        <div className="stat-card card-purple">
-          <div className="stat-icon purple-icon">🏫</div>
-          <div className="stat-content">
-            <p className="stat-title">Año Escolar</p>
-            <h2 className="stat-value">{currentYear}</h2>
-            <p className="stat-description">Gestión académica activa</p>
-          </div>
-        </div>
-      </div>
-
-      {/* GRID */}
-      <div className="dashboard-grid">
-        {/* ACTIVIDADES - PAGOS RECIENTES */}
-        <div className="dashboard-panel">
-          <h3 className="panel-title">Pagos Reportados Recientemente</h3>
-
-          {topRecentPayments.length === 0 ? (
-            <div className="text-center py-5 text-muted">
-              <p>No tienes transacciones registradas recientemente.</p>
+      {/* TOP KPI CARDS */}
+      <div className="kpi-grid">
+        {/* CARD 1: Hijos Registrados */}
+        <div className="kpi-card border-indigo">
+          <div className="kpi-top">
+            <div className="kpi-icon-bg indigo">
+              <StudentIcon />
             </div>
-          ) : (
-            topRecentPayments.map((pago) => (
-              <div key={pago.id} className="activity-item">
-                <div className="activity-icon">
-                  {getStatusIcon(pago.estado)}
-                </div>
-
-                <div>
-                  <h4 className="activity-title">
-                    Pago de S/ {parseFloat(pago.monto_total_entregado).toFixed(2)}
-                  </h4>
-
-                  <p className="activity-text">
-                    Alumno: <strong>{pago.alumno_nombre}</strong> <br />
-                    Método: {pago.metodo_pago} {pago.numero_operacion ? `• Op: ${pago.numero_operacion}` : ''} <br />
-                    <span className={getStatusClass(pago.estado)}>
-                      {getStatusLabel(pago)}
-                    </span>
-                  </p>
-
-                  <p className="activity-time">
-                    {new Date(pago.fecha_pago).toLocaleDateString('es-PE')} {new Date(pago.fecha_pago).toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}
-                  </p>
-                </div>
-              </div>
-            ))
-          )}
+            <span className="status-pill active">Activo</span>
+          </div>
+          <div className="kpi-body">
+            <span className="kpi-title">Alumnos Matriculados</span>
+            <h2 className="kpi-value">{data.cantidad_hijos}</h2>
+          </div>
         </div>
 
-        {/* STATUS POR HIJO */}
-        <div className="dashboard-panel">
-          <h3 className="panel-title">Estado de Cuenta por Estudiante</h3>
-
-          {data.alumnos.length === 0 ? (
-            <div className="text-center py-5 text-muted">
-              <p>No hay alumnos registrados.</p>
+        {/* CARD 2: Deuda Pendiente */}
+        <div className="kpi-card border-red">
+          <div className="kpi-top">
+            <div className="kpi-icon-bg red">
+              <DebtIcon />
             </div>
-          ) : (
-            data.alumnos.map((alumno) => {
-              const progress = alumno.porcentaje_progreso ?? 100;
-              const pendingDeudasCount = alumno.deudas?.length || 0;
-              return (
-                <div key={alumno.id} className="payment-status">
-                  <div className="payment-top">
-                    <span className="payment-name fw-bold">
-                      {alumno.nombre}
-                    </span>
-                    <span className={`payment-percent fw-semibold ${progress === 100 ? 'text-success' : 'text-warning'}`}>
-                      {progress.toFixed(0)}% pagado
-                    </span>
-                  </div>
+            {data.total_pendiente > 0 ? (
+              <span className="status-pill warning">Acción Requerida</span>
+            ) : (
+              <span className="status-pill active">Al Día</span>
+            )}
+          </div>
+          <div className="kpi-body">
+            <span className="kpi-title">Deuda Pendiente</span>
+            <h2 className="kpi-value">S/ {data.total_pendiente.toFixed(2)}</h2>
+          </div>
+        </div>
 
-                  <div className="small text-muted mb-2">
-                    Código: {alumno.codigo} • Pagado: <strong>S/ {alumno.total_pagado.toFixed(2)}</strong> de <strong>S/ {alumno.total_monto.toFixed(2)}</strong>
-                    {pendingDeudasCount > 0 && (
-                      <span className="text-danger ms-1">
-                        (Pendiente: S/ {alumno.total_pendiente.toFixed(2)})
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="progress-bar" style={{ height: '8px' }}>
-                    <div
-                      className={`progress-fill ${progress === 100 ? 'fill-green' : 'fill-orange'}`}
-                      style={{ width: `${progress}%` }}
-                    ></div>
-                  </div>
-                </div>
-              );
-            })
-          )}
+        {/* CARD 3: Año Escolar / Estado */}
+        <div className="kpi-card border-blue">
+          <div className="kpi-top">
+            <div className="kpi-icon-bg blue">
+              <GradeIcon />
+            </div>
+            <span className="status-pill info">Ciclo Activo</span>
+          </div>
+          <div className="kpi-body">
+            <span className="kpi-title">Año Académico</span>
+            <h2 className="kpi-value">{new Date().getFullYear()}</h2>
+          </div>
         </div>
       </div>
 
-      <GuiaDashboardModal 
-        show={showGuia} 
-        onHide={() => setShowGuia(false)} 
+      {/* CONTENT GRID: PERFILES DE ESTUDIANTES + HISTORIAL */}
+      <div className="dashboard-content-grid">
+        {/* COLUMNA IZQUIERDA: Perfiles de los Hijos */}
+        <div className="panel-section">
+          <div className="panel-header">
+            <h3>Perfil de los Estudiantes</h3>
+          </div>
+
+          <div className="students-list">
+            {data.alumnos.length === 0 ? (
+              <p className="empty-msg">No hay alumnos asignados a esta cuenta.</p>
+            ) : (
+              data.alumnos.map((alumno) => {
+                const progress = alumno.porcentaje_progreso ?? 100;
+                return (
+                  <div key={alumno.id} className="student-card">
+                    <div className="student-info-main">
+                      <div className="student-avatar">
+                        {alumno.nombre.charAt(0)}
+                      </div>
+                      <div className="student-details">
+                        <div className="student-name-row">
+                          <h4>{alumno.nombre}</h4>
+                          <span className={`standing-pill ${progress === 100 ? 'good' : 'due'}`}>
+                            {progress === 100 ? 'Al Día' : 'Pago Pendiente'}
+                          </span>
+                        </div>
+                        <p className="student-sub">Código: {alumno.codigo}</p>
+                      </div>
+                    </div>
+
+                    <div className="student-progress-section">
+                      <div className="progress-labels">
+                        <span>Pensiones Pagadas</span>
+                        <span className="percent-num">{progress.toFixed(0)}%</span>
+                      </div>
+                      <div className="progress-bar-bg">
+                        <div
+                          className={`progress-bar-fill ${progress === 100 ? 'green' : 'red'}`}
+                          style={{ width: `${progress}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+
+        {/* COLUMNA DERECHA: Actividad / Pagos Recientes */}
+        <div className="panel-section">
+          <div className="panel-header">
+            <h3>Reportados Recientemente</h3>
+          </div>
+
+          <div className="activity-feed">
+            {topRecentPayments.length === 0 ? (
+              <p className="empty-msg">No hay transacciones registradas.</p>
+            ) : (
+              topRecentPayments.map((pago) => (
+                <div key={pago.id} className="activity-item">
+                  <div className="activity-icon-container">
+                    <DebtIcon />
+                  </div>
+                  <div className="activity-details">
+                    <div className="activity-title-row">
+                      <p className="activity-title">
+                        S/ {parseFloat(pago.monto_total_entregado).toFixed(2)} — {pago.alumno_nombre}
+                      </p>
+                      {getStatusBadge(pago.estado)}
+                    </div>
+                    <p className="activity-sub">
+                      Método: {pago.metodo_pago} {pago.numero_operacion ? `• Op: ${pago.numero_operacion}` : ''}
+                    </p>
+                    <span className="activity-date">
+                      {new Date(pago.fecha_pago).toLocaleDateString('es-PE')}
+                    </span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+
+      <GuiaDashboardModal
+        show={showGuia}
+        onHide={() => setShowGuia(false)}
       />
     </div>
   );
