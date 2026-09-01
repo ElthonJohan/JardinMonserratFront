@@ -458,7 +458,7 @@ export default function MatrizNotasPage() {
                         </th>
                       ))}
                       <th className="py-3 ps-3 text-gray-800 uppercase fw-bold border-0" style={{ width: '30%' }}>
-                        Apreciación del Docente
+                        Conclusión Descriptiva
                       </th>
                     </tr>
                   </thead>
