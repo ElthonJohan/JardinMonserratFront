@@ -37,7 +37,8 @@ export default function MatrizNotasPage() {
 
   // Calificaciones y apreciaciones vigentes (estado de edición)
   const [grades, setGrades] = useState({}); // { [alumnoId]: { [competenciaId]: 'A' } }
-  const [comments, setComments] = useState({}); // { [alumnoId]: { id: X, comentario: '...' } }
+  const [comments, setComments] = useState({}); // { [alumnoId]: { [areaId]: { id: X, comentario: '...' } } }
+  const [graders, setGraders] = useState({}); // { [alumnoId]: { [competenciaId]: 'Nombre Docente' } }
 
   // Respaldos originales (para saber si hay cambios sin guardar)
   const [originalGrades, setOriginalGrades] = useState({});
@@ -160,9 +161,13 @@ export default function MatrizNotasPage() {
         const listCalificaciones = Array.isArray(resCalificaciones) ? resCalificaciones : resCalificaciones.results || [];
 
         const loadedGrades = {};
+        const loadedGraders = {};
         listCalificaciones.forEach(c => {
           if (!loadedGrades[c.alumno]) loadedGrades[c.alumno] = {};
+          if (!loadedGraders[c.alumno]) loadedGraders[c.alumno] = {};
+          
           loadedGrades[c.alumno][c.competencia] = c.valor;
+          loadedGraders[c.alumno][c.competencia] = c.docente_nombre;
         });
 
         // Cargar apreciaciones guardadas
@@ -171,12 +176,14 @@ export default function MatrizNotasPage() {
 
         const loadedComments = {};
         listApreciaciones.forEach(a => {
-          loadedComments[a.alumno] = { id: a.id, comentario: a.comentario };
+          if (!loadedComments[a.alumno]) loadedComments[a.alumno] = {};
+          loadedComments[a.alumno][a.area] = { id: a.id, comentario: a.comentario, docente: a.docente_nombre };
         });
 
         // Inicializar estados principales
         setGrades(loadedGrades);
         setComments(loadedComments);
+        setGraders(loadedGraders);
 
         // Respaldar copias originales
         setOriginalGrades(JSON.parse(JSON.stringify(loadedGrades)));
@@ -219,7 +226,10 @@ export default function MatrizNotasPage() {
       ...prev,
       [alumnoId]: {
         ...(prev[alumnoId] || {}),
-        comentario: val
+        [selectedAreaId]: {
+          ...(prev[alumnoId]?.[selectedAreaId] || {}),
+          comentario: val
+        }
       }
     }));
   };
@@ -238,7 +248,9 @@ export default function MatrizNotasPage() {
       Object.keys(grades).forEach(alumnoId => {
         Object.keys(grades[alumnoId]).forEach(competenciaId => {
           const valor = grades[alumnoId][competenciaId];
-          if (valor && valor !== '-') {
+          const originalValor = originalGrades[alumnoId]?.[competenciaId];
+
+          if (valor && valor !== '-' && valor !== originalValor) {
             payloadCalificaciones.push({
               alumno_id: Number(alumnoId),
               competencia_id: Number(competenciaId),
@@ -255,28 +267,37 @@ export default function MatrizNotasPage() {
       }
 
       // 3. Enviar apreciaciones
-      const apreciacionPromises = Object.keys(comments).map(async (alumnoId) => {
-        const item = comments[alumnoId];
-        const commentText = (item.comentario || '').trim();
+      const apreciacionPromises = [];
+      Object.keys(comments).forEach(alumnoId => {
+        Object.keys(comments[alumnoId]).forEach(areaId => {
+          const item = comments[alumnoId][areaId];
+          const originalItem = originalComments[alumnoId]?.[areaId] || {};
+          const commentText = (item.comentario || '').trim();
+          const originalText = (originalItem.comentario || '').trim();
 
-        if (item.id) {
-          // Si ya existe
-          return updateApreciacion(item.id, {
-            comentario: commentText,
-            alumno: Number(alumnoId),
-            periodo_evaluacion: Number(selectedPeriodo)
-          });
-        } else if (commentText) {
-          // Si es nuevo y tiene texto
-          return createApreciacion({
-            comentario: commentText,
-            alumno: Number(alumnoId),
-            periodo_evaluacion: Number(selectedPeriodo)
-          });
-        }
+          if (commentText !== originalText) {
+            if (item.id) {
+              // Si ya existe
+              apreciacionPromises.push(updateApreciacion(item.id, {
+                comentario: commentText,
+                alumno: Number(alumnoId),
+                periodo_evaluacion: Number(selectedPeriodo),
+                area: Number(areaId)
+              }));
+            } else if (commentText) {
+              // Si es nuevo y no está vacío
+              apreciacionPromises.push(createApreciacion({
+                comentario: commentText,
+                alumno: Number(alumnoId),
+                periodo_evaluacion: Number(selectedPeriodo),
+                area: Number(areaId)
+              }));
+            }
+          }
+        });
       });
 
-      await Promise.all(apreciacionPromises.filter(Boolean));
+      await Promise.all(apreciacionPromises);
 
       toast.success('¡Registro académico guardado exitosamente!');
 
@@ -288,7 +309,8 @@ export default function MatrizNotasPage() {
       const listApreciaciones = Array.isArray(resApreciaciones) ? resApreciaciones : resApreciaciones.results || [];
       const updatedComments = {};
       listApreciaciones.forEach(a => {
-        updatedComments[a.alumno] = { id: a.id, comentario: a.comentario };
+        if (!updatedComments[a.alumno]) updatedComments[a.alumno] = {};
+        updatedComments[a.alumno][a.area] = { id: a.id, comentario: a.comentario, docente: a.docente_nombre };
       });
       setComments(updatedComments);
       setOriginalComments(JSON.parse(JSON.stringify(updatedComments)));
@@ -361,34 +383,6 @@ export default function MatrizNotasPage() {
                   </Form.Group>
                 </Col>
 
-                <Col md={4} className="d-flex flex-column flex-md-row gap-3 justify-content-md-end align-items-stretch">
-                  <Button
-                    variant="outline-secondary"
-                    className="fw-bold py-2 rounded-3"
-                    onClick={() => navigate('/docente/mis-cursos')}
-                  >
-                    ⬅ Salir
-                  </Button>
-                  <Button
-                    variant="primary"
-                    className="fw-bold py-2 rounded-3 d-flex align-items-center justify-content-center gap-2"
-                    style={{ background: '#0d3b66', border: 'none' }}
-                    onClick={handleSave}
-                    disabled={saving}
-                  >
-                    {saving ? (
-                      <>
-                        <Spinner animation="border" size="sm" />
-                        <span>Guardando...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>💾</span>
-                        <span>Guardar Todo</span>
-                      </>
-                    )}
-                  </Button>
-                </Col>
               </Row>
             </Card>
 
@@ -476,8 +470,7 @@ export default function MatrizNotasPage() {
                       alumnos.map((alumno) => {
                         const alumnoId = alumno.id;
                         const studentName = `${alumno.apellidos}, ${alumno.nombres}`;
-                        const currentComment = comments[alumnoId]?.comentario || '';
-
+                        
                         return (
                           <tr key={alumnoId}>
                             <td className="ps-4 fw-semibold text-dark">
@@ -523,6 +516,11 @@ export default function MatrizNotasPage() {
                                       })
                                     }}
                                   />
+                                  {graders[alumnoId]?.[compId] && (
+                                    <div className="text-secondary mt-1 fw-medium" style={{ fontSize: '0.65rem' }}>
+                                      Por: {graders[alumnoId][compId]}
+                                    </div>
+                                  )}
                                 </td>
                               );
                             })}
@@ -530,12 +528,17 @@ export default function MatrizNotasPage() {
                               <Form.Control
                                 as="textarea"
                                 rows={2}
-                                placeholder="Comentario general sobre el aprendizaje..."
-                                value={currentComment}
+                                placeholder="Comentario para esta área..."
+                                value={comments[alumnoId]?.[selectedAreaId]?.comentario || ''}
                                 onChange={e => handleCommentChange(alumnoId, e.target.value)}
                                 className="rounded-3 border-secondary-subtle"
                                 style={{ fontSize: '13px', resize: 'vertical' }}
                               />
+                              {comments[alumnoId]?.[selectedAreaId]?.docente && (
+                                <div className="text-secondary mt-1 fw-medium text-end" style={{ fontSize: '0.7rem' }}>
+                                  Por: {comments[alumnoId][selectedAreaId].docente}
+                                </div>
+                              )}
                             </td>
                           </tr>
                         );
