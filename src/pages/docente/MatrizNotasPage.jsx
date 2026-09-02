@@ -222,13 +222,14 @@ export default function MatrizNotasPage() {
   };
 
   const handleCommentChange = (alumnoId, val) => {
+    const upperVal = val.toUpperCase();
     setComments(prev => ({
       ...prev,
       [alumnoId]: {
         ...(prev[alumnoId] || {}),
         [selectedAreaId]: {
           ...(prev[alumnoId]?.[selectedAreaId] || {}),
-          comentario: val
+          comentario: upperVal
         }
       }
     }));
