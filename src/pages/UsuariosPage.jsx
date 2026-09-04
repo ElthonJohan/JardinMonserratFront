@@ -222,7 +222,7 @@ const UsuariosPage = () => {
         </Card>
 
         {/* Modal Crear / Editar */}
-        <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">
           <Form onSubmit={handleSubmit}>
             <Modal.Header closeButton>
               <Modal.Title>{formData.id ? 'Editar Usuario' : 'Crear Usuario'}</Modal.Title>
@@ -260,6 +260,7 @@ const UsuariosPage = () => {
                   onChange={(selected) => handleChange({ target: { name: 'role_id', value: selected ? selected.value : '' } })}
                   placeholder="Seleccione un rol"
                   isClearable
+                  menuPosition="fixed"
                   noOptionsMessage={() => "No se encontraron roles"}
                 />
               </Form.Group>
