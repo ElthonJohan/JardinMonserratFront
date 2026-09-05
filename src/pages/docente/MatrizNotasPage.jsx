@@ -495,7 +495,9 @@ export default function MatrizNotasPage() {
                                     value={{ value: currentVal, label: currentVal }}
                                     onChange={selected => handleGradeChange(alumnoId, compId, selected ? selected.value : '-')}
                                     isSearchable={false}
+                                    menuPortalTarget={document.body}
                                     styles={{
+                                      menuPortal: base => ({ ...base, zIndex: 9999 }),
                                       control: (base) => ({
                                         ...base,
                                         backgroundColor:
