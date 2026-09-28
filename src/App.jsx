@@ -32,7 +32,7 @@ import Payments from "./pages/intranet/Payments";
 import LoginParent from "./pages/intranet/LoginParent";
 import IntranetLayout from "./pages/intranet/IntranetLayout";
 import ChangePassword from "./pages/intranet/ChangePassword";
-import Profile from "./pages/intranet/Profile"; 
+import Profile from "./pages/intranet/Profile";
 import AcademicTracking from "./pages/intranet/AcademicTracking";
 import "./App.css";
 import ConfiguracionPagosPage from "./pages/ConfiguracionPagosPage";
@@ -109,8 +109,8 @@ function App() {
             />
 
 
-            
-      
+
+
             <Route
               path="/dashboard"
               element={
@@ -195,9 +195,9 @@ function App() {
               }
             />
             <Route
-    path="/configuracion-pagos"
-    element={<ConfiguracionPagosPage />}
-/>
+              path="/configuracion-pagos"
+              element={<ConfiguracionPagosPage />}
+            />
             <Route
               path="/periodos"
               element={

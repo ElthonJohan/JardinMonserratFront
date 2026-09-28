@@ -101,21 +101,40 @@ export default function AulasPage() {
 
   return (
     <>
-    <AppNavbar />
-    <div className="container container-custom">
-      <h1 className="text-2xl text-center font-bold mb-4">Gestión de Aulas 🏫</h1>
-      <button className="btn btn-primary mb-3" onClick={openCreateModal}>
-        + Nueva Aula
-      </button>
+      <AppNavbar />
+      <div className="matriculas-container">
+        <div className="container-matriculas">
+          {/* HEADER */}
+          <div className="matriculas-header">
+            <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <div>
+                <h1>🏫 Gestión de Aulas</h1>
+                <p className="text-muted mb-0">Administra los grados, secciones y capacidades de aulas de la institución.</p>
+              </div>
+              <button className="btn-nueva-matricula" onClick={openCreateModal}>
+                ➕ Nueva Aula
+              </button>
+            </div>
+          </div>
 
-      <input 
-  type="text" 
-  className="form-control mb-3" 
-  placeholder="Buscar por nombre de aula..." 
-  onChange={handleSearch} 
-/>
+          {/* SEARCH CARD */}
+          <div className="search-card mb-4">
+            <label>Buscar Aula</label>
+            <div className="search-input-wrapper">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Buscar por nombre de aula..."
+                onChange={handleSearch}
+                style={{ paddingLeft: '40px' }}
+              />
+            </div>
+          </div>
 
-      <AulaTable data={aulas} onEdit={handleEdit} onDelete={handleDelete} />
+          <AulaTable data={aulas} onEdit={handleEdit} onDelete={handleDelete} />
+        </div>
+      </div>
+
 
       <div className="modal fade" id="aulaModal" tabIndex="-1">
         <div className="modal-dialog modal-lg">
@@ -129,7 +148,7 @@ export default function AulasPage() {
 
             <div className="modal-body">
               <AulaForm
-                key={selectedAula ? selectedAula.id : Date.now()} // 🔥 FORZAR RECREACIÓN// 🔥 FORZAR RECREACIÓN
+                key={selectedAula ? selectedAula.id : Date.now()}
                 onSubmit={handleSubmit}
                 initialData={selectedAula || {}}
                 isEditMode={isEditMode}
@@ -138,7 +157,7 @@ export default function AulasPage() {
           </div>
         </div>
       </div>
-    </div>
     </>
   );
 }
+

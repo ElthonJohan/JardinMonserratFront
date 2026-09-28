@@ -140,7 +140,7 @@ export default function AcademicoPage() {
           onSelect={(tab) => {
             navigate(`/academico?tab=${tab}`);
           }}
-          className="mb-4"
+          className="pagos-nav-tabs mb-3 mb-md-4"
           id="academico-tabs"
         >
           <Tab eventKey="asignacion" title="📑 Asignación Docente">
@@ -181,3 +181,4 @@ export default function AcademicoPage() {
     </ErrorBoundary>
   );
 }
+

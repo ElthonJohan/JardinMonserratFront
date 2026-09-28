@@ -15,19 +15,19 @@ const ConfiguracionPage = () => {
 
   return (
     <div className="configuracion-container">
-      {/* 2. AppNavbar rendered at the top of the view */}
+      {/* AppNavbar */}
       <AppNavbar title="Configuración - Jardín Monserrat" />
 
-      <Container className="py-5">
+      <Container className="py-4 py-md-5">
         {/* Responsive Header Card */}
         <Row className="justify-content-center">
           <Col lg={10}>
-            <Card className="configuracion-header-card p-4 text-center">
+            <Card className="configuracion-header-card p-3 p-md-4 text-center">
               <Card.Body>
                 <span className="fs-1">⚙️</span>
-                <h1 className="fw-bold mt-2 display-5 text-dark">Configuración General</h1>
-                <p className="text-muted fs-5 mb-0">
-                  Panel central para administrar las tablas maestras y datos maestros del sistema.
+                <h1 className="fw-bold mt-2 h2 text-dark">Configuración General</h1>
+                <p className="text-muted fs-6 mb-0">
+                  Panel central para administrar las tablas maestras y datos del sistema.
                 </p>
               </Card.Body>
             </Card>
@@ -35,17 +35,14 @@ const ConfiguracionPage = () => {
         </Row>
 
         {/* Short-cut Cards for static data management */}
-        <Row className="justify-content-center g-4 mt-2">
-
-
-
+        <Row className="justify-content-center g-3 g-md-4 mt-1 mt-md-2">
           {/* Card 1: Gestión de Aulas */}
-          <Col md={4}>
+          <Col xs={12} sm={6} lg={4}>
             <Card
               className="configuracion-card h-100 p-3"
               onClick={() => handleNavigation('/aulas')}
             >
-              <Card.Body className="d-flex flex-column text-center">
+              <Card.Body className="d-flex flex-column text-center p-2 p-md-3">
                 <div className="config-card-icon-wrapper">
                   <span>🏫</span>
                 </div>
@@ -70,12 +67,12 @@ const ConfiguracionPage = () => {
           </Col>
 
           {/* Card 2: Gestión de Apoderados */}
-          <Col md={4}>
+          <Col xs={12} sm={6} lg={4}>
             <Card
               className="configuracion-card h-100 p-3"
               onClick={() => handleNavigation('/apoderados')}
             >
-              <Card.Body className="d-flex flex-column text-center">
+              <Card.Body className="d-flex flex-column text-center p-2 p-md-3">
                 <div className="config-card-icon-wrapper">
                   <span>👨‍👩‍👧‍👦</span>
                 </div>
@@ -83,7 +80,7 @@ const ConfiguracionPage = () => {
                   Gestión de Apoderados
                 </Card.Title>
                 <Card.Text className="configuracion-card-desc flex-grow-1">
-                  Administrar información personal, documentos DNI, contactos y correos de los padres o tutores de los estudiantes.
+                  Administrar información personal, documentos DNI, contactos y correos de los padres o tutores.
                 </Card.Text>
                 <Button
                   variant="success"
@@ -99,22 +96,22 @@ const ConfiguracionPage = () => {
             </Card>
           </Col>
 
-          {/* Card: Periodos Académicos */}
+          {/* Card: Configuración de pagos */}
           {user?.permissions?.includes('change_configuracionpago') && (
-            <Col md={4} >
+            <Col xs={12} sm={6} lg={4}>
               <Card
                 className="configuracion-card h-100 p-3"
                 onClick={() => handleNavigation('/configuracion-pagos')}
               >
-                <Card.Body className="d-flex flex-column text-center">
+                <Card.Body className="d-flex flex-column text-center p-2 p-md-3">
                   <div className="config-card-icon-wrapper">
-                    <span>📅</span>
+                    <span>⚙️</span>
                   </div>
                   <Card.Title className="configuracion-card-title">
-                    Configuración de pagos
+                    Configuración de Pagos
                   </Card.Title>
                   <Card.Text className="configuracion-card-desc flex-grow-1">
-                    Configurar los años lectivos, fechas de inicio, fin y estados de apertura para los procesos de matrícula.
+                    Configurar los parámetros de cobro, tolerancias, datos de comprobante y QR institucional.
                   </Card.Text>
                   <Button
                     variant="info"
@@ -124,7 +121,7 @@ const ConfiguracionPage = () => {
                       handleNavigation('/configuracion-pagos');
                     }}
                   >
-                    Entrar a Configuración de pagos
+                    Configurar Pagos
                   </Button>
                 </Card.Body>
               </Card>
@@ -132,12 +129,12 @@ const ConfiguracionPage = () => {
           )}
 
           {/* Card 3: Conceptos de Pago */}
-          <Col md={4}>
+          <Col xs={12} sm={6} lg={4}>
             <Card
               className="configuracion-card h-100 p-3"
               onClick={() => handleNavigation('/conceptos')}
             >
-              <Card.Body className="d-flex flex-column text-center">
+              <Card.Body className="d-flex flex-column text-center p-2 p-md-3">
                 <div className="config-card-icon-wrapper">
                   <span>💰</span>
                 </div>
@@ -163,12 +160,12 @@ const ConfiguracionPage = () => {
 
           {/* Card: Periodos Académicos */}
           {user?.permissions?.includes('view_periodoacademico') && (
-            <Col md={4}>
+            <Col xs={12} sm={6} lg={4}>
               <Card
                 className="configuracion-card h-100 p-3"
                 onClick={() => handleNavigation('/periodos')}
               >
-                <Card.Body className="d-flex flex-column text-center">
+                <Card.Body className="d-flex flex-column text-center p-2 p-md-3">
                   <div className="config-card-icon-wrapper">
                     <span>📅</span>
                   </div>
@@ -195,12 +192,12 @@ const ConfiguracionPage = () => {
 
           {/* Card: Configuración Académica */}
           {(user?.role === 'admin' || user?.role === 'director' || user?.permissions?.includes('view_periodoacademico')) && (
-            <Col md={4}>
+            <Col xs={12} sm={6} lg={4}>
               <Card
                 className="configuracion-card h-100 p-3"
                 onClick={() => handleNavigation('/academico')}
               >
-                <Card.Body className="d-flex flex-column text-center">
+                <Card.Body className="d-flex flex-column text-center p-2 p-md-3">
                   <div className="config-card-icon-wrapper">
                     <span>📚</span>
                   </div>
@@ -249,12 +246,12 @@ const ConfiguracionPage = () => {
 
           {/* Card 4: Gestión de Usuarios */}
           {user?.permissions?.includes('view_usuario') && (
-            <Col md={4} className="mt-4">
+            <Col xs={12} sm={6} lg={4}>
               <Card
                 className="configuracion-card h-100 p-3"
                 onClick={() => handleNavigation('/usuarios')}
               >
-                <Card.Body className="d-flex flex-column text-center">
+                <Card.Body className="d-flex flex-column text-center p-2 p-md-3">
                   <div className="config-card-icon-wrapper">
                     <span>👥</span>
                   </div>
@@ -281,12 +278,12 @@ const ConfiguracionPage = () => {
 
           {/* Card 5: Gestión de Roles */}
           {user?.permissions?.includes('view_group') && (
-            <Col md={4} className="mt-4">
+            <Col xs={12} sm={6} lg={4}>
               <Card
                 className="configuracion-card h-100 p-3"
                 onClick={() => handleNavigation('/roles')}
               >
-                <Card.Body className="d-flex flex-column text-center">
+                <Card.Body className="d-flex flex-column text-center p-2 p-md-3">
                   <div className="config-card-icon-wrapper">
                     <span>🔐</span>
                   </div>
@@ -309,19 +306,16 @@ const ConfiguracionPage = () => {
                 </Card.Body>
               </Card>
             </Col>
-
-
           )}
-
 
           {/* Card 6: Gestión de Bancos */}
           {user?.permissions?.includes('view_banco') && (
-            <Col md={4} className="mt-4">
+            <Col xs={12} sm={6} lg={4}>
               <Card
                 className="configuracion-card h-100 p-3"
                 onClick={() => handleNavigation('/bancos')}
               >
-                <Card.Body className="d-flex flex-column text-center">
+                <Card.Body className="d-flex flex-column text-center p-2 p-md-3">
                   <div className="config-card-icon-wrapper">
                     <span>🏦</span>
                   </div>
@@ -352,3 +346,4 @@ const ConfiguracionPage = () => {
 };
 
 export default ConfiguracionPage;
+

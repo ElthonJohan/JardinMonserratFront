@@ -49,11 +49,11 @@ export default function PagosPage() {
   return (
     <ErrorBoundary>
       <AppNavbar />
-      <Container className="mt-4 mb-5" style={{ maxWidth: '1200px' }}>
-        <Row className="mb-4">
+      <Container className="my-3 my-md-4 px-3 px-md-4" style={{ maxWidth: '1200px' }}>
+        <Row className="mb-3 mb-md-4">
           <Col>
-            <h1 className="display-5 fw-bold">Tesorería - Gestión de Pagos</h1>
-            <p className="text-muted">
+            <h1 className="h2 fw-bold text-primary-900 mb-1">Tesorería - Gestión de Pagos</h1>
+            <p className="text-muted mb-0 small text-md-normal">
               Registro de pagos y control de caja diaria
             </p>
           </Col>
@@ -64,12 +64,12 @@ export default function PagosPage() {
           onSelect={(tab) => {
             navigate(`/pagos?tab=${tab}`);
           }}
-          className="mb-4"
+          className="pagos-nav-tabs mb-3 mb-md-4"
           id="pagos-tabs"
         >
           <Tab eventKey="registro" title="📝 Registro de Pago">
-            <Card className="mt-3">
-              <Card.Body>
+            <Card className="mt-2 mt-md-3 border-0 shadow-sm">
+              <Card.Body className="p-3 p-md-4">
                 {loading ? (
                   <div className="text-center py-5">
                     <Spinner animation="border" role="status">
@@ -90,8 +90,8 @@ export default function PagosPage() {
           </Tab>
 
           <Tab eventKey="caja" title="💼 Gestión de Caja">
-            <Card className="mt-3 text-blue">
-              <Card.Body>
+            <Card className="mt-2 mt-md-3 border-0 shadow-sm">
+              <Card.Body className="p-3 p-md-4">
                 <ErrorBoundary>
                   <GestionCaja onCajaChange={handleCajaChange} />
                 </ErrorBoundary>
@@ -100,8 +100,8 @@ export default function PagosPage() {
           </Tab>
 
           <Tab eventKey="auditoria" title="📊 Auditoría de Pagos">
-            <Card className="mt-3">
-              <Card.Body>
+            <Card className="mt-2 mt-md-3 border-0 shadow-sm">
+              <Card.Body className="p-3 p-md-4">
                 {loading ? (
                   <div className="text-center py-5">
                     <Spinner animation="border" role="status">
@@ -118,8 +118,8 @@ export default function PagosPage() {
           </Tab>
 
           <Tab eventKey="validacion" title="✅ Validación de Pagos">
-            <Card className="mt-3">
-              <Card.Body>
+            <Card className="mt-2 mt-md-3 border-0 shadow-sm">
+              <Card.Body className="p-3 p-md-4">
                 <ErrorBoundary>
                   <ValidacionPagos />
                 </ErrorBoundary>
