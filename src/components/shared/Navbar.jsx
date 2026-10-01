@@ -35,6 +35,7 @@ const AppNavbar = ({ title = 'Jardín Monserrat' }) => {
     linksToRender = [...NAV_LINKS];
     if (canViewAcademico) {
       linksToRender.push({ label: 'Académico', path: '/academico' });
+      linksToRender.push({ label: 'Libretas', path: '/reportes/libretas' });
     }
   }
 

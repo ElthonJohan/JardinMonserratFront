@@ -14,6 +14,9 @@ import {
   createApreciacion,
   updateApreciacion
 } from '../../api/academicoAPI';
+import { getReporteLibretasAula } from '../../api/reportesAPI';
+import { useReactToPrint } from 'react-to-print';
+import LibretaPrintWrapper from '../reportes/LibretasReportes/LibretaPrintWrapper';
 
 export default function MatrizNotasPage() {
   const { asignacionId } = useParams();
@@ -48,6 +51,48 @@ export default function MatrizNotasPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+
+  // --- PRINTING STATE ---
+  const printComponentRef = React.useRef(null);
+  const [datosReporte, setDatosReporte] = useState(null);
+  const [printing, setPrinting] = useState(false);
+  const [selectedAlumnosPrint, setSelectedAlumnosPrint] = useState([]);
+
+  const handlePrintAction = useReactToPrint({
+    contentRef: printComponentRef,
+    documentTitle: `Libretas_Aula_${selectedAulaId}`,
+  });
+
+  useEffect(() => {
+    if (datosReporte && printing) {
+      handlePrintAction();
+      setPrinting(false);
+    }
+  }, [datosReporte, printing, handlePrintAction]);
+
+  const handleGenerarLibretas = async () => {
+    try {
+      setPrinting(true);
+      toast.loading('Generando documento de libretas...', { id: 'print-toast' });
+      const data = await getReporteLibretasAula({
+        aula_id: selectedAulaId,
+        periodo_academico_id: currentAsignacion.periodo_matricula
+      });
+
+      // Filtro frontend para imprimir solo los seleccionados
+      if (selectedAlumnosPrint && selectedAlumnosPrint.length > 0) {
+        const selectedIds = selectedAlumnosPrint.map(opt => opt.value);
+        data.alumnos = data.alumnos.filter(a => selectedIds.includes(a.id));
+      }
+
+      setDatosReporte(data);
+      toast.success('Documento listo para imprimir', { id: 'print-toast' });
+    } catch (err) {
+      console.error(err);
+      toast.error('Error al generar libretas', { id: 'print-toast' });
+      setPrinting(false);
+    }
+  };
 
   // Determinar si hay cambios sin guardar
   const hasChanges = JSON.stringify(grades) !== JSON.stringify(originalGrades) ||
@@ -357,8 +402,8 @@ export default function MatrizNotasPage() {
           <>
             {/* Control Panel: Selectores Superiores de Aula y Periodo */}
             <Card className="border-0 shadow-sm rounded-4 p-4 mb-4 bg-white">
-              <Row className="g-4 align-items-end">
-                <Col md={4}>
+              <Row className="g-3 align-items-end">
+                <Col lg={3} md={6}>
                   <Form.Group controlId="selectAula">
                     <Form.Label className="fw-bold text-secondary">Aula (Salón)</Form.Label>
                     <Select
@@ -371,7 +416,7 @@ export default function MatrizNotasPage() {
                   </Form.Group>
                 </Col>
 
-                <Col md={4}>
+                <Col lg={3} md={6}>
                   <Form.Group controlId="selectPeriodo">
                     <Form.Label className="fw-bold text-secondary">Trimestre / Periodo</Form.Label>
                     <Select
@@ -384,6 +429,36 @@ export default function MatrizNotasPage() {
                   </Form.Group>
                 </Col>
 
+                <Col lg={4} md={8}>
+                  <Form.Group controlId="selectAlumnosPrint">
+                    <Form.Label className="fw-bold text-secondary">Alumnos a Imprimir (Vacío = Todos)</Form.Label>
+                    <Select
+                      isMulti
+                      options={alumnos.map(a => ({ value: a.id, label: `${a.apellidos}, ${a.nombres}` }))}
+                      value={selectedAlumnosPrint}
+                      onChange={setSelectedAlumnosPrint}
+                      placeholder="Seleccionar alumnos..."
+                    />
+                  </Form.Group>
+                </Col>
+
+                <Col lg={2} md={4} className="d-flex justify-content-lg-end mt-3 mt-lg-0">
+                  <Button
+                    variant="info"
+                    className="fw-bold py-2 px-3 w-100 rounded-3 text-white shadow-sm"
+                    style={{ background: '#17a2b8', border: 'none', height: '42px', whiteSpace: 'nowrap' }}
+                    onClick={handleGenerarLibretas}
+                    disabled={saving || printing}
+                  >
+                    {printing ? (
+                      <>
+                        <Spinner animation="border" size="sm" className="me-2" /> Imprimiendo...
+                      </>
+                    ) : (
+                      '🖨️ Imprimir'
+                    )}
+                  </Button>
+                </Col>
               </Row>
             </Card>
 
@@ -443,7 +518,7 @@ export default function MatrizNotasPage() {
                         >
                           <div className="d-flex flex-column align-items-center">
                             <span>Comp. {idx + 1}</span>
-                            <span className="text-gray-800-50 small fw-normal text-truncate" style={{ maxWidth: '140px' }}>
+                            <span className="text-gray-800-50 small fw-normal mt-1" style={{ wordWrap: 'break-word', whiteSpace: 'normal', lineHeight: '1.2' }}>
                               {comp.descripcion}
                             </span>
                           </div>
@@ -578,6 +653,12 @@ export default function MatrizNotasPage() {
                   </>
                 )}
               </Button>
+            </div>
+            
+            <div style={{ display: 'none' }}>
+              {datosReporte && (
+                <LibretaPrintWrapper ref={printComponentRef} datosReporte={datosReporte} />
+              )}
             </div>
           </>
         )}

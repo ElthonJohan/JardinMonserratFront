@@ -27,6 +27,7 @@ import RolesPage from "./pages/RolesPage";
 import PeriodosPage from "./pages/PeriodosPage";
 import BancosPage from "./pages/BancosPage";
 import AcademicoPage from "./pages/AcademicoPage";
+import LibretasPage from "./pages/reportes/LibretasReportes/LibretasPage";
 import ValidacionPagos from "./components/pagos/ValidacionPagos";
 import Payments from "./pages/intranet/Payments";
 import LoginParent from "./pages/intranet/LoginParent";
@@ -235,6 +236,14 @@ function App() {
               element={
                 <ProtectedRoute allowedPermissions={["view_asignaciondocente", "view_periodoacademico"]}>
                   <AcademicoPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reportes/libretas"
+              element={
+                <ProtectedRoute allowedPermissions={["view_asignaciondocente", "view_periodoacademico"]}>
+                  <LibretasPage />
                 </ProtectedRoute>
               }
             />
