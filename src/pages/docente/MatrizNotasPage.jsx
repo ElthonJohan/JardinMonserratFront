@@ -71,6 +71,14 @@ export default function MatrizNotasPage() {
   }, [datosReporte, printing, handlePrintAction]);
 
   const handleGenerarLibretas = async () => {
+    const hasUnsavedChanges = JSON.stringify(grades) !== JSON.stringify(originalGrades) ||
+      JSON.stringify(comments) !== JSON.stringify(originalComments);
+
+    if (hasUnsavedChanges) {
+      toast.warning('Tienes cambios sin guardar. Por favor "Guardar Cambios" antes de imprimir las libretas.', { id: 'print-toast', duration: 4000 });
+      return;
+    }
+
     try {
       setPrinting(true);
       toast.loading('Generando documento de libretas...', { id: 'print-toast' });
@@ -210,7 +218,7 @@ export default function MatrizNotasPage() {
         listCalificaciones.forEach(c => {
           if (!loadedGrades[c.alumno]) loadedGrades[c.alumno] = {};
           if (!loadedGraders[c.alumno]) loadedGraders[c.alumno] = {};
-          
+
           loadedGrades[c.alumno][c.competencia] = c.valor || '-';
           loadedGraders[c.alumno][c.competencia] = c.docente_nombre;
         });
@@ -446,7 +454,7 @@ export default function MatrizNotasPage() {
                   <Button
                     variant="info"
                     className="fw-bold py-2 px-3 w-100 rounded-3 text-white shadow-sm"
-                    style={{ background: '#17a2b8', border: 'none', height: '42px', whiteSpace: 'nowrap' }}
+                    style={{ background: 'rgb(13, 59, 102)', border: 'none', height: '42px', whiteSpace: 'nowrap' }}
                     onClick={handleGenerarLibretas}
                     disabled={saving || printing}
                   >
@@ -543,7 +551,7 @@ export default function MatrizNotasPage() {
                       alumnos.map((alumno) => {
                         const alumnoId = alumno.id;
                         const studentName = `${alumno.apellidos}, ${alumno.nombres}`;
-                        
+
                         return (
                           <tr key={alumnoId}>
                             <td className="ps-4 fw-semibold text-dark">
@@ -644,7 +652,7 @@ export default function MatrizNotasPage() {
                 )}
               </Button>
             </div>
-            
+
             <div style={{ display: 'none' }}>
               {datosReporte && (
                 <LibretaPrintWrapper ref={printComponentRef} datosReporte={datosReporte} />
