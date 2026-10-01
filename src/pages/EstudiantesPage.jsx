@@ -326,24 +326,25 @@ Por seguridad cambie su contraseña después del primer ingreso.
               <h1>👨‍🎓 Gestión de Estudiantes</h1>
             </div>
             <p>Registra y administra los estudiantes de la institución de manera centralizada.</p>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+            <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 pt-2">
               <div />
-              <div className="d-flex gap-2 flex-wrap">
-                <Button className="btn-nueva-matricula" onClick={openCreateModal}>
+              <div className="d-flex gap-2 flex-wrap w-100 w-md-auto justify-content-start justify-content-md-end">
+                <Button className="btn-nueva-matricula flex-fill flex-md-grow-0 justify-content-center" onClick={openCreateModal}>
                   ➕ Nuevo Estudiante
                 </Button>
-                <Button variant="info" style={{ borderRadius: '8px', fontWeight: 500, color: 'white' }} onClick={() => openModal("importarEstudiantesModal")}>
+                <Button variant="info" className="flex-fill flex-md-grow-0 text-white justify-content-center" style={{ borderRadius: '8px', fontWeight: 500 }} onClick={() => openModal("importarEstudiantesModal")}>
                   📥 Importar
                 </Button>
-                <Button variant="success" className="d-flex align-items-center gap-2" style={{ borderRadius: '8px', fontWeight: 500 }} onClick={() => exportStudentsToExcel(estudiantes)}>
-                  📊 Exportar Excel
+                <Button variant="success" className="d-flex align-items-center justify-content-center gap-1 flex-fill flex-md-grow-0" style={{ borderRadius: '8px', fontWeight: 500 }} onClick={() => exportStudentsToExcel(estudiantes)}>
+                  📊 Excel
                 </Button>
-                <Button variant="danger" className="d-flex align-items-center gap-2" style={{ borderRadius: '8px', fontWeight: 500 }} onClick={() => exportStudentsToPdf(estudiantes)}>
-                  📄 Exportar PDF
+                <Button variant="danger" className="d-flex align-items-center justify-content-center gap-1 flex-fill flex-md-grow-0" style={{ borderRadius: '8px', fontWeight: 500 }} onClick={() => exportStudentsToPdf(estudiantes)}>
+                  📄 PDF
                 </Button>
               </div>
             </div>
           </div>
+
 
           {/* ─── SEARCH & STATS SECTION ─── */}
           <div className="matriculas-search-section">

@@ -27,12 +27,13 @@ import RolesPage from "./pages/RolesPage";
 import PeriodosPage from "./pages/PeriodosPage";
 import BancosPage from "./pages/BancosPage";
 import AcademicoPage from "./pages/AcademicoPage";
+import LibretasPage from "./pages/reportes/LibretasReportes/LibretasPage";
 import ValidacionPagos from "./components/pagos/ValidacionPagos";
 import Payments from "./pages/intranet/Payments";
 import LoginParent from "./pages/intranet/LoginParent";
 import IntranetLayout from "./pages/intranet/IntranetLayout";
 import ChangePassword from "./pages/intranet/ChangePassword";
-import Profile from "./pages/intranet/Profile"; 
+import Profile from "./pages/intranet/Profile";
 import AcademicTracking from "./pages/intranet/AcademicTracking";
 import "./App.css";
 import ConfiguracionPagosPage from "./pages/ConfiguracionPagosPage";
@@ -109,8 +110,8 @@ function App() {
             />
 
 
-            
-      
+
+
             <Route
               path="/dashboard"
               element={
@@ -195,9 +196,9 @@ function App() {
               }
             />
             <Route
-    path="/configuracion-pagos"
-    element={<ConfiguracionPagosPage />}
-/>
+              path="/configuracion-pagos"
+              element={<ConfiguracionPagosPage />}
+            />
             <Route
               path="/periodos"
               element={
@@ -235,6 +236,14 @@ function App() {
               element={
                 <ProtectedRoute allowedPermissions={["view_asignaciondocente", "view_periodoacademico"]}>
                   <AcademicoPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reportes/libretas"
+              element={
+                <ProtectedRoute allowedPermissions={["view_asignaciondocente", "view_periodoacademico"]}>
+                  <LibretasPage />
                 </ProtectedRoute>
               }
             />

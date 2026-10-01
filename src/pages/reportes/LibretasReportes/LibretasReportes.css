@@ -1,0 +1,257 @@
+/* Layout general de la página de filtros */
+.libretas-page-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.filtros-container {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+  align-items: center;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filtro-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.filtro-item select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 200px;
+}
+
+.btn-generar {
+  padding: 10px 20px;
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+  align-self: flex-end;
+}
+
+.btn-generar:hover:not(:disabled) {
+  background-color: #004494;
+}
+
+.btn-generar:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Contenedor del Preview para ver antes de imprimir */
+.libretas-preview-container {
+  background: #525659;
+  padding: 20mm 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  overflow-y: auto;
+  max-height: 80vh;
+}
+
+/* =========================================
+   ESTILOS DE LA LIBRETA (A4)
+   ========================================= */
+
+.libreta-pagina {
+  width: 210mm;
+  min-height: 297mm;
+  background: white;
+  padding: 15mm;
+  /* Márgenes internos de la hoja */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  color: #000;
+  position: relative;
+  page-break-after: always;
+  break-after: page;
+}
+
+/* Cabecera SIAGIE y Datos del Alumno */
+.libreta-header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.libreta-header-left,
+.libreta-header-right {
+  width: 15%;
+  display: flex;
+  justify-content: center;
+}
+
+.libreta-header-logo {
+  max-width: 100px;
+  height: auto;
+  object-fit: contain;
+}
+
+.libreta-header-center {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.libreta-year {
+  font-size: 11px;
+  margin: 0 0 5px 0;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Tabla de Información Estilo Excel */
+.libreta-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 8px;
+  border: 1px solid #000;
+}
+
+.libreta-info-table td {
+  border: 1px solid #000;
+  padding: 2px 4px;
+  vertical-align: middle;
+}
+
+.info-label-cell {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+.info-value-cell {
+  text-transform: uppercase;
+}
+
+/* Tabla de Calificaciones */
+.libreta-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10px;
+  margin-bottom: 15px;
+}
+
+.libreta-table th,
+.libreta-table td {
+  border: 1px solid #000;
+  padding: 4px;
+  text-align: center;
+}
+
+.libreta-table th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+  font-size: 7px;
+}
+
+.libreta-table .text-left {
+  text-align: left;
+}
+
+.area-row td {
+  background-color: #fff;
+  font-weight: bold;
+}
+
+.competencia-row td {
+  background-color: #fff;
+}
+
+/* Apreciación final */
+.apreciacion-box {
+  border: 1px solid #000;
+  padding: 8px;
+  font-size: 11px;
+  margin-bottom: 15px;
+  min-height: 50px;
+}
+
+.apreciacion-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+  text-decoration: underline;
+}
+
+/* Firmas */
+.firmas-container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 80px;
+}
+
+.firma-box {
+  text-align: center;
+  width: 200px;
+}
+
+.firma-linea {
+  border-top: 1px solid #000;
+  margin-bottom: 5px;
+}
+
+.firma-texto {
+  font-size: 7px;
+}
+
+/* =========================================
+   MEDIA PRINT - REGLAS ESTRICTAS
+   ========================================= */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+    /* Quitamos márgenes del navegador para usar los nuestros */
+  }
+
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .libretas-page-container {
+    padding: 0;
+    max-width: none;
+    margin: 0;
+  }
+
+  /* Ocultamos todo lo que no sea la libreta */
+  .filtros-container,
+  .btn-generar {
+    display: none !important;
+  }
+
+  /* Quitamos fondos grises y sombras para impresión */
+  .libretas-preview-container {
+    background: none;
+    padding: 0;
+    overflow: visible;
+    max-height: none;
+  }
+
+  .libreta-pagina {
+    box-shadow: none;
+    margin: 0;
+    width: 210mm;
+    min-height: 297mm;
+    /* page-break-after ya está declarado arriba pero reforzamos */
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+}

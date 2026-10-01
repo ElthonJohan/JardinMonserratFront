@@ -1,118 +1,227 @@
-.navbar-custom {
-  background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%) !important;
-  box-shadow: 0 4px 20px rgba(13, 110, 253, 0.3);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 0.65rem 0;
-  transition: all 0.3s ease;
+/* ===== MAIN APP NAVBAR RESPONSIVE STYLES ===== */
+.app-navbar {
+  background-color: var(--primary-container, #0d3b66) !important;
+  box-shadow: var(--shadow-soft, 0 4px 16px rgba(13, 59, 102, 0.22));
+  padding: 0.5rem 0;
+  z-index: 1030;
 }
 
-.navbar-custom .navbar-brand {
-  font-size: 1.65rem;
+.app-navbar-brand {
+  font-family: var(--font-secondary, 'Quicksand', sans-serif);
   font-weight: 700;
-  color: white !important;
-  letter-spacing: -0.5px;
-  transition: all 0.3s ease;
+  font-size: 1.15rem;
+  color: #ffffff !important;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.app-brand-icon {
+  background: #ffffff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
+}
+
+.app-brand-title {
+  white-space: nowrap;
+}
+
+/* Nav Links Container & Items */
+.app-nav-links {
+  display: flex;
+  gap: 6px;
+}
+
+.app-nav-link {
+  font-family: var(--font-primary, 'Plus Jakarta Sans', sans-serif);
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.78);
+  padding: 8px 16px;
+  border-radius: 9999px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  text-align: left;
+  text-decoration: none;
+  width: auto;
+}
+
+.app-nav-link:hover,
+.app-nav-link.active {
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+}
+
+.app-badge-pill {
+  background: #ef4444;
+  color: #ffffff;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 7px;
+  line-height: 18px;
+}
+
+/* User Pill & Dropdown */
+.app-user-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 9999px;
+  padding: 4px 10px 4px 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+  color: #ffffff;
+  font-family: var(--font-primary, 'Plus Jakarta Sans', sans-serif);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.app-user-pill:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.app-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #ffffff;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.app-username {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-arrow {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.app-dropdown-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+}
+
+.app-dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 1000;
+  background: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 32px rgba(13, 59, 102, 0.18);
+  padding: 8px;
+  min-width: 180px;
+  font-family: var(--font-secondary, 'Quicksand', sans-serif);
+}
+
+.app-dropdown-item {
+  width: 100%;
+  border: none;
+  background: transparent;
+  border-radius: 0.5rem;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #191b23;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.navbar-custom .navbar-brand:hover {
-  transform: translateY(-2px) scale(1.03);
-  color: #fff !important;
+.app-dropdown-item:hover {
+  background: #f0f3ff;
+  color: #0d3b66;
 }
 
-/* Links */
-.navbar-custom .nav-link {
-  color: rgba(255, 255, 255, 0.85) !important;
-  font-weight: 500;
-  padding: 0.6rem 1rem !important;
-  position: relative;
-  transition: all 0.3s ease;
-  border-radius: 6px;
-  margin: 0 4px;
+.app-dropdown-item.danger {
+  color: #ba1a1a;
 }
 
-.navbar-custom .nav-link:hover {
-  color: rgb(0, 0, 0) !important;
-  background-color: rgba(255, 255, 255, 0.1);
-  transform: translateY(-1px);
+.app-dropdown-item.danger:hover {
+  background: #ba1a1a;
+  color: #ffffff;
 }
 
-/* Línea inferior en hover + active */
-.navbar-custom .nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 3px;
-  background: white;
-  border-radius: 3px;
-  transition: width 0.3s ease;
+.app-dropdown-divider {
+  border-top: 1px solid #e8edf9;
+  margin: 4px 0;
 }
 
-.navbar-custom .nav-link:hover::after,
-.navbar-custom .nav-link.active::after {
-  width: 60%;
+/* Hamburger Toggle Button */
+.app-navbar-toggle {
+  padding: 4px 8px;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
-/* Badge de pagos */
-.navbar-custom .badge {
-  font-size: 0.75rem;
-  padding: 0.25em 0.55em;
-  box-shadow: 0 2px 6px rgba(220, 53, 69, 0.4);
+.app-navbar-toggle .navbar-toggler-icon {
+  filter: invert(1) brightness(2);
+  width: 1.25em;
+  height: 1.25em;
 }
 
-/* Dropdown Usuario */
-.navbar-custom .dropdown-toggle {
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  padding: 0.45rem 0.9rem;
-  border-radius: 50px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.08) !important;
+/* Mobile responsive collapse menu */
+@media (max-width: 991.98px) {
+  .app-brand-title {
+    font-size: 1rem;
+  }
+  
+  .navbar-collapse {
+    background: rgba(13, 59, 102, 0.98);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    margin: 8px -1rem -0.5rem -1rem;
+    padding: 12px 16px 16px 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  .app-nav-links {
+    flex-direction: column;
+    width: 100%;
+    gap: 4px;
+  }
+
+  .app-nav-link {
+    width: 100%;
+    padding: 10px 16px;
+    border-radius: 12px;
+  }
 }
 
-.navbar-custom .dropdown-toggle:hover {
-  border-color: white;
-  background: rgba(255, 255, 255, 0.15) !important;
-  transform: translateY(-1px);
-}
-
-.navbar-custom .dropdown-menu {
-  border: none;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-  border-radius: 12px;
-  padding: 8px;
-  background: #fff;
-  margin-top: 8px;
-}
-
-.navbar-custom .dropdown-item {
-  border-radius: 8px;
-  padding: 10px 16px;
-  transition: all 0.2s ease;
-}
-
-.navbar-custom .dropdown-item:hover {
-  background-color: #f8f9fa;
-}
-
-/* Estado activo del link actual */
-.navbar-custom .nav-link.active {
-  color: white !important;
-  font-weight: 600;
-  background-color: rgba(255, 255, 255, 0.15);
-}
-
-/* Navbar styles are handled via inline styles in AppNavbar.jsx
-   to avoid Bootstrap specificity conflicts.
-   Este archivo puede quedarse vacío o usarse para estilos del dropdown menu
-   de Bootstrap si lo necesitas en otro componente. */
-
-/* Scrollbar personalizado — Serene Growth */
+/* Custom scrollbars */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;

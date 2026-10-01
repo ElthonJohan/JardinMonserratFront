@@ -131,40 +131,50 @@ export default function GestionCaja({ onCajaChange = null }) {
           <>
             {/* Caja Abierta Card */}
             <div className="pagos-table-container" style={{ marginBottom: '20px' }}>
-              <div className="pagos-deudas-header" style={{ background: '#d1fae5', borderColor: '#a7f3d0' }}>
-                <div className="pagos-deudas-header-icon" style={{ background: '#10b981', color: '#fff' }}>✅</div>
-                <div style={{ flex: 1 }}>
-                  <h5 className="pagos-deudas-title">Caja Abierta</h5>
-                  <p className="pagos-deudas-subtitle">ID: {cajaActual.id}</p>
+              <div className="pagos-deudas-header d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3" style={{ background: '#d1fae5', borderColor: '#a7f3d0' }}>
+                <div className="d-flex align-items-center gap-2">
+                  <div className="pagos-deudas-header-icon" style={{ background: '#10b981', color: '#fff' }}>✅</div>
+                  <div>
+                    <h5 className="pagos-deudas-title">Caja Abierta</h5>
+                    <p className="pagos-deudas-subtitle">ID: {cajaActual.id}</p>
+                  </div>
                 </div>
-                <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontFamily: 'Quicksand', fontSize: '1.3rem', fontWeight: 700, color: '#065f46' }}>
+                <div className="d-flex flex-wrap gap-3 align-items-center justify-content-between w-100 w-md-auto">
+                  <div>
+                    <div style={{ fontFamily: 'Quicksand', fontSize: '1.2rem', fontWeight: 700, color: '#065f46' }}>
                       S/ {parseFloat(cajaActual.monto_inicial || 0).toFixed(2)}
                     </div>
-                    <small style={{ color: '#6b7280', fontSize: 12, fontWeight: 600 }}>Monto Inicial</small>
+                    <small style={{ color: '#6b7280', fontSize: 11, fontWeight: 600 }}>Monto Inicial</small>
                   </div>
                   {resumen && (
-                    <div style={{ textAlign: 'right', borderLeft: '1px solid #a7f3d0', paddingLeft: '24px' }}>
-                      <div style={{ fontFamily: 'Quicksand', fontSize: '1.3rem', fontWeight: 700, color: '#0d3b66' }}>
+                    <div className="ps-md-3 border-start-md border-emerald">
+                      <div style={{ fontFamily: 'Quicksand', fontSize: '1.2rem', fontWeight: 700, color: '#0d3b66' }}>
                         S/ {parseFloat(resumen.total_con_inicial || 0).toFixed(2)}
                       </div>
-                      <small style={{ color: '#6b7280', fontSize: 12, fontWeight: 600 }}>Total en Caja</small>
+                      <small style={{ color: '#6b7280', fontSize: 11, fontWeight: 600 }}>Total en Caja</small>
                     </div>
                   )}
                 </div>
               </div>
-              <div style={{ padding: '20px 24px' }}>
-                <Row>
+              <div style={{ padding: '16px 20px' }}>
+                <Row className="gy-3 align-items-center">
                   <Col md={6}>
-                    <p style={{ fontSize: 14, color: 'var(--on-surface-variant)' }}>
-                      <strong>Fecha de Apertura:</strong><br />
+                    <p style={{ fontSize: 13, color: 'var(--on-surface-variant)', margin: 0 }}>
+                      <strong>Aperturado por:</strong>{' '}
+                      <span className="fw-semibold text-dark">
+                        {cajaActual.usuario_detail
+                          ? (cajaActual.usuario_detail.first_name || cajaActual.usuario_detail.username)
+                          : cajaActual.usuario_nombre || cajaActual.usuario || 'Usuario de sistema'}
+                      </span>
+                    </p>
+                    <p style={{ fontSize: 13, color: 'var(--on-surface-variant)', margin: '4px 0 0' }}>
+                      <strong>Fecha de Apertura:</strong>{' '}
                       {new Date(cajaActual.fecha_apertura).toLocaleString('es-PE')}
                     </p>
                   </Col>
-                  <Col md={6} className="text-end">
+                  <Col md={6} className="d-flex flex-wrap gap-2 justify-content-start justify-content-md-end">
                     <button
-                      className="btn-registrar-pago"
+                      className="btn-registrar-pago flex-fill flex-md-grow-0"
                       style={{ background: '#ba1a1a' }}
                       onClick={handleCerrarCaja}
                       disabled={loading}
@@ -179,8 +189,7 @@ export default function GestionCaja({ onCajaChange = null }) {
                       )}
                     </button>
                     <button
-                      className="btn-limpiar"
-                      style={{ marginLeft: 8 }}
+                      className="btn-limpiar flex-fill flex-md-grow-0 ms-0"
                       onClick={handleRefresh}
                       disabled={loading}
                     >
@@ -195,48 +204,51 @@ export default function GestionCaja({ onCajaChange = null }) {
               <>
                 {/* Resumen de Ingresos */}
                 <div className="pagos-table-container" style={{ marginBottom: '20px' }}>
-                  <div className="pagos-deudas-header">
-                    <div className="pagos-deudas-header-icon" style={{ background: 'rgba(0,149,217,0.15)', color: '#0095d9' }}>📊</div>
-                    <h5 className="pagos-deudas-title">Resumen de Ingresos</h5>
-                    <div className="d-flex gap-2">
-                      <Button variant="success" className="d-flex align-items-center gap-2" style={{ borderRadius: '8px', fontWeight: 500 }} onClick={() => exportResumenToExcel(resumen)}>
-                        📊 Exportar Excel
+                  <div className="pagos-deudas-header d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
+                    <div className="d-flex align-items-center gap-2">
+                      <div className="pagos-deudas-header-icon" style={{ background: 'rgba(0,149,217,0.15)', color: '#0095d9' }}>📊</div>
+                      <h5 className="pagos-deudas-title mb-0">Resumen de Ingresos</h5>
+                    </div>
+                    <div className="d-flex gap-2 w-100 w-sm-auto mt-2 mt-sm-0">
+                      <Button variant="success" size="sm" className="d-flex align-items-center gap-1 flex-fill flex-sm-grow-0 justify-content-center" style={{ borderRadius: '8px', fontWeight: 500 }} onClick={() => exportResumenToExcel(resumen)}>
+                        📊 Excel
                       </Button>
-                      <Button variant="danger" className="d-flex align-items-center gap-2" style={{ borderRadius: '8px', fontWeight: 500 }} onClick={() => exportResumenToPdf(resumen)}>
-                        📄 Exportar PDF
+                      <Button variant="danger" size="sm" className="d-flex align-items-center gap-1 flex-fill flex-sm-grow-0 justify-content-center" style={{ borderRadius: '8px', fontWeight: 500 }} onClick={() => exportResumenToPdf(resumen)}>
+                        📄 PDF
                       </Button>
                     </div>
                   </div>
-                  <div style={{ padding: '24px' }}>
-                    <Row className="mb-4">
-                      <Col md={4} className="text-center">
-                        <div className="pagos-monto-card" style={{ minHeight: 'auto', padding: '16px', borderStyle: 'solid', borderColor: 'var(--surface-container-high)' }}>
+                  <div style={{ padding: '20px 16px' }}>
+                    <Row className="g-3 mb-4">
+                      <Col xs={12} sm={4} className="text-center">
+                        <div className="pagos-monto-card" style={{ minHeight: 'auto', padding: '14px', borderStyle: 'solid', borderColor: 'var(--surface-container-high)' }}>
                           <span className="pagos-monto-label">Monto Inicial</span>
-                          <div style={{ fontFamily: 'Quicksand', fontSize: '1.5rem', fontWeight: 700, color: 'var(--outline)' }}>
+                          <div style={{ fontFamily: 'Quicksand', fontSize: '1.35rem', fontWeight: 700, color: 'var(--outline)' }}>
                             S/ {parseFloat(resumen.monto_inicial || 0).toFixed(2)}
                           </div>
                         </div>
                       </Col>
-                      <Col md={4} className="text-center">
-                        <div className="pagos-monto-card" style={{ minHeight: 'auto', padding: '16px', borderStyle: 'solid', borderColor: '#a7f3d0' }}>
+                      <Col xs={12} sm={4} className="text-center">
+                        <div className="pagos-monto-card" style={{ minHeight: 'auto', padding: '14px', borderStyle: 'solid', borderColor: '#a7f3d0' }}>
                           <span className="pagos-monto-label">Recaudado</span>
-                          <div style={{ fontFamily: 'Quicksand', fontSize: '1.5rem', fontWeight: 700, color: '#10b981' }}>
+                          <div style={{ fontFamily: 'Quicksand', fontSize: '1.35rem', fontWeight: 700, color: '#10b981' }}>
                             S/ {parseFloat(resumen.total_recaudado || 0).toFixed(2)}
                           </div>
                         </div>
                       </Col>
-                      <Col md={4} className="text-center">
-                        <div className="pagos-monto-card" style={{ minHeight: 'auto', padding: '16px', borderStyle: 'solid', borderColor: 'rgba(170,125,254,0.3)' }}>
+                      <Col xs={12} sm={4} className="text-center">
+                        <div className="pagos-monto-card" style={{ minHeight: 'auto', padding: '14px', borderStyle: 'solid', borderColor: 'rgba(170,125,254,0.3)' }}>
                           <span className="pagos-monto-label">Total con Inicial</span>
-                          <div style={{ fontFamily: 'Quicksand', fontSize: '1.5rem', fontWeight: 700, color: 'var(--primary-container)' }}>
+                          <div style={{ fontFamily: 'Quicksand', fontSize: '1.35rem', fontWeight: 700, color: 'var(--primary-container)' }}>
                             S/ {parseFloat(resumen.total_con_inicial || 0).toFixed(2)}
                           </div>
                         </div>
                       </Col>
                     </Row>
-                    <h6 style={{ fontFamily: 'Quicksand', fontWeight: 700, marginBottom: 16 }}>
+                    <h6 style={{ fontFamily: 'Quicksand', fontWeight: 700, marginBottom: 14 }}>
                       Desglose por Método de Pago
                     </h6>
+
                     {resumen.resumen_por_metodo && resumen.resumen_por_metodo.length > 0 ? (
                       <div className="table-responsive">
                         <Table striped bordered hover size="sm">
