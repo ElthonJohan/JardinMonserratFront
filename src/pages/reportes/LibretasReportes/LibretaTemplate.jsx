@@ -76,18 +76,25 @@ const LibretaTemplate = React.forwardRef(({ alumno, institucion, periodoAcademic
           {alumno?.areas?.map((area, idx) => (
             <React.Fragment key={idx}>
               <tr className="area-row">
-                <td className="text-left" rowSpan={area.competencias.length + 1}>
+                <td className="text-left" rowSpan={area.competencias.length + 1} style={{verticalAlign: 'middle', fontWeight: 'bold'}}>
                   {area.area_nombre}
                 </td>
               </tr>
               {area.competencias.map((comp, cIdx) => (
                 <tr key={cIdx} className="competencia-row">
                   <td className="text-left">{comp.descripcion}</td>
-                  {periodosHeaders.map((per) => (
-                    <td key={per}>
-                      {comp.evaluaciones[per] || '-'}
-                    </td>
-                  ))}
+                  {periodosHeaders.map((per) => {
+                    const nota = comp.evaluaciones[per] || '-';
+                    const conclusion = comp.conclusiones?.[per] || '';
+
+                    return (
+                      <td key={per} style={{verticalAlign: 'middle', padding: '5px'}}>
+                        {nota !== '-' && <div style={{fontWeight: 'bold'}}>{nota}</div>}
+                        {conclusion && <div style={{fontSize: '0.85em', marginTop: '3px', textAlign: 'left', lineHeight: '1.1'}}>{conclusion}</div>}
+                        {nota === '-' && !conclusion && '-'}
+                      </td>
+                    );
+                  })}
                 </tr>
               ))}
             </React.Fragment>

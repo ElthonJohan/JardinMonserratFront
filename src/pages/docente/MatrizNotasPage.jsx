@@ -40,7 +40,7 @@ export default function MatrizNotasPage() {
 
   // Calificaciones y apreciaciones vigentes (estado de edición)
   const [grades, setGrades] = useState({}); // { [alumnoId]: { [competenciaId]: 'A' } }
-  const [comments, setComments] = useState({}); // { [alumnoId]: { [areaId]: { id: X, comentario: '...' } } }
+  const [comments, setComments] = useState({}); // { [alumnoId]: { [competenciaId]: { id: X, comentario: '...' } } }
   const [graders, setGraders] = useState({}); // { [alumnoId]: { [competenciaId]: 'Nombre Docente' } }
 
   // Respaldos originales (para saber si hay cambios sin guardar)
@@ -211,7 +211,7 @@ export default function MatrizNotasPage() {
           if (!loadedGrades[c.alumno]) loadedGrades[c.alumno] = {};
           if (!loadedGraders[c.alumno]) loadedGraders[c.alumno] = {};
           
-          loadedGrades[c.alumno][c.competencia] = c.valor;
+          loadedGrades[c.alumno][c.competencia] = c.valor || '-';
           loadedGraders[c.alumno][c.competencia] = c.docente_nombre;
         });
 
@@ -222,7 +222,7 @@ export default function MatrizNotasPage() {
         const loadedComments = {};
         listApreciaciones.forEach(a => {
           if (!loadedComments[a.alumno]) loadedComments[a.alumno] = {};
-          loadedComments[a.alumno][a.area] = { id: a.id, comentario: a.comentario, docente: a.docente_nombre };
+          loadedComments[a.alumno][a.competencia] = { id: a.id, comentario: a.comentario, docente: a.docente_nombre };
         });
 
         // Inicializar estados principales
@@ -266,14 +266,14 @@ export default function MatrizNotasPage() {
     }));
   };
 
-  const handleCommentChange = (alumnoId, val) => {
+  const handleCommentChange = (alumnoId, competenciaId, val) => {
     const upperVal = val.toUpperCase();
     setComments(prev => ({
       ...prev,
       [alumnoId]: {
         ...(prev[alumnoId] || {}),
-        [selectedAreaId]: {
-          ...(prev[alumnoId]?.[selectedAreaId] || {}),
+        [competenciaId]: {
+          ...(prev[alumnoId]?.[competenciaId] || {}),
           comentario: upperVal
         }
       }
@@ -296,7 +296,7 @@ export default function MatrizNotasPage() {
           const valor = grades[alumnoId][competenciaId];
           const originalValor = originalGrades[alumnoId]?.[competenciaId];
 
-          if (valor && valor !== '-' && valor !== originalValor) {
+          if (valor !== originalValor) {
             payloadCalificaciones.push({
               alumno_id: Number(alumnoId),
               competencia_id: Number(competenciaId),
@@ -315,9 +315,9 @@ export default function MatrizNotasPage() {
       // 3. Enviar apreciaciones
       const apreciacionPromises = [];
       Object.keys(comments).forEach(alumnoId => {
-        Object.keys(comments[alumnoId]).forEach(areaId => {
-          const item = comments[alumnoId][areaId];
-          const originalItem = originalComments[alumnoId]?.[areaId] || {};
+        Object.keys(comments[alumnoId]).forEach(competenciaId => {
+          const item = comments[alumnoId][competenciaId];
+          const originalItem = originalComments[alumnoId]?.[competenciaId] || {};
           const commentText = (item.comentario || '').trim();
           const originalText = (originalItem.comentario || '').trim();
 
@@ -328,7 +328,7 @@ export default function MatrizNotasPage() {
                 comentario: commentText,
                 alumno: Number(alumnoId),
                 periodo_evaluacion: Number(selectedPeriodo),
-                area: Number(areaId)
+                competencia: Number(competenciaId)
               }));
             } else if (commentText) {
               // Si es nuevo y no está vacío
@@ -336,7 +336,7 @@ export default function MatrizNotasPage() {
                 comentario: commentText,
                 alumno: Number(alumnoId),
                 periodo_evaluacion: Number(selectedPeriodo),
-                area: Number(areaId)
+                competencia: Number(competenciaId)
               }));
             }
           }
@@ -356,7 +356,7 @@ export default function MatrizNotasPage() {
       const updatedComments = {};
       listApreciaciones.forEach(a => {
         if (!updatedComments[a.alumno]) updatedComments[a.alumno] = {};
-        updatedComments[a.alumno][a.area] = { id: a.id, comentario: a.comentario, docente: a.docente_nombre };
+        updatedComments[a.alumno][a.competencia] = { id: a.id, comentario: a.comentario, docente: a.docente_nombre };
       });
       setComments(updatedComments);
       setOriginalComments(JSON.parse(JSON.stringify(updatedComments)));
@@ -524,21 +524,18 @@ export default function MatrizNotasPage() {
                           </div>
                         </th>
                       ))}
-                      <th className="py-3 ps-3 text-gray-800 uppercase fw-bold border-0" style={{ width: '30%' }}>
-                        Conclusión Descriptiva
-                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {alumnos.length === 0 ? (
                       <tr>
-                        <td colSpan={competencias.length + 2} className="text-center py-5 text-muted">
+                        <td colSpan={competencias.length + 1} className="text-center py-5 text-muted">
                           No hay alumnos activos registrados para el aula y periodo seleccionado.
                         </td>
                       </tr>
                     ) : competencias.length === 0 ? (
                       <tr>
-                        <td colSpan={competencias.length + 2} className="text-center py-5 text-muted">
+                        <td colSpan={competencias.length + 1} className="text-center py-5 text-muted">
                           No hay competencias activas configuradas para esta área académica.
                         </td>
                       </tr>
@@ -592,6 +589,15 @@ export default function MatrizNotasPage() {
                                       })
                                     }}
                                   />
+                                  <Form.Control
+                                    as="textarea"
+                                    rows={2}
+                                    placeholder="Conclusión / Apreciación..."
+                                    value={comments[alumnoId]?.[compId]?.comentario || ''}
+                                    onChange={e => handleCommentChange(alumnoId, compId, e.target.value)}
+                                    className="mt-2 rounded-2 border-secondary-subtle"
+                                    style={{ fontSize: '12px', resize: 'vertical' }}
+                                  />
                                   {graders[alumnoId]?.[compId] && (
                                     <div className="text-secondary mt-1 fw-medium" style={{ fontSize: '0.65rem' }}>
                                       Por: {graders[alumnoId][compId]}
@@ -600,22 +606,6 @@ export default function MatrizNotasPage() {
                                 </td>
                               );
                             })}
-                            <td className="pe-4 py-3">
-                              <Form.Control
-                                as="textarea"
-                                rows={2}
-                                placeholder="Comentario para esta área..."
-                                value={comments[alumnoId]?.[selectedAreaId]?.comentario || ''}
-                                onChange={e => handleCommentChange(alumnoId, e.target.value)}
-                                className="rounded-3 border-secondary-subtle"
-                                style={{ fontSize: '13px', resize: 'vertical' }}
-                              />
-                              {comments[alumnoId]?.[selectedAreaId]?.docente && (
-                                <div className="text-secondary mt-1 fw-medium text-end" style={{ fontSize: '0.7rem' }}>
-                                  Por: {comments[alumnoId][selectedAreaId].docente}
-                                </div>
-                              )}
-                            </td>
                           </tr>
                         );
                       })
